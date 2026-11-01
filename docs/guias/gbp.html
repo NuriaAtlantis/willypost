@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conecta Google Business Profile con WillyPost</title>
+<meta name="description" content="Cómo pedir acceso a la API de Google Business Profile y conectar tu ficha con WillyPost. Requiere aprobación de Google.">
+<meta name="theme-color" content="#4A73AA">
+<meta property="og:title" content="Conecta Google Business Profile con WillyPost">
+<meta property="og:description" content="Cómo pedir acceso a la API de Google Business Profile y conectar tu ficha con WillyPost. Requiere aprobación de Google.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://nuriaatlantis.github.io/willypost/assets/icon-512.png">
+<link rel="icon" href="../assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="apple-touch-icon" href="../assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div class="topbar">Software gratuito de la <a href="https://willyseo.net/" target="_blank" rel="noopener">Willy SEO Academy</a> para sus alumnos</div>
+<header class="site">
+  <div class="container hbar">
+    <a class="brand" href="../index.html" aria-label="WillyPost, inicio">
+      <img src="../assets/icon-192.png" alt="" width="38" height="38">
+      <span><b>WillyPost</b><small>by Willy SEO Academy</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
+    <nav class="main" id="menu" aria-label="Principal">
+      <a href="../index.html">Inicio</a><a href="../index.html#instalar">Cómo se instala</a><a href="../guias/index.html" aria-current="page">Guías</a><a href="../guias/claude.html">Claude</a><a href="../index.html#faq">Preguntas</a>
+      <a class="btn btn-sm" data-repo="zip" href="#">Descargar</a>
+    </nav>
+  </div>
+</header>
+<main id="contenido">
+<section class="guide-hero"><div class="container narrow">
+  <div class="crumbs"><a href="../index.html">Inicio</a> › <a href="index.html">Guías</a> › Google Business Profile</div>
+  <span class="eyebrow">Guía paso a paso</span>
+  <h1>Conecta tu <span class="pill">ficha de Google</span></h1>
+  <p class="lead">Publica novedades en tu ficha de Google Business Profile (SEO local). Requiere pedir permiso a Google.</p>
+  <ul class="meta"><li><span>Tiempo:</span> 15 minutos + espera de Google</li><li><span>Dificultad:</span> Con espera</li><li><span>Coste:</span> gratis</li><li><span>Aprobación:</span> sí, de Google</li></ul>
+</div></section>
+<section class="guide-body"><div class="container narrow">
+<div class="callout warn"><span class="t">Léelo antes de empezar</span><p>Google <strong>no deja usar esta API a cualquiera</strong>: hay que pedir permiso, puede tardar <strong>de unos días a más de una semana</strong> y pueden decirte que no. Mientras tanto, WillyPost te recuerda publicar <strong>a mano</strong> (modo manual) y no pierdes nada.</p></div>
+<h2>Requisitos (si no los cumples, no merece la pena pedirlo)</h2>
+<ul class="checklist"><li>Tu ficha de Google (Google Business Profile) está <strong>verificada</strong> y lleva <strong>más de 60 días activa</strong>.</li><li>La ficha tiene <strong>tu página web</strong> puesta.</li><li>Tienes un correo que es <strong>propietario o administrador</strong> de esa ficha.</li><li>Has hecho la <a href="youtube.html" target="_blank" rel="noopener">guía de YouTube</a> (necesitas el proyecto de Google Cloud y su número).</li></ul>
+<h2>Apunta el número de tu proyecto</h2>
+<ol class="steps" style="counter-reset: st 0"><li>En <a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a>, con el proyecto <strong>WillyPost</strong> seleccionado, ve al <strong>Panel</strong> (<em>Dashboard</em>) o a <strong>Configuración del proyecto</strong>.</li><li>Copia el <strong>Número del proyecto</strong> (unos 12 dígitos). No es lo mismo que el “ID del proyecto”.</li></ol>
+<h2>Rellena el formulario de acceso</h2>
+<ol class="steps" style="counter-reset: st 2"><li>Abre <a href="https://support.google.com/business/contact/api_default" target="_blank" rel="noopener">support.google.com/business/contact/api_default</a>.</li><li>En el desplegable elige <strong>Application for Basic API Access</strong>.</li><li>Rellena tu nombre, el <strong>correo</strong> propietario/gestor de la ficha, el <strong>número de proyecto</strong>, y el nombre y la web de tu negocio.</li><li>En “para qué lo usas” puedes poner: <em>“Programador personal de publicaciones para la ficha de mi propio negocio. Solo publico novedades en mis propias fichas.”</em></li><li>Envía el formulario. Te contestarán por correo. Mientras esperas, WillyPost funciona con tu ficha en modo manual.</li></ol>
+<h2>Comprueba si te han aprobado</h2>
+<ol class="steps" style="counter-reset: st 7"><li>En Google Cloud: ☰ → <span class="btnlabel">APIs y servicios</span> → <span class="btnlabel">Cuotas y límites del sistema</span> (<em>Quotas &amp; system limits</em>) y filtra por “Business Profile” o “My Business”.</li><li>Si ves <strong>0 consultas por minuto</strong>, todavía <strong>no</strong> estás aprobado. Si ves <strong>300</strong>, ya sí.</li></ol>
+<h2>Cuando te aprueben: activa las APIs</h2>
+<ol class="steps" style="counter-reset: st 9"><li>En ☰ → <span class="btnlabel">APIs y servicios</span> → <span class="btnlabel">Biblioteca</span> busca y pulsa <span class="btnlabel">Habilitar</span> en: <strong>Google My Business API</strong>, <strong>My Business Account Management API</strong> y <strong>My Business Business Information API</strong>. (La “Google My Business API” solo aparece en la biblioteca cuando Google ya te ha aprobado.)</li><li>Comprueba que en la pantalla de consentimiento (guía de YouTube) añadiste el permiso <code>business.manage</code>.</li></ol>
+<h2>Conecta tu ficha en WillyPost</h2>
+<ol class="steps" style="counter-reset: st 11"><li>WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → <strong>Google Business Profile</strong> → <span class="btnlabel">Conectar Google Business Profile</span> (usa el mismo carné de Google que ya pegaste para YouTube).</li><li>Si tienes varias fichas, WillyPost te deja elegir cuáles conectar.</li></ol>
+<h2>Si algo falla</h2>
+<details class="faq"><summary>“Google todavía no te ha dado acceso a la API”</summary><div class="body"><p>O no te han aprobado aún o falta habilitar las APIs. WillyPost publicará en modo manual hasta entonces.</p></div></details>
+<details class="faq"><summary>No encuentra mis fichas</summary><div class="body"><p>Estás conectando con una cuenta de Google que no es propietaria ni gestora de la ficha.</p></div></details>
+<details class="faq"><summary>Me han rechazado la solicitud</summary><div class="body"><p>Puedes volver a pedirla explicando mejor el uso, o seguir con el modo manual: WillyPost te avisa a la hora y te deja el texto y la foto listos para copiar.</p></div></details>
+<div class="guide-nav"><a class="btn btn-secondary btn-sm" href="youtube.html">← YouTube</a><a class="btn btn-secondary btn-sm" href="linkedin.html">LinkedIn →</a></div>
+</div></section>
+</main>
+<footer class="site">
+  <div class="container">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="../index.html"><img src="../assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
+        <p style="margin-top:16px;max-width:320px">Programa tus redes sociales desde tu propio ordenador. Gratis, libre y con tus datos en tus manos.</p>
+      </div>
+      <div><h4>WillyPost</h4><ul>
+        <li><a data-repo="zip" href="#">Descargar</a></li>
+        <li><a href="../index.html#instalar">Cómo se instala</a></li>
+        <li><a href="../guias/index.html">Guías de cada red</a></li>
+        <li><a href="../guias/claude.html">Conecta con Claude</a></li>
+      </ul></div>
+      <div><h4>Legal</h4><ul>
+        <li><a href="../privacidad.html">Política de privacidad</a></li>
+        <li><a href="../terminos.html">Términos del servicio</a></li>
+        <li><a href="../borrar-datos.html">Borrar mis datos</a></li>
+      </ul></div>
+      <div><h4>Ayuda</h4><ul>
+        <li><a data-fill-href="contactEmail" data-fill-text href="mailto:hola@willyseo.net">hola@willyseo.net</a></li>
+        <li><a data-repo="issues" href="#">Avisar de un problema</a></li>
+        <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
+      </ul></div>
+    </div>
+    <div class="fbottom"><span>Hecho con cariño por la Willy SEO Academy.</span><span>Software libre con licencia MIT · © <span data-year>2026</span> Willy SEO Academy</span></div>
+  </div>
+</footer>
+<script src="../config.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>

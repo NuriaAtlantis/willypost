@@ -1,0 +1,27 @@
+{
+  "name": "willypost",
+  "version": "1.0.0",
+  "description": "Programador de redes sociales local de la Willy SEO Academy, conectable con Claude (MCP).",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server/index.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
+    "mcp": "node --disable-warning=ExperimentalWarning mcp/server.js",
+    "build:web": "npm --prefix web run build",
+    "test": "node --disable-warning=ExperimentalWarning --test test/"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "express": "^5.3.0",
+    "multer": "^2.5.0",
+    "node-notifier": "^12.1.0",
+    "sharp": "^0.35.5",
+    "zod": "^4.6.7"
+  }
+}

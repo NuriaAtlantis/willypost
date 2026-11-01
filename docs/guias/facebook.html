@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conecta Facebook con WillyPost</title>
+<meta name="description" content="Guía paso a paso para conectar tu Página de Facebook con WillyPost creando tu propia app de Meta. Unos 25 minutos.">
+<meta name="theme-color" content="#4A73AA">
+<meta property="og:title" content="Conecta Facebook con WillyPost">
+<meta property="og:description" content="Guía paso a paso para conectar tu Página de Facebook con WillyPost creando tu propia app de Meta. Unos 25 minutos.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://nuriaatlantis.github.io/willypost/assets/icon-512.png">
+<link rel="icon" href="../assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="apple-touch-icon" href="../assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div class="topbar">Software gratuito de la <a href="https://willyseo.net/" target="_blank" rel="noopener">Willy SEO Academy</a> para sus alumnos</div>
+<header class="site">
+  <div class="container hbar">
+    <a class="brand" href="../index.html" aria-label="WillyPost, inicio">
+      <img src="../assets/icon-192.png" alt="" width="38" height="38">
+      <span><b>WillyPost</b><small>by Willy SEO Academy</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
+    <nav class="main" id="menu" aria-label="Principal">
+      <a href="../index.html">Inicio</a><a href="../index.html#instalar">Cómo se instala</a><a href="../guias/index.html" aria-current="page">Guías</a><a href="../guias/claude.html">Claude</a><a href="../index.html#faq">Preguntas</a>
+      <a class="btn btn-sm" data-repo="zip" href="#">Descargar</a>
+    </nav>
+  </div>
+</header>
+<main id="contenido">
+<section class="guide-hero"><div class="container narrow">
+  <div class="crumbs"><a href="../index.html">Inicio</a> › <a href="index.html">Guías</a> › Facebook</div>
+  <span class="eyebrow">Guía paso a paso</span>
+  <h1>Conecta tu <span class="pill">Página de Facebook</span></h1>
+  <p class="lead">Publica posts, fotos, carruseles y Reels en una Página que administras. Creas tu propio “carné” de desarrollador una vez y WillyPost hace el resto.</p>
+  <ul class="meta"><li><span>Tiempo:</span> 25 minutos</li><li><span>Dificultad:</span> Media</li><li><span>Coste:</span> gratis</li></ul>
+</div></section>
+<section class="guide-body"><div class="container narrow">
+<h2>Antes de empezar</h2>
+<ul class="checklist"><li>Una <strong>cuenta personal de Facebook</strong> con la verificación en dos pasos activada (Meta la pide para crear apps).</li><li>WillyPost <strong>instalado y abierto</strong> en tu ordenador.</li><li>Un ratito tranquilo: las pantallas de Meta tienen muchos menús, pero solo tocarás unos pocos.</li></ul>
+<div class="callout "><span class="t">Una cuenta de desarrollador para las tres redes</span><p>Facebook, Instagram y Threads son de Meta y se configuran en la <strong>misma cuenta de desarrollador</strong>. Pero cada red guarda <strong>su propio ID y su propia clave secreta</strong>: en WillyPost hay tres “carnés” distintos y no se pueden mezclar. No tienes que pasar ninguna revisión de Meta: tu app solo publica en tus propias cuentas.</p></div>
+<h2>Regístrate como desarrollador (solo la primera vez)</h2>
+<ol class="steps" style="counter-reset: st 0"><li>Entra en <a href="https://developers.facebook.com/" target="_blank" rel="noopener">developers.facebook.com</a> con tu cuenta personal de Facebook.</li><li>Pulsa <span class="btnlabel">Empezar</span> (<em>Get Started</em>), acepta las condiciones, verifica tu móvil o tu email y elige el rol que quieras (cualquiera vale).</li><li>Si Meta te pide activar la <strong>verificación en dos pasos</strong>, hazlo: sin ella no te deja crear apps.</li><li>Si te pide un <strong>portfolio de negocio</strong> (<em>Business portfolio</em>), crea uno con tu nombre o el de tu negocio. Si te deja saltarlo, salta.</li></ol>
+<h2>Crea la app</h2>
+<ol class="steps" style="counter-reset: st 4"><li>En <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">developers.facebook.com/apps</a> pulsa <span class="btnlabel">Crear app</span> (<em>Create app</em>).</li><li>Ponle un nombre, por ejemplo <strong>WillyPost de [tu nombre]</strong>, y tu email. Siguiente.</li><li>En los casos de uso elige <span class="btnlabel">Gestionar todo en tu Página</span> (<em>Manage everything on your Page</em>). Si no lo ves, pulsa el filtro <span class="btnlabel">Todos</span> y elige <span class="btnlabel">Otro</span> al final y, después, el tipo de app <span class="btnlabel">Empresa</span>.</li><li>Elige tu portfolio de negocio si te lo pide y pulsa <span class="btnlabel">Crear app</span>. Puede pedirte tu contraseña de Facebook.</li></ol>
+<h2>Los permisos</h2>
+<p>Estos permisos los pide WillyPost cuando conectas tu Página. Hay que activarlos en tu app.</p>
+<ol class="steps" style="counter-reset: st 8"><li>En el menú de la izquierda entra en <span class="btnlabel">Casos de uso</span> (<em>Use cases</em>), abre <span class="btnlabel">Gestionar todo en tu Página</span> y pulsa <span class="btnlabel">Personalizar</span> (<em>Customize</em>).</li><li>Verás la lista de permisos. <code>pages_show_list</code> y <code>business_management</code> suelen venir ya añadidos. Pulsa <span class="btnlabel">Añadir</span> (<em>Add</em>) junto a los que falten de esta lista: <code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>pages_manage_posts</code>, <code>publish_video</code> y <code>business_management</code>.</li><li><strong>No</strong> pidas “acceso avanzado” ni pulses “Enviar para revisión”: no hace falta. Con el acceso estándar funcionas tú solo/a con tus Páginas.</li></ol>
+<h2>La dirección de retorno (URI de redirección)</h2>
+<p>Meta tiene este ajuste en sitios distintos según cómo haya salido tu pantalla. Busca el primero que veas:</p>
+<ol class="steps" style="counter-reset: st 11"><li>Busca el ajuste de inicio de sesión:<ul class="plain"><li>Menú de la izquierda → <span class="btnlabel">Inicio de sesión con Facebook</span> (<em>Facebook Login</em>) → <span class="btnlabel">Configuración</span>; o</li><li>Menú de la izquierda → <span class="btnlabel">Inicio de sesión con Facebook para empresas</span> (<em>Facebook Login for Business</em>) → <span class="btnlabel">Configuración</span>; o</li><li><span class="btnlabel">Casos de uso</span> → <span class="btnlabel">Gestionar todo en tu Página</span> → <span class="btnlabel">Personalizar</span> → <span class="btnlabel">Configuración</span>.</li></ul></li><li>Si no encuentras ninguno: <span class="btnlabel">Casos de uso</span> → <span class="btnlabel">Añadir caso de uso</span> y añade el de iniciar sesión con Facebook (<em>Authenticate and request data from users with Facebook Login</em>). Después aparecerá <em>Inicio de sesión con Facebook → Configuración</em>.</li><li>En <span class="btnlabel">URI de redireccionamiento de OAuth válidos</span> (<em>Valid OAuth Redirect URIs</em>; en la versión “para empresas” el campo se llama <em>Redirect URI</em>) pega esta dirección y pulsa <span class="btnlabel">Guardar cambios</span>:<div class="copybox"><span class="lbl">Cópiala exactamente así</span><div class="row"><code data-fill="relayUrl">https://nuriaatlantis.github.io/willypost/callback.html</code><button type="button" aria-label="Copiar Cópiala exactamente así">Copiar</button></div></div></li><li>Mira la dirección que ha quedado guardada: tiene que ser <strong>idéntica</strong>. Si Meta le ha añadido una “/” al final, bórrala y guarda otra vez.</li></ol>
+<h2>Copia tu ID y tu clave</h2>
+<ol class="steps" style="counter-reset: st 15"><li>Menú de la izquierda → <span class="btnlabel">Configuración de la app</span> (<em>App settings</em>) → <span class="btnlabel">Básica</span> (<em>Basic</em>).</li><li>Copia el <strong>Identificador de la app</strong> (<em>App ID</em>).</li><li>En <strong>Clave secreta de la app</strong> (<em>App secret</em>) pulsa <span class="btnlabel">Mostrar</span>, escribe tu contraseña si te la pide y copia la clave.</li><li>En WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → Facebook → <span class="btnlabel">Configura tu carné</span> pega el <strong>ID de la app</strong> y la <strong>Clave secreta de la app</strong>. Pulsa <span class="btnlabel">Guardar</span> (o <span class="btnlabel">Guardar y conectar</span> si quieres seguir ya con la conexión).</li></ol>
+<h2>Publica la app (pásala a “Live”)</h2>
+<div class="callout warn"><span class="t">Por qué es importante</span><p>Mientras la app no está publicada (modo <strong>Desarrollo</strong>), lo que publiques solo lo ven las personas con un rol en tu app, es decir, tú. Para que lo vea todo el mundo, hay que publicarla (<strong>Live</strong>).</p></div>
+<ol class="steps" style="counter-reset: st 19"><li>Menú de la izquierda → <span class="btnlabel">Configuración de la app</span> → <span class="btnlabel">Básica</span>. Rellena estos campos (Meta los exige para publicar):<ul class="plain"><li><strong>Correo de contacto</strong>: tu email.</li><li><strong>URL de la política de privacidad</strong>:<div class="copybox"><span class="lbl">Política de privacidad</span><div class="row"><code data-fill="privacyUrl">https://nuriaatlantis.github.io/willypost/privacidad.html</code><button type="button" aria-label="Copiar Política de privacidad">Copiar</button></div></div></li><li><strong>URL de las condiciones del servicio</strong> (<em>Terms of Service URL</em>):<div class="copybox"><span class="lbl">Condiciones del servicio</span><div class="row"><code data-fill="termsUrl">https://nuriaatlantis.github.io/willypost/terminos.html</code><button type="button" aria-label="Copiar Condiciones del servicio">Copiar</button></div></div></li><li><strong>Eliminación de datos de usuario</strong> (<em>User data deletion</em>): elige <em>URL de instrucciones</em> y pega:<div class="copybox"><span class="lbl">Eliminación de datos</span><div class="row"><code data-fill="dataDeletionUrl">https://nuriaatlantis.github.io/willypost/borrar-datos.html</code><button type="button" aria-label="Copiar Eliminación de datos">Copiar</button></div></div></li><li><strong>Icono de la app</strong> (imagen cuadrada de 1024×1024: vale tu logo).</li><li><strong>Categoría</strong> (por ejemplo “Negocios y páginas”) y, si te lo pide, <strong>Propósito de la app</strong> (<em>App purpose</em>): elige la opción de uso para tu propio negocio.</li></ul></li><li>Pulsa <span class="btnlabel">Guardar cambios</span>.</li><li>Menú de la izquierda → <span class="btnlabel">Publicar</span> (<em>Publish</em>). Revisa lo que te marca Meta y pulsa <span class="btnlabel">Publicar</span> (abajo a la derecha). En algunas pantallas, en vez de eso, hay un interruptor <strong>Modo de la app: Desarrollo</strong> arriba del todo: cámbialo a <strong>Live</strong> y confirma.</li><li>Si Meta dice que falta algo, entra en lo que te señale, complétalo y vuelve a pulsar Publicar.</li></ol>
+<div class="callout"><span class="t">¿No ves “Publicar” ni “Live”?</span><p>Algunas apps de tipo <strong>Empresa</strong> no tienen modo Desarrollo/Live y ya funcionan en abierto. Conecta tu Página (siguiente sección), haz una publicación de prueba y comprueba que se ve desde otra cuenta. Si solo la ves tú, vuelve aquí y busca “Publicar”.</p></div>
+<h2>Conecta tu Página</h2>
+<ol class="steps" style="counter-reset: st 23"><li>En WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → Facebook → <span class="btnlabel">Conectar Facebook</span>. Se abre Facebook.</li><li>Pulsa <span class="btnlabel">Continuar como [tu nombre]</span>. Cuando te pregunte qué Páginas quieres usar, <strong>marca tu Página</strong> (o “todas las Páginas actuales y futuras”). Acepta los permisos y pulsa <span class="btnlabel">Guardar</span>.</li><li>Vuelves a WillyPost, que te enseña tus Páginas: marca la tuya y pulsa <span class="btnlabel">Conectar</span>. ¡Listo! Recuerda que hay que reconectar cada 30 días (WillyPost te avisa).</li></ol>
+<h2>Qué pegas en WillyPost</h2>
+<table class="simple"><thead><tr><th>Campo de WillyPost</th><th>Qué pegas</th><th>De dónde sale</th></tr></thead><tbody><tr><td>Facebook → ID de la app</td><td>Identificador de la app (<em>App ID</em>)</td><td>Meta → Configuración de la app → Básica</td></tr><tr><td>Facebook → Clave secreta de la app</td><td>Clave secreta de la app (<em>App secret</em>)</td><td>Meta → Configuración de la app → Básica → Mostrar</td></tr></tbody></table>
+<h2>Si algo falla</h2>
+<details class="faq"><summary>“No hemos encontrado ninguna Página”</summary><div class="body"><p>No eres administrador de la Página, o no marcaste la Página en la ventana de permisos. Vuelve a pulsar <strong>Conectar</strong> y marca tu Página. Recuerda: es para <strong>Páginas</strong>, no para tu perfil personal.</p></div></details>
+<details class="faq"><summary>“Invalid Scopes” o “permiso no válido”</summary><div class="body"><p>Te falta añadir algún permiso de la lista. Repasa la sección “Los permisos”.</p><p>Si los cinco permisos están añadidos y sigue saliendo, tu app usa <strong>Inicio de sesión con Facebook para empresas</strong> (<em>Facebook Login for Business</em>). En ese caso: en Meta entra en <span class="btnlabel">Facebook Login para empresas</span> → <span class="btnlabel">Configuraciones</span> (<em>Configurations</em>) → <span class="btnlabel">Crear configuración</span>, elige “Token de acceso de usuario” y marca los cinco permisos. Copia el número de <strong>ID de configuración</strong> que te da. En WillyPost, abre el carné de Facebook, despliega <strong>Opción avanzada</strong>, pégalo en “ID de configuración” y pulsa <strong>Guardar y conectar</strong>.</p></div></details>
+<details class="faq"><summary>Publica, pero nadie lo ve</summary><div class="body"><p>La app sigue en modo <strong>Desarrollo</strong>. Pásala a <strong>Live</strong> (sección anterior).</p></div></details>
+<details class="faq"><summary>“URL bloqueada” o “redirect_uri” no coincide</summary><div class="body"><p>La dirección de retorno no es idéntica. Vuelve a copiarla con el botón <strong>Copiar</strong> y pégala en Meta sin espacios. Después de guardar, mira la lista: si Meta le ha añadido una “/” al final, bórrala.</p></div></details>
+<details class="faq"><summary>Mi pantalla de Meta no se parece a esta guía</summary><div class="body"><p>Meta cambia sus menús a menudo. Busca el nombre en inglés que ponemos entre paréntesis y, si no lo encuentras, usa el buscador de la parte de arriba del panel de Meta. Lo importante son siempre las mismas cuatro cosas: los cinco permisos, la dirección de retorno, el ID y la clave secreta, y publicar la app.</p></div></details>
+<details class="faq"><summary>Las stories no se publican solas</summary><div class="body"><p>Meta no siempre permite publicar stories de Página por API. WillyPost te lo avisa y las deja en <strong>Para publicar a mano</strong>: nada se pierde.</p></div></details>
+<details class="faq"><summary>Al volver, veo “No se puede acceder a este sitio”</summary><div class="body"><p>WillyPost estaba cerrado. Ábrelo y recarga esa pestaña (tecla F5): el código sigue siendo válido unos minutos. Si no, pulsa Conectar otra vez.</p></div></details>
+<div class="guide-nav"><a class="btn btn-secondary btn-sm" href="index.html">← Todas las guías</a><a class="btn btn-secondary btn-sm" href="instagram.html">Instagram →</a></div>
+</div></section>
+</main>
+<footer class="site">
+  <div class="container">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="../index.html"><img src="../assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
+        <p style="margin-top:16px;max-width:320px">Programa tus redes sociales desde tu propio ordenador. Gratis, libre y con tus datos en tus manos.</p>
+      </div>
+      <div><h4>WillyPost</h4><ul>
+        <li><a data-repo="zip" href="#">Descargar</a></li>
+        <li><a href="../index.html#instalar">Cómo se instala</a></li>
+        <li><a href="../guias/index.html">Guías de cada red</a></li>
+        <li><a href="../guias/claude.html">Conecta con Claude</a></li>
+      </ul></div>
+      <div><h4>Legal</h4><ul>
+        <li><a href="../privacidad.html">Política de privacidad</a></li>
+        <li><a href="../terminos.html">Términos del servicio</a></li>
+        <li><a href="../borrar-datos.html">Borrar mis datos</a></li>
+      </ul></div>
+      <div><h4>Ayuda</h4><ul>
+        <li><a data-fill-href="contactEmail" data-fill-text href="mailto:hola@willyseo.net">hola@willyseo.net</a></li>
+        <li><a data-repo="issues" href="#">Avisar de un problema</a></li>
+        <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
+      </ul></div>
+    </div>
+    <div class="fbottom"><span>Hecho con cariño por la Willy SEO Academy.</span><span>Software libre con licencia MIT · © <span data-year>2026</span> Willy SEO Academy</span></div>
+  </div>
+</footer>
+<script src="../config.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>

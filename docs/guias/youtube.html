@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conecta YouTube Shorts con WillyPost</title>
+<meta name="description" content="Guía paso a paso para subir tus Shorts a YouTube desde WillyPost con tu propio carné de Google Cloud. Unos 15 minutos.">
+<meta name="theme-color" content="#4A73AA">
+<meta property="og:title" content="Conecta YouTube Shorts con WillyPost">
+<meta property="og:description" content="Guía paso a paso para subir tus Shorts a YouTube desde WillyPost con tu propio carné de Google Cloud. Unos 15 minutos.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://nuriaatlantis.github.io/willypost/assets/icon-512.png">
+<link rel="icon" href="../assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="apple-touch-icon" href="../assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div class="topbar">Software gratuito de la <a href="https://willyseo.net/" target="_blank" rel="noopener">Willy SEO Academy</a> para sus alumnos</div>
+<header class="site">
+  <div class="container hbar">
+    <a class="brand" href="../index.html" aria-label="WillyPost, inicio">
+      <img src="../assets/icon-192.png" alt="" width="38" height="38">
+      <span><b>WillyPost</b><small>by Willy SEO Academy</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
+    <nav class="main" id="menu" aria-label="Principal">
+      <a href="../index.html">Inicio</a><a href="../index.html#instalar">Cómo se instala</a><a href="../guias/index.html" aria-current="page">Guías</a><a href="../guias/claude.html">Claude</a><a href="../index.html#faq">Preguntas</a>
+      <a class="btn btn-sm" data-repo="zip" href="#">Descargar</a>
+    </nav>
+  </div>
+</header>
+<main id="contenido">
+<section class="guide-hero"><div class="container narrow">
+  <div class="crumbs"><a href="../index.html">Inicio</a> › <a href="index.html">Guías</a> › YouTube</div>
+  <span class="eyebrow">Guía paso a paso</span>
+  <h1>Conecta tus <span class="pill">Shorts de YouTube</span></h1>
+  <p class="lead">Sube tus vídeos verticales a tu canal desde WillyPost. Creas tu carné de Google una vez (también sirve para tu ficha de Google).</p>
+  <ul class="meta"><li><span>Tiempo:</span> 15 minutos</li><li><span>Dificultad:</span> Media</li><li><span>Coste:</span> gratis</li></ul>
+</div></section>
+<section class="guide-body"><div class="container narrow">
+<h2>Antes de empezar</h2>
+<ul class="checklist"><li>La <strong>cuenta de Google dueña de tu canal de YouTube</strong>.</li><li>WillyPost abierto en tu ordenador.</li></ul>
+<div class="callout ok"><span class="t">Esta guía vale también para Google Business Profile</span><p>El “carné” de Google es el mismo para YouTube y para tu ficha de Google. Solo tienes que hacerlo <strong>una vez</strong>.</p></div>
+<h2>Crea un proyecto en Google Cloud</h2>
+<ol class="steps" style="counter-reset: st 0"><li>Entra en <a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a> con la cuenta de Google dueña de tu canal. Si es tu primera vez, acepta los términos.</li><li>Arriba a la izquierda, pulsa el selector de proyectos (junto al logo de Google Cloud) y luego <span class="btnlabel">Proyecto nuevo</span>.</li><li>Nombre del proyecto: <strong>WillyPost</strong>. Pulsa <span class="btnlabel">Crear</span>.</li><li>Espera unos segundos y, en el aviso que sale, pulsa <span class="btnlabel">Seleccionar proyecto</span>. Comprueba que arriba pone <strong>WillyPost</strong>.</li></ol>
+<h2>Activa la API de YouTube</h2>
+<ol class="steps" style="counter-reset: st 4"><li>Menú ☰ → <span class="btnlabel">APIs y servicios</span> → <span class="btnlabel">Biblioteca</span>.</li><li>Escribe <strong>YouTube Data API v3</strong>, ábrela y pulsa <span class="btnlabel">Habilitar</span>.</li></ol>
+<h2>Configura la pantalla de consentimiento</h2>
+<ol class="steps" style="counter-reset: st 6"><li>Menú ☰ → <span class="btnlabel">Google Auth Platform</span>. Pulsa <span class="btnlabel">Comenzar</span> (<em>Get started</em>).</li><li><strong>Información de la aplicación:</strong> nombre <strong>WillyPost</strong> y tu correo como correo de asistencia. Siguiente.</li><li><strong>Público:</strong> elige <span class="btnlabel">Externo</span>. Siguiente. <strong>Información de contacto:</strong> pon tu correo. Siguiente.</li><li>Acepta la política de datos de usuario de los servicios de Google y pulsa <span class="btnlabel">Continuar</span> → <span class="btnlabel">Crear</span>.</li><li>En el menú de la izquierda entra en <span class="btnlabel">Acceso a los datos</span> (<em>Data Access</em>) → <span class="btnlabel">Añadir o quitar permisos</span> y añade <code>.../auth/youtube.upload</code> y <code>.../auth/youtube.readonly</code>. (Si vas a usar también Google Business Profile, añade <code>.../auth/business.manage</code>.) Pulsa <span class="btnlabel">Actualizar</span> y luego <span class="btnlabel">Guardar</span>.</li></ol>
+<h2>Añádete como usuario de prueba y PUBLICA la app</h2>
+<div class="callout warn"><span class="t">Muy importante</span><p>Una app en estado <strong>Pruebas</strong> hace que Google <strong>caduque tu conexión cada 7 días</strong> y tendrías que reconectar YouTube cada semana. Por eso la pasamos a <strong>En producción</strong>. Es tu app y solo la usas tú: no necesita verificación.</p></div>
+<ol class="steps" style="counter-reset: st 11"><li>En el menú de la izquierda entra en <span class="btnlabel">Público</span> (<em>Audience</em>). En <strong>Usuarios de prueba</strong> pulsa <span class="btnlabel">Add users</span>, escribe tu correo de Google y <span class="btnlabel">Guardar</span>.</li><li>Pulsa <span class="btnlabel">Publicar la app</span> (<em>Publish app</em>) → <span class="btnlabel">Confirmar</span>. El estado pasará a <strong>En producción</strong>.</li></ol>
+<div class="callout "><span class="t">“Google no ha verificado esta aplicación”</span><p>Saldrá este aviso la primera vez que conectes. Es normal: la app es tuya y nadie más la usa. Pulsa <span class="btnlabel">Avanzado</span> → <span class="btnlabel">Ir a WillyPost (no seguro)</span> y acepta los permisos. Es seguro porque el “desarrollador” eres tú.</p></div>
+<h2>Crea las credenciales (tu “carné”)</h2>
+<ol class="steps" style="counter-reset: st 13"><li>Menú ☰ → <span class="btnlabel">Google Auth Platform</span> → <span class="btnlabel">Clientes</span> → <span class="btnlabel">Crear cliente</span>.</li><li><strong>Tipo de aplicación:</strong> <span class="btnlabel">Aplicación web</span>. <strong>Nombre:</strong> WillyPost.</li><li>En <strong>URI de redirección autorizados</strong> pulsa <span class="btnlabel">Añadir URI</span> y pega esta dirección tal cual:<div class="copybox"><span class="lbl">Cópiala exactamente así (con http, sin barra al final)</span><div class="row"><code data-fill="localRedirect">http://localhost:4747/oauth/callback</code><button type="button" aria-label="Copiar Cópiala exactamente así (con http, sin barra al final)">Copiar</button></div></div></li><li>Pulsa <span class="btnlabel">Crear</span>. Te saldrá una ventana con el <strong>ID de cliente</strong> y el <strong>Secreto del cliente</strong>. <strong>Cópialos ahora</strong> y, por si acaso, pulsa también <span class="btnlabel">Descargar JSON</span> y guarda el archivo: Google solo enseña el secreto completo en esta ventana y <strong>después ya no se puede volver a ver</strong>.</li></ol>
+<div class="callout"><span class="t">¿Has cerrado la ventana sin copiar el secreto?</span><p>No pasa nada. En <span class="btnlabel">Google Auth Platform → Clientes</span> pulsa <span class="btnlabel">Crear cliente</span> otra vez (mismos datos, misma dirección de redirección) y copia el secreto nuevo.</p></div>
+<h2>Pégalo en WillyPost</h2>
+<ol class="steps" style="counter-reset: st 17"><li>Abre WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → tarjeta <strong>YouTube Shorts</strong> → <span class="btnlabel">Configura tu carné</span>.</li><li>Pega el <strong>ID de cliente</strong> y el <strong>Secreto de cliente</strong>. Pulsa <span class="btnlabel">Guardar</span> (o <span class="btnlabel">Guardar y conectar</span>).</li><li>Si has pulsado solo Guardar, ahora pulsa <span class="btnlabel">Conectar YouTube Shorts</span>. Elige tu cuenta y, si sale el aviso de app no verificada, sigue el recuadro de arriba. En la pantalla de permisos deja <strong>todas las casillas marcadas</strong>.</li></ol>
+<h2>Qué pegas en WillyPost</h2>
+<table class="simple"><thead><tr><th>Campo de WillyPost</th><th>Qué pegas</th><th>De dónde sale</th></tr></thead><tbody><tr><td>Google → ID de cliente</td><td>ID de cliente (acaba en .apps.googleusercontent.com)</td><td>Google Cloud → Google Auth Platform → Clientes</td></tr><tr><td>Google → Secreto de cliente</td><td>Secreto del cliente</td><td>La misma ventana al crear el cliente</td></tr></tbody></table>
+<h2>Si algo falla</h2>
+<details class="faq"><summary>“redirect_uri_mismatch”</summary><div class="body"><p>La dirección del paso de credenciales no es idéntica. Cópiala otra vez con el botón <strong>Copiar</strong>: con <strong>http</strong> (no https) y sin barra al final.</p></div></details>
+<details class="faq"><summary>“Acceso bloqueado: la app no ha completado la verificación” o “solo desarrolladores”</summary><div class="body"><p>No te añadiste como usuario de prueba o no publicaste la app. Repasa la sección “Añádete como usuario de prueba y PUBLICA la app”.</p></div></details>
+<details class="faq"><summary>Tengo que reconectar cada semana</summary><div class="body"><p>La app sigue en <strong>Pruebas</strong>. Pulsa <strong>Publicar la app</strong>.</p></div></details>
+<details class="faq"><summary>El vídeo se ha subido pero está en privado</summary><div class="body"><p>Si te pasa, entra en <a href="https://studio.youtube.com" target="_blank" rel="noopener">YouTube Studio</a> → Contenido, abre el vídeo y cámbialo a <strong>Público</strong>. (Según la documentación actual de Google, las apps sin verificar ya no están obligadas a subir en privado, pero tu canal puede tener esa opción puesta por defecto.) En WillyPost también puedes elegir la privacidad al crear el Short.</p></div></details>
+<details class="faq"><summary>“Has llegado al límite diario”</summary><div class="body"><p>YouTube permite unas 100 subidas al día por proyecto. Espera a mañana.</p></div></details>
+<details class="faq"><summary>Al volver, veo “No se puede acceder a este sitio”</summary><div class="body"><p>WillyPost estaba cerrado. Ábrelo y recarga esa pestaña (F5).</p></div></details>
+<div class="guide-nav"><a class="btn btn-secondary btn-sm" href="tiktok.html">← TikTok</a><a class="btn btn-secondary btn-sm" href="gbp.html">Google Business Profile →</a></div>
+</div></section>
+</main>
+<footer class="site">
+  <div class="container">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="../index.html"><img src="../assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
+        <p style="margin-top:16px;max-width:320px">Programa tus redes sociales desde tu propio ordenador. Gratis, libre y con tus datos en tus manos.</p>
+      </div>
+      <div><h4>WillyPost</h4><ul>
+        <li><a data-repo="zip" href="#">Descargar</a></li>
+        <li><a href="../index.html#instalar">Cómo se instala</a></li>
+        <li><a href="../guias/index.html">Guías de cada red</a></li>
+        <li><a href="../guias/claude.html">Conecta con Claude</a></li>
+      </ul></div>
+      <div><h4>Legal</h4><ul>
+        <li><a href="../privacidad.html">Política de privacidad</a></li>
+        <li><a href="../terminos.html">Términos del servicio</a></li>
+        <li><a href="../borrar-datos.html">Borrar mis datos</a></li>
+      </ul></div>
+      <div><h4>Ayuda</h4><ul>
+        <li><a data-fill-href="contactEmail" data-fill-text href="mailto:hola@willyseo.net">hola@willyseo.net</a></li>
+        <li><a data-repo="issues" href="#">Avisar de un problema</a></li>
+        <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
+      </ul></div>
+    </div>
+    <div class="fbottom"><span>Hecho con cariño por la Willy SEO Academy.</span><span>Software libre con licencia MIT · © <span data-year>2026</span> Willy SEO Academy</span></div>
+  </div>
+</footer>
+<script src="../config.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>

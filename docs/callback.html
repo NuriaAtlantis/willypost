@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>Volviendo a WillyPost…</title>
+<link rel="icon" href="assets/favicon.png">
+<!--
+  Relé OAuth de WillyPost.
+  Meta (Facebook, Instagram, Threads) y LinkedIn exigen una dirección de retorno HTTPS. Esta página, alojada en GitHub Pages,
+  recibe ?code=…&state=… y los reenvía, tal cual, a http://localhost:4747/oauth/callback (tu propio ordenador).
+  - No usa analítica, ni fuentes externas, ni scripts externos, ni cookies, ni almacenamiento.
+  - El destino es FIJO (no se puede cambiar con parámetros): no es un redirector abierto.
+  - El "code" por sí solo no sirve de nada: hace falta el secreto de tu app, que nunca sale de tu ordenador.
+-->
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 20px; background: #F4F6FA; color: #4B5567;
+         font-family: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif; line-height: 1.55; }
+  main { width: 100%; max-width: 520px; background: #fff; border: 1px solid #E4E8EF; border-radius: 24px; padding: 38px 32px;
+         box-shadow: 0 30px 60px -30px rgba(27,38,56,.35); text-align: center; }
+  img { width: 64px; height: 64px; border-radius: 16px; }
+  h1 { color: #1B2638; font-size: 26px; line-height: 1.15; letter-spacing: -.03em; margin: 18px 0 10px; font-weight: 800; }
+  p { margin: 0 0 14px; }
+  .spin { width: 34px; height: 34px; border: 4px solid #DCE6F3; border-top-color: #4A73AA; border-radius: 50%; margin: 18px auto; animation: g .9s linear infinite; }
+  @keyframes g { to { transform: rotate(360deg); } }
+  .btn { display: inline-block; background: #4A73AA; color: #fff; text-decoration: none; font-weight: 600; padding: 14px 24px; border-radius: 12px; margin-top: 6px; }
+  .btn:hover { background: #3D6396; }
+  .hint { display: none; background: #EEF3F9; border: 1px solid #DCE6F3; border-radius: 16px; padding: 16px 18px; text-align: left; font-size: 15px; margin-top: 18px; }
+  .err { display: none; background: #FFF4DF; border: 1px solid #F6DDAF; border-radius: 16px; padding: 14px 18px; text-align: left; font-size: 15px; margin: 14px 0; color: #6B4A00; }
+  .small { font-size: 13px; color: #6B7588; margin-top: 22px; }
+  @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+</style>
+</head>
+<body>
+<main>
+  <img src="assets/icon-192.png" alt="" width="64" height="64">
+  <h1 id="title">Volviendo a WillyPost…</h1>
+  <div class="spin" id="spin" aria-hidden="true"></div>
+  <p id="msg">Un segundo: te llevo de vuelta a la aplicación que tienes en tu ordenador.</p>
+  <div class="err" id="err" role="alert"></div>
+  <p><a class="btn" id="manual" href="http://localhost:4747/">Abrir WillyPost</a></p>
+  <div class="hint" id="hint">
+    <b>¿No pasa nada?</b><br>
+    Comprueba que <b>WillyPost está abierto</b> en este mismo ordenador (haz doble clic en su icono) y pulsa el botón de arriba.
+    Si sigue sin ir, vuelve a WillyPost → Redes y pulsa <b>Conectar</b> otra vez.
+  </div>
+  <p class="small">Esta página solo reenvía a <b>localhost</b> (tu ordenador). No guarda nada ni lo envía a ningún sitio.</p>
+  <noscript><p>Necesitas activar JavaScript para que te lleve de vuelta automáticamente. También puedes pulsar el botón “Abrir WillyPost” después de copiar la dirección completa de esta página y pegarla cambiando <b>https://…/callback.html</b> por <b>http://localhost:4747/oauth/callback</b>.</p></noscript>
+</main>
+<script>
+(function () {
+  var TARGET = 'http://localhost:4747/oauth/callback';   // fijo
+  var search = location.search || '';
+  var params = new URLSearchParams(search);
+  var hasData = params.has('code') || params.has('error') || params.has('state');
+  var $ = function (id) { return document.getElementById(id); };
+
+  if (!hasData) {
+    // Alguien ha abierto la página sin venir de una red social
+    $('title').textContent = 'Esta página es solo un puente';
+    $('spin').style.display = 'none';
+    $('msg').textContent = 'Sirve para que redes como Facebook, Instagram, Threads o LinkedIn puedan devolverte a WillyPost. No tienes que hacer nada aquí: abre WillyPost y conecta tu red desde Redes.';
+    return;
+  }
+
+  var dest = TARGET + search;
+  $('manual').setAttribute('href', dest);
+
+  var err = params.get('error_description') || params.get('error');
+  if (err) {
+    var box = $('err');
+    box.textContent = 'La red ha avisado de un problema: ' + String(err).slice(0, 240);   // textContent: nunca HTML
+    box.style.display = 'block';
+    $('title').textContent = 'Volviendo a WillyPost…';
+  }
+
+  // Redirige ya (replace: esta página no queda en el historial, así que el código no se queda en el navegador)
+  try { location.replace(dest); } catch (e) { location.href = dest; }
+
+  // Si pasados unos segundos seguimos aquí, WillyPost probablemente está cerrado
+  setTimeout(function () {
+    $('hint').style.display = 'block';
+    $('title').textContent = 'Si no pasa nada, abre WillyPost';
+    $('msg').textContent = 'Si WillyPost estaba cerrado, ábrelo y pulsa el botón.';
+  }, 4000);
+})();
+</script>
+</body>
+</html>

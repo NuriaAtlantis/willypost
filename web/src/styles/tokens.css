@@ -1,0 +1,83 @@
+/* Tokens de diseño WillyPost — extraídos de willyseo.net (Willy SEO Academy). */
+/* Fuente Onest: se carga con @fontsource/onest en main.jsx (funciona sin internet). */
+
+:root {
+  /* Marca (leídos de willyseo.net, bloque .wsa) */
+  --azul: #5881B9;
+  --azul-btn: #4A73AA;
+  --azul-btn-h: #3D6396;
+  --azul-100: #DCE6F3;
+  --azul-50: #EEF3F9;
+  --tinta: #1B2638;
+  --marino: #203046;
+  --marino-2: #2C4263;
+  --tx: #4B5567;
+  --tx-2: #6B7588;
+  --linea: #E4E8EF;
+  --fondo: #F4F6FA;
+  --blanco: #FFFFFF;
+  --tx-sobre-marino: #C9D3E1;
+  --dorado: #F5A623;
+  --hito-bg: #FFF4DF; --hito-tx: #C9851A; --hito-halo: #F6DDAF;
+  --whatsapp: #25D366; --whatsapp-tx: #073B1C;
+  --live: #EF4444;
+  /* Estado (inferidos) */
+  --ok: #16A34A; --warn: #F5A623; --error: #EF4444;
+
+  /* Tipografía */
+  --font: 'Onest', system-ui, sans-serif;
+  --fs-h1: clamp(40px, 4.8vw, 66px);
+  --fs-h2: clamp(28px, 3vw, 44px);
+  --fs-h3: 22px;
+  --fs-body: 17px;
+  --fs-btn: 16.5px;
+  --fs-small: 14.5px;
+  --fs-eyebrow: 12.5px;
+  --ls-h1: -0.04em;
+  --ls-h2: -0.035em;
+  --ls-h3: -0.02em;
+  --lh-h1: 1.04;
+  --lh-body: 1.6;
+
+  /* Radios */
+  --r-sm: 10px;
+  --r-btn: 12px;
+  --r-md: 16px;
+  --r-lg: 18px;
+  --r-card: 24px;
+  --r-xl: 28px;
+  --r-2xl: 32px;
+  --r-pill: 999px;
+
+  /* Sombras */
+  --sh-card: 0 30px 60px -30px rgba(27,38,56,.35);
+  --sh-pop: 0 20px 40px -18px rgba(27,38,56,.45);
+  --sh-menu: 0 24px 48px -24px rgba(27,38,56,.35);
+  --sh-btn: 0 12px 24px -12px rgba(74,115,170,.8);
+  --sh-plan: 0 24px 48px -24px rgba(74,115,170,.45);
+  --sh-hover: 0 24px 40px -24px rgba(27,38,56,.55);
+  --focus: 0 0 0 4px #EEF3F9;
+
+  /* Espaciado y layout */
+  --container: 1200px;
+  --sec-y: 96px;
+  --card-pad: 30px;
+  --gap: 24px;
+
+  /* Gradientes */
+  --grad-topbar: linear-gradient(100deg, #203046 0%, #2C4263 55%, #203046 100%);
+  --halo: radial-gradient(circle, rgba(88,129,185,.5), rgba(88,129,185,0) 70%);
+}
+
+body { font-family: var(--font); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--tx); background: var(--fondo); }
+h1, h2, h3 { color: var(--tinta); font-weight: 800; letter-spacing: var(--ls-h2); }
+.btn { font: 600 var(--fs-btn)/1.2 var(--font); padding: 17px 28px; border-radius: var(--r-btn); background: var(--azul-btn); color: #fff; box-shadow: var(--sh-btn); border: 1.5px solid transparent; transition: .2s; }
+.btn:hover { background: var(--azul-btn-h); transform: translateY(-1px); }
+.card { background: #fff; border: 1px solid var(--linea); border-radius: var(--r-card); box-shadow: var(--sh-card); padding: var(--card-pad); }
+.pill-title { display: inline-block; background: var(--azul); color: #fff; padding: .02em .22em .1em; border-radius: .16em; transform: rotate(-1.5deg); }
+
+/* Colores de cada red (solo para puntos, chips y bordes finos) */
+:root {
+  --net-facebook: #1877F2; --net-instagram: #E1306C; --net-threads: #101010; --net-tiktok: #111111;
+  --net-youtube: #FF0000; --net-gbp: #34A853; --net-linkedin: #0A66C2; --net-bluesky: #1185FE;
+}

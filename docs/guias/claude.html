@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conecta WillyPost con Claude</title>
+<meta name="description" content="Cómo conectar WillyPost con Claude Desktop o Claude Code para que te monte campañas de redes sociales. Incluye ejemplos de peticiones.">
+<meta name="theme-color" content="#4A73AA">
+<meta property="og:title" content="Conecta WillyPost con Claude">
+<meta property="og:description" content="Cómo conectar WillyPost con Claude Desktop o Claude Code para que te monte campañas de redes sociales. Incluye ejemplos de peticiones.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://nuriaatlantis.github.io/willypost/assets/icon-512.png">
+<link rel="icon" href="../assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="apple-touch-icon" href="../assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div class="topbar">Software gratuito de la <a href="https://willyseo.net/" target="_blank" rel="noopener">Willy SEO Academy</a> para sus alumnos</div>
+<header class="site">
+  <div class="container hbar">
+    <a class="brand" href="../index.html" aria-label="WillyPost, inicio">
+      <img src="../assets/icon-192.png" alt="" width="38" height="38">
+      <span><b>WillyPost</b><small>by Willy SEO Academy</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
+    <nav class="main" id="menu" aria-label="Principal">
+      <a href="../index.html">Inicio</a><a href="../index.html#instalar">Cómo se instala</a><a href="../guias/index.html">Guías</a><a href="../guias/claude.html" aria-current="page">Claude</a><a href="../index.html#faq">Preguntas</a>
+      <a class="btn btn-sm" data-repo="zip" href="#">Descargar</a>
+    </nav>
+  </div>
+</header>
+<main id="contenido">
+<section class="guide-hero"><div class="container narrow">
+  <div class="crumbs"><a href="../index.html">Inicio</a> › <a href="index.html">Guías</a> › Claude</div>
+  <span class="eyebrow">Guía paso a paso</span>
+  <h1>Conecta <span class="pill">Claude</span> con WillyPost</h1>
+  <p class="lead">Pídele campañas enteras y llegan a tu calendario como borradores para que las apruebes.</p>
+  <ul class="meta"><li><span>Tiempo:</span> 10 minutos</li><li><span>Dificultad:</span> Fácil</li><li><span>Coste:</span> gratis</li></ul>
+</div></section>
+<section class="guide-body"><div class="container narrow">
+<h2>Qué consigues</h2>
+<p>Con Claude conectado puedes decirle cosas como <em>“hazme una campaña de Black Friday de dos semanas”</em> y Claude te deja <strong>todas las publicaciones creadas en tu calendario de WillyPost</strong>: con sus textos adaptados a cada red, sus fechas y sus imágenes.</p>
+<div class="callout ok"><span class="t">Tú mandas siempre</span><p>Por defecto, lo que crea Claude llega como <strong>borrador “Propuesto por Claude”</strong>. No se publica nada hasta que tú lo apruebas. Puedes cambiarlo en WillyPost → Claude (modo <strong>Borrador</strong> o modo <strong>Programar directamente</strong>).</p></div>
+<h2>Antes de empezar</h2>
+<ul class="checklist"><li><strong>WillyPost abierto</strong> en tu ordenador (haz doble clic en su icono). Claude habla con él; si está cerrado, no puede trabajar.</li><li><strong>Claude Desktop</strong> (<a href="https://claude.ai/download" target="_blank" rel="noopener">claude.ai/download</a>), en Windows o Mac, o <strong>Claude Code</strong>. Con cuenta gratuita o de pago.</li><li>No hace falta instalar nada más (ni Node.js): WillyPost usa el suyo.</li></ul>
+<h2>Opción A: Claude Desktop (la más fácil)</h2>
+<ol class="steps" style="counter-reset: st 0"><li>En WillyPost abre <a href="http://localhost:4747/#/claude" target="_blank" rel="noopener">Claude</a> y pulsa <span class="btnlabel">Conectar con Claude Desktop</span>. WillyPost crea un token de acceso y lo guarda en la configuración de Claude Desktop por ti (antes hace una copia de seguridad de tu archivo). Verás el aviso “Listo”.</li><li><strong>Cierra Claude Desktop del todo</strong>: en Windows, también desde el icono de la bandeja del sistema (junto al reloj, clic derecho → Salir); en Mac, <em>Claude → Salir</em> (⌘Q). Vuelve a abrirlo.</li><li>Empieza una conversación nueva. Para ver que está conectado, pulsa el botón <span class="btnlabel">+</span> (abajo a la izquierda del cuadro donde escribes) → <span class="btnlabel">Conectores</span>: debe aparecer <strong>willypost</strong>. (Si tu versión lo enseña distinto: <em>Ajustes → Desarrollador</em> lista los servidores locales y <strong>willypost</strong> debe poner “running”.)</li><li>Pruébalo con esta frase: <em>“¿Qué redes tengo conectadas en WillyPost?”</em>. La primera vez Claude te pedirá permiso para usar la herramienta: pulsa <span class="btnlabel">Permitir siempre</span> (o <span class="btnlabel">Permitir una vez</span>). Si responde con tus cuentas, ya está.</li><li>Segunda prueba, inofensiva: <em>“Crea en WillyPost un borrador de prueba que ponga ‘Hola’ para mi Instagram, sin fecha.”</em> Aparecerá en el calendario como borrador “Propuesto por Claude”. Bórralo después.</li></ol>
+<div class="callout"><span class="t">¿Tienes Claude Desktop de la Microsoft Store?</span><p>Esa versión guarda su configuración en otra carpeta. WillyPost lo sabe y la rellena también (en la tarjeta de Claude Desktop ves la ruta del archivo). Si después de reiniciar <strong>willypost</strong> no aparece, usa la Opción C: el botón <em>Editar configuración</em> de Claude te abre siempre el archivo correcto.</p></div>
+<h2>Opción B: Claude Code</h2>
+<ol class="steps" style="counter-reset: st 5"><li>En WillyPost → <a href="http://localhost:4747/#/claude" target="_blank" rel="noopener">Claude</a> abre <strong>Acceso avanzado</strong> (<span class="btnlabel">Mostrar</span>) y pulsa <span class="btnlabel">Generar token</span>. El token se muestra <strong>una sola vez</strong>: cópialo.</li><li>En la tarjeta <strong>Claude Code</strong> copia el comando (empieza por <code>claude mcp add willypost ...</code>) y cambia <code>&lt;TU_TOKEN&gt;</code> por el token que acabas de copiar.</li><li>Abre tu terminal, pega el comando y pulsa Intro.</li><li>Comprueba que está: escribe <code>claude mcp list</code> y debe aparecer <strong>willypost</strong>. Después, en Claude Code, pídele: <em>“Usa WillyPost para decirme qué redes tengo conectadas”</em>.</li></ol>
+<h2>Opción C: a mano (si el botón no funciona)</h2>
+<ol class="steps" style="counter-reset: st 9"><li>En WillyPost → <a href="http://localhost:4747/#/claude" target="_blank" rel="noopener">Claude</a> → <strong>Acceso avanzado</strong> (<span class="btnlabel">Mostrar</span>) pulsa <span class="btnlabel">Generar token</span> y copia el token. Debajo verás el bloque de configuración: cópialo y cambia <code>&lt;TU_TOKEN&gt;</code> por tu token.</li><li>Abre Claude Desktop → <span class="btnlabel">Ajustes</span> (<em>Settings</em>) → <span class="btnlabel">Desarrollador</span> (<em>Developer</em>) → <span class="btnlabel">Editar configuración</span> (<em>Edit Config</em>). Se abre el archivo <code>claude_desktop_config.json</code>.</li><li>Pega el contenido de <code>willypost</code> dentro de <code>mcpServers</code> (si el archivo está vacío, pega el bloque entero). Guarda y reinicia Claude Desktop del todo.</li></ol>
+<p>Por si necesitas encontrar el archivo a mano:</p>
+<table class="simple"><thead><tr><th>Sistema</th><th>Archivo</th></tr></thead><tbody><tr><td>Windows</td><td><code>%APPDATA%\Claude\claude_desktop_config.json</code></td></tr><tr><td>Windows, versión de la Microsoft Store</td><td><code>%LOCALAPPDATA%\Packages\Claude_…\LocalCache\Roaming\Claude\claude_desktop_config.json</code> (la carpeta empieza por <code>Claude_</code>)</td></tr><tr><td>Mac</td><td><code>~/Library/Application Support/Claude/claude_desktop_config.json</code></td></tr></tbody></table>
+<h2>Ejemplos de peticiones</h2>
+<p>Cuanto más contexto le des, mejor. Puedes copiar y adaptar:</p>
+<ul class="plain"><li><em>“Hazme una campaña de Black Friday de 2 semanas para Instagram y TikTok. Vendo un curso de SEO local. Tono cercano.”</em></li><li><em>“Mira mi calendario y dime qué días de la semana que viene tengo huecos en LinkedIn.”</em></li><li><em>“Sube las fotos de la carpeta C:\Users\yo\Fotos\lanzamiento y monta un carrusel para Instagram y LinkedIn con 5 pasos para mejorar el SEO.”</em></li><li><em>“Escribe 3 publicaciones para mi ficha de Google Business Profile sobre mis servicios en [ciudad].”</em></li><li><em>“Reprograma las publicaciones de la campaña de verano para que empiecen el lunes.”</em></li><li><em>“Revisa los borradores que tengo pendientes y propón mejoras en los textos.”</em></li></ul>
+<div class="callout"><span class="t">Para que Claude use tus imágenes y vídeos</span><p>Dile la <strong>ruta completa</strong> del archivo o de la carpeta en tu ordenador (en Windows empieza por <code>C:\</code>; en Mac, por <code>/Users/</code>). Valen espacios y tildes. Claude no puede mirar tu disco por su cuenta: es WillyPost quien lee ese archivo o esa carpeta y los sube a su biblioteca para adjuntarlos a las publicaciones.</p></div>
+<div class="callout"><span class="t">Límites que Claude respeta</span><p>Como máximo 5 publicaciones de feed y 10 stories por red y día. Si pide más, Claude te lo dirá y moverá la pieza a otro día. Y si una red no admite ese tipo de publicación (por ejemplo, un carrusel en TikTok), la pieza se crea igualmente y te toca publicarla a mano.</p></div>
+<h2>Un extra: la “skill” de campañas</h2>
+<p>WillyPost incluye una skill opcional (carpeta <code>skills/willypost-campanas</code>) que enseña a Claude un método para montar campañas: objetivo, embudo, textos nativos por red y respeto de los límites. No es obligatoria: Claude ya sabe usar WillyPost sin ella.</p>
+<ul class="plain"><li><strong>Claude Code:</strong> copia esa carpeta dentro de <code>~/.claude/skills/</code> (en Windows, <code>%USERPROFILE%\.claude\skills\</code>) y Claude la usará solo cuando le pidas campañas.</li><li><strong>Claude Desktop:</strong> comprime la carpeta <code>willypost-campanas</code> en un ZIP (la carpeta debe quedar dentro del ZIP), y en <span class="btnlabel">Ajustes → Capacidades → Skills</span> pulsa <span class="btnlabel">Subir skill</span> y elige el ZIP. Después activa la skill. Necesita tener activada la ejecución de código. El nombre de los menús puede cambiar entre versiones: busca “Skills”.</li><li>Alternativa sin instalar nada: en una conversación nueva, escribe <em>“usa el prompt campana de WillyPost”</em> o pulsa <span class="btnlabel">+</span> → <span class="btnlabel">Conectores</span> → willypost y elige el prompt <strong>campana</strong>.</li></ul>
+<h2>Si algo falla</h2>
+<details class="faq"><summary>No veo “willypost” en Claude</summary><div class="body"><p>Cierra Claude Desktop <strong>del todo</strong> (también desde la bandeja del sistema en Windows) y ábrelo de nuevo. Después empieza una conversación nueva.</p></div></details>
+<details class="faq"><summary>Claude dice que WillyPost no responde</summary><div class="body"><p>Abre WillyPost (doble clic en su icono) y vuelve a intentarlo. Tiene que estar abierto en el mismo ordenador.</p></div></details>
+<details class="faq"><summary>“Token no válido” o “No autorizado”</summary><div class="body"><p>Pulsa <strong>Volver a conectar con Claude Desktop</strong> en WillyPost → Claude (o <strong>Generar token nuevo</strong> en Acceso avanzado) y reinicia Claude.</p></div></details>
+<details class="faq"><summary>Claude dice que no encuentra mi archivo o mi carpeta</summary><div class="body"><p>Dale la ruta <strong>completa</strong> (empezando por <code>C:\</code> o <code>/Users/</code>) y comprueba que escribes bien las tildes y los espacios. Lo más fácil: en el Explorador de archivos de Windows, selecciona el archivo y pulsa Ctrl + Mayús + C (copia su ruta completa); luego pégasela a Claude. En Mac: clic derecho sobre el archivo, mantén pulsada la tecla Opción y elige “Copiar … como nombre de ruta”.</p></div></details>
+<details class="faq"><summary>Aparece willypost pero da error al arrancar</summary><div class="body"><p>Mira el registro: en Windows <code>%APPDATA%\Claude\logs\mcp-server-willypost.log</code> (en la versión de la Microsoft Store, dentro de su carpeta <code>Packages\Claude_…</code>); en Mac <code>~/Library/Logs/Claude/mcp-server-willypost.log</code>. Lo más habitual es que WillyPost se haya movido de carpeta: pulsa de nuevo <strong>Volver a conectar con Claude Desktop</strong> y reinicia Claude.</p></div></details>
+<details class="faq"><summary>Mi archivo de configuración da error</summary><div class="body"><p>WillyPost guarda una copia con el nombre <code>claude_desktop_config.json.bak-willypost</code> en la misma carpeta. Restáurala y repite el proceso (o usa la opción C).</p></div></details>
+<details class="faq"><summary>Claude crea las publicaciones pero no se publican</summary><div class="body"><p>Es el modo <strong>Borrador</strong> (el recomendado): entra en WillyPost, revisa cada pieza y pulsa <strong>Aprobar</strong>. Si prefieres que Claude las programe directamente, cámbialo en WillyPost → Claude.</p></div></details>
+<details class="faq"><summary>Mis datos y Claude</summary><div class="body"><p>Claude solo ve lo que WillyPost le muestra a través de esta conexión (tu calendario, tus redes conectadas y lo que le pidas). Las conversaciones con Claude se rigen por las condiciones de Anthropic. Puedes quitarle el acceso borrando la entrada <code>willypost</code> de la configuración de Claude.</p></div></details>
+<div class="guide-nav"><a class="btn btn-secondary btn-sm" href="bluesky.html">← Bluesky</a><a class="btn btn-secondary btn-sm" href="index.html">Todas las guías →</a></div>
+</div></section>
+</main>
+<footer class="site">
+  <div class="container">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="../index.html"><img src="../assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
+        <p style="margin-top:16px;max-width:320px">Programa tus redes sociales desde tu propio ordenador. Gratis, libre y con tus datos en tus manos.</p>
+      </div>
+      <div><h4>WillyPost</h4><ul>
+        <li><a data-repo="zip" href="#">Descargar</a></li>
+        <li><a href="../index.html#instalar">Cómo se instala</a></li>
+        <li><a href="../guias/index.html">Guías de cada red</a></li>
+        <li><a href="../guias/claude.html">Conecta con Claude</a></li>
+      </ul></div>
+      <div><h4>Legal</h4><ul>
+        <li><a href="../privacidad.html">Política de privacidad</a></li>
+        <li><a href="../terminos.html">Términos del servicio</a></li>
+        <li><a href="../borrar-datos.html">Borrar mis datos</a></li>
+      </ul></div>
+      <div><h4>Ayuda</h4><ul>
+        <li><a data-fill-href="contactEmail" data-fill-text href="mailto:hola@willyseo.net">hola@willyseo.net</a></li>
+        <li><a data-repo="issues" href="#">Avisar de un problema</a></li>
+        <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
+      </ul></div>
+    </div>
+    <div class="fbottom"><span>Hecho con cariño por la Willy SEO Academy.</span><span>Software libre con licencia MIT · © <span data-year>2026</span> Willy SEO Academy</span></div>
+  </div>
+</footer>
+<script src="../config.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>

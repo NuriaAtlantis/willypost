@@ -1,0 +1,8 @@
+node_modules/
+web/node_modules/
+runtime/
+.env
+*.log
+.DS_Store
+data/
+.playwright-mcp/

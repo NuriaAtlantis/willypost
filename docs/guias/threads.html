@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conecta Threads con WillyPost</title>
+<meta name="description" content="Guía paso a paso para conectar tu cuenta de Threads con WillyPost creando tu propia app de Meta. Unos 20 minutos.">
+<meta name="theme-color" content="#4A73AA">
+<meta property="og:title" content="Conecta Threads con WillyPost">
+<meta property="og:description" content="Guía paso a paso para conectar tu cuenta de Threads con WillyPost creando tu propia app de Meta. Unos 20 minutos.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://nuriaatlantis.github.io/willypost/assets/icon-512.png">
+<link rel="icon" href="../assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="apple-touch-icon" href="../assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div class="topbar">Software gratuito de la <a href="https://willyseo.net/" target="_blank" rel="noopener">Willy SEO Academy</a> para sus alumnos</div>
+<header class="site">
+  <div class="container hbar">
+    <a class="brand" href="../index.html" aria-label="WillyPost, inicio">
+      <img src="../assets/icon-192.png" alt="" width="38" height="38">
+      <span><b>WillyPost</b><small>by Willy SEO Academy</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
+    <nav class="main" id="menu" aria-label="Principal">
+      <a href="../index.html">Inicio</a><a href="../index.html#instalar">Cómo se instala</a><a href="../guias/index.html" aria-current="page">Guías</a><a href="../guias/claude.html">Claude</a><a href="../index.html#faq">Preguntas</a>
+      <a class="btn btn-sm" data-repo="zip" href="#">Descargar</a>
+    </nav>
+  </div>
+</header>
+<main id="contenido">
+<section class="guide-hero"><div class="container narrow">
+  <div class="crumbs"><a href="../index.html">Inicio</a> › <a href="index.html">Guías</a> › Threads</div>
+  <span class="eyebrow">Guía paso a paso</span>
+  <h1>Conecta tu <span class="pill">Threads</span></h1>
+  <p class="lead">Publica texto, fotos, vídeos y carruseles en tu perfil de Threads.</p>
+  <ul class="meta"><li><span>Tiempo:</span> 20 minutos</li><li><span>Dificultad:</span> Media</li><li><span>Coste:</span> gratis</li></ul>
+</div></section>
+<section class="guide-body"><div class="container narrow">
+<h2>Antes de empezar</h2>
+<ul class="checklist"><li>Una cuenta de <strong>Threads</strong> (la tuya, la de Instagram sirve).</li><li>El registro de desarrollador de Meta hecho (mira la <a href="facebook.html" target="_blank" rel="noopener">guía de Facebook</a>).</li><li>WillyPost abierto.</li></ul>
+<div class="callout "><span class="t">Qué puedes publicar</span><p>Texto (hasta 500 caracteres), fotos, vídeos y carruseles. Threads no tiene stories.</p></div>
+<h2>Crea la app</h2>
+<ol class="steps" style="counter-reset: st 0"><li>En <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">developers.facebook.com/apps</a> pulsa <span class="btnlabel">Crear app</span>.</li><li>Nombre: <strong>WillyPost Threads de [tu nombre]</strong> y tu email. Siguiente.</li><li>En los casos de uso elige <span class="btnlabel">Acceder a la API de Threads</span> (<em>Access the Threads API</em>). Si no lo ves, usa el filtro <span class="btnlabel">Todos</span>.</li><li>Si te dice que no hay portfolios de negocio, salta ese paso. Pulsa <span class="btnlabel">Crear app</span>.</li></ol>
+<h2>Permisos y direcciones</h2>
+<ol class="steps" style="counter-reset: st 4"><li>Entra en el caso de uso <span class="btnlabel">Acceder a la API de Threads → Personalizar</span>.</li><li>Añade <code>threads_basic</code> (suele venir marcado) y <code>threads_content_publish</code>.</li><li>Ve a la pestaña <span class="btnlabel">Configuración</span> del caso de uso de Threads y rellena la <strong>URI de redireccionamiento</strong> (<em>Redirect callback URLs</em>):<div class="copybox"><span class="lbl">Cópiala exactamente así</span><div class="row"><code data-fill="relayUrl">https://nuriaatlantis.github.io/willypost/callback.html</code><button type="button" aria-label="Copiar Cópiala exactamente así">Copiar</button></div></div></li><li>En <strong>URL de devolución de llamada de desinstalación</strong> y <strong>de eliminación de datos</strong> pega la URL de privacidad (WillyPost no las usa, pero el formulario las exige):<div class="copybox"><span class="lbl">URL de la política de privacidad</span><div class="row"><code data-fill="privacyUrl">https://nuriaatlantis.github.io/willypost/privacidad.html</code><button type="button" aria-label="Copiar URL de la política de privacidad">Copiar</button></div></div></li><li>Guarda. Si el botón no se activa, haz clic fuera del campo de cada URL y vuelve a pulsar <span class="btnlabel">Guardar</span>.</li></ol>
+<h2>Copia el ID y la clave de Threads</h2>
+<div class="callout warn"><span class="t">Ojo</span><p>Son <strong>distintos</strong> de los de la app de Meta (“Configuración de la app → Básica”). Copia los de la pantalla de Threads.</p></div>
+<ol class="steps" style="counter-reset: st 9"><li>En esa misma pantalla verás el <strong>Identificador de la app de Threads</strong> y la <strong>Clave secreta de la app de Threads</strong> (pulsa <span class="btnlabel">Mostrar</span>). Copia los dos.</li><li>En WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → Threads → <span class="btnlabel">Configura tu carné</span> pega el <strong>ID de la app de Threads</strong> y la <strong>Clave secreta de la app de Threads</strong>. Pulsa <span class="btnlabel">Guardar</span> (o <span class="btnlabel">Guardar y conectar</span>).</li></ol>
+<h2>Añádete como probador de Threads</h2>
+<ol class="steps" style="counter-reset: st 11"><li>Menú izquierdo → <span class="btnlabel">Roles de la app → Roles</span> → pestaña <span class="btnlabel">Probadores</span> → <span class="btnlabel">Añadir personas</span>.</li><li>Elige <span class="btnlabel">Probador de Threads</span> (<em>Threads Tester</em>), escribe <strong>tu nombre de usuario de Threads</strong> y pulsa <span class="btnlabel">Añadir</span>.</li><li>Abre Threads en el ordenador con esa cuenta: <span class="btnlabel">Configuración → Cuenta → Permisos de sitios web</span> → pestaña <em>Invitaciones</em> → <strong>Aceptar</strong>. Atajo: <a href="https://www.threads.com/settings/account/website_permissions" target="_blank" rel="noopener">threads.com/settings/account/website_permissions</a>.</li></ol>
+<h2>Conecta tu Threads</h2>
+<ol class="steps" style="counter-reset: st 14"><li>En WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → Threads → <span class="btnlabel">Conectar Threads</span>. Inicia sesión en Threads y pulsa <span class="btnlabel">Permitir</span>.</li><li>Si da error de permisos, revisa que aceptaste la invitación de probador.</li></ol>
+<h2>Qué pegas en WillyPost</h2>
+<table class="simple"><thead><tr><th>Campo de WillyPost</th><th>Qué pegas</th><th>De dónde sale</th></tr></thead><tbody><tr><td>Threads → ID de la app de Threads</td><td>Identificador de la app <strong>de Threads</strong></td><td>Meta → Caso de uso Threads → Configuración</td></tr><tr><td>Threads → Clave secreta de la app de Threads</td><td>Clave secreta de la app <strong>de Threads</strong></td><td>La misma pantalla → Mostrar</td></tr></tbody></table>
+<h2>Si algo falla</h2>
+<details class="faq"><summary>Error de permisos al conectar</summary><div class="body"><p>Falta aceptar la invitación de probador en Threads (último paso de “Añádete como probador”).</p></div></details>
+<details class="faq"><summary>El botón Guardar no se activa</summary><div class="body"><p>Haz clic fuera de cada campo de URL y vuelve a pulsar Guardar. Comprueba que las tres direcciones estén rellenas.</p></div></details>
+<details class="faq"><summary>“redirect_uri” no coincide</summary><div class="body"><p>Copia la dirección con el botón <strong>Copiar</strong>. Tiene que ser idéntica, sin espacios.</p></div></details>
+<details class="faq"><summary>Al volver, veo “No se puede acceder a este sitio”</summary><div class="body"><p>WillyPost estaba cerrado. Ábrelo y recarga esa pestaña (F5).</p></div></details>
+<div class="guide-nav"><a class="btn btn-secondary btn-sm" href="instagram.html">← Instagram</a><a class="btn btn-secondary btn-sm" href="tiktok.html">TikTok →</a></div>
+</div></section>
+</main>
+<footer class="site">
+  <div class="container">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="../index.html"><img src="../assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
+        <p style="margin-top:16px;max-width:320px">Programa tus redes sociales desde tu propio ordenador. Gratis, libre y con tus datos en tus manos.</p>
+      </div>
+      <div><h4>WillyPost</h4><ul>
+        <li><a data-repo="zip" href="#">Descargar</a></li>
+        <li><a href="../index.html#instalar">Cómo se instala</a></li>
+        <li><a href="../guias/index.html">Guías de cada red</a></li>
+        <li><a href="../guias/claude.html">Conecta con Claude</a></li>
+      </ul></div>
+      <div><h4>Legal</h4><ul>
+        <li><a href="../privacidad.html">Política de privacidad</a></li>
+        <li><a href="../terminos.html">Términos del servicio</a></li>
+        <li><a href="../borrar-datos.html">Borrar mis datos</a></li>
+      </ul></div>
+      <div><h4>Ayuda</h4><ul>
+        <li><a data-fill-href="contactEmail" data-fill-text href="mailto:hola@willyseo.net">hola@willyseo.net</a></li>
+        <li><a data-repo="issues" href="#">Avisar de un problema</a></li>
+        <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
+      </ul></div>
+    </div>
+    <div class="fbottom"><span>Hecho con cariño por la Willy SEO Academy.</span><span>Software libre con licencia MIT · © <span data-year>2026</span> Willy SEO Academy</span></div>
+  </div>
+</footer>
+<script src="../config.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>
