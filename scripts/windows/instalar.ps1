@@ -23,7 +23,7 @@ function Stop-WithError([string]$Msg, [string]$Hint = '') {
     Write-Fail $Msg
     if ($Hint) { Write-Host "      $Hint" -ForegroundColor Yellow }
     Write-Host ''
-    Write-Host '      Si no consigues arreglarlo, escribe a hola@willyseo.net contando en qué paso se ha parado.' -ForegroundColor Gray
+    Write-Host '      Si no consigues arreglarlo, escribe a nuria.olive@gmail.com contando en qué paso se ha parado.' -ForegroundColor Gray
     exit 1
 }
 
@@ -235,7 +235,7 @@ try {
             $k = $Paths.UninstKey
             Set-ItemProperty -Path $k -Name DisplayName -Value 'WillyPost'
             Set-ItemProperty -Path $k -Name DisplayVersion -Value $Version
-            Set-ItemProperty -Path $k -Name Publisher -Value 'Willy SEO Academy'
+            Set-ItemProperty -Path $k -Name Publisher -Value 'Nuria Olive Soler'
             Set-ItemProperty -Path $k -Name DisplayIcon -Value $icon
             Set-ItemProperty -Path $k -Name InstallLocation -Value $Install
             Set-ItemProperty -Path $k -Name UninstallString -Value ('"' + (Join-Path $Install 'Desinstalar WillyPost.bat') + '"')
@@ -296,6 +296,6 @@ catch {
     Write-Fail ("Algo no ha ido bien: " + $_.Exception.Message)
     if ($script:Hint) { Write-Host "      $($script:Hint)" -ForegroundColor Yellow }
     Write-Host '      Vuelve a hacer doble clic en "Instalar WillyPost": repite solo lo que faltaba.' -ForegroundColor Yellow
-    Write-Host '      Si sigue fallando, escribe a hola@willyseo.net y pega este mensaje.' -ForegroundColor Gray
+    Write-Host '      Si sigue fallando, escribe a nuria.olive@gmail.com y pega este mensaje.' -ForegroundColor Gray
     exit 1
 }

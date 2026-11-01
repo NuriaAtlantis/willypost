@@ -36,7 +36,7 @@ if not "%RC%"=="0" (
   echo   El instalador se ha detenido antes de terminar. Lee el mensaje de arriba.
   echo   Puedes volver a hacer doble clic en "Instalar WillyPost": repite solo lo que faltaba.
   echo   Si ves texto en rojo que habla de "scripts" o "directivas", tu ordenador
-  echo   ^(de empresa o colegio^) bloquea instaladores: escribe a hola@willyseo.net.
+  echo   ^(de empresa o colegio^) bloquea instaladores: escribe a nuria.olive@gmail.com.
   echo.
 )
 echo   Pulsa una tecla para cerrar esta ventana.

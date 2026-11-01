@@ -2,7 +2,7 @@
 
 **Programa tus redes en un rato, no en toda la semana.**
 
-WillyPost es un programador de redes sociales **gratuito** que se instala en tu propio ordenador (Windows o Mac). Lo regala la [Willy SEO Academy](https://willyseo.net) a sus alumnos.
+WillyPost es un programador de redes sociales **gratuito** que se instala en tu propio ordenador (Windows o Mac). Es un regalo sin ánimo de lucro de Nuria Olive Soler, profesora de la [Willy SEO Academy](https://willyseo.net), para los alumnos de la Academia.
 
 - **Calendario visual**: ves el mes entero y arrastras las publicaciones para cambiarlas de día.
 - **8 redes en un solo sitio**: Facebook (Páginas), Instagram, Threads, TikTok, YouTube Shorts, Google Business Profile, LinkedIn y Bluesky.
@@ -63,10 +63,10 @@ Si al abrir el instalador dice *“permiso denegado”*, usa el **Plan B** de ar
 | “No encuentro los archivos de instalación” | No has descomprimido el ZIP. Clic derecho → Extraer todo, y abre el instalador desde la carpeta nueva. |
 | Falla la descarga de Node o de las piezas | Es la conexión a internet. Comprueba que navegas bien y vuelve a hacer doble clic en **Instalar WillyPost**: continúa donde se quedó. En una red de empresa o colegio, prueba con otra red (p. ej. el móvil como punto de acceso). |
 | “Otro programa está usando el puerto 4747” | Reinicia el ordenador y vuelve a ejecutar el instalador. |
-| El texto rojo habla de “scripts” o “directivas” (Windows) | Tu ordenador (de empresa o colegio) bloquea instaladores. Prueba en otro ordenador o escribe a hola@willyseo.net. |
+| El texto rojo habla de “scripts” o “directivas” (Windows) | Tu ordenador (de empresa o colegio) bloquea instaladores. Prueba en otro ordenador o escribe a nuria.olive@gmail.com. |
 | El navegador dice “No se puede acceder” | Abre el icono **WillyPost** del Escritorio (Windows) o de Launchpad (Mac). Si sigue igual, vuelve a ejecutar el instalador (repara la instalación). |
 
-Cualquier error deja un registro en `%APPDATA%\WillyPost\logs\servidor.log` (Windows) o `~/Library/Application Support/WillyPost/logs/servidor.log` (Mac). Si te atascas, escribe a hola@willyseo.net y adjunta lo que pone la ventana.
+Cualquier error deja un registro en `%APPDATA%\WillyPost\logs\servidor.log` (Windows) o `~/Library/Application Support/WillyPost/logs/servidor.log` (Mac). Si te atascas, escribe a nuria.olive@gmail.com y adjunta lo que pone la ventana.
 
 ---
 
@@ -116,7 +116,7 @@ Quita los iconos, el arranque automático y la aplicación. **Antes de borrar tu
 
 ## Preguntas frecuentes
 
-**¿Es de verdad gratis?** Sí. Sin cuotas, sin límite de redes, licencia MIT.
+**¿Es de verdad gratis?** Sí. Sin cuotas, sin límite de redes y sin ánimo de lucro. Nadie puede venderlo ni cobrar por él.
 
 **¿Tiene que estar el ordenador encendido?** Sí: WillyPost vive en tu ordenador y publica a la hora programada si está encendido. Si estaba apagado, al arrancar te pregunta qué hacer con lo que se quedó atrás (publicar ahora, reprogramar u omitir).
 
@@ -132,7 +132,7 @@ Quita los iconos, el arranque automático y la aplicación. **Antes de borrar tu
 
 **¿Y en Linux?** No hay instalador oficial. Con Node 22.13 o superior: `npm ci --omit=dev` y `npm start`.
 
-**Me he atascado.** Pregunta en la comunidad de la Academia o escribe a hola@willyseo.net.
+**Me he atascado.** Pregunta en la comunidad de la Academia o escribe a nuria.olive@gmail.com.
 
 ---
 
@@ -162,8 +162,8 @@ npm run mcp       # servidor MCP (stdio) para Claude
 
 ## Licencia
 
-[MIT](LICENSE) © Willy SEO Academy.
+[MIT con Commons Clause](LICENSE) © 2026 Nuria Olive Soler. Es un regalo gratuito y sin ánimo de lucro: puedes usarlo, copiarlo y modificarlo, pero no venderlo ni cobrar por él.
 
 ---
 
-*Hecho con cariño por la Willy SEO Academy.*
+*Hecho con cariño por Nuria Olive Soler para la Willy SEO Academy.*

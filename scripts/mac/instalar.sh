@@ -74,7 +74,7 @@ else
   NODE_MAJOR="$(node_major_for_os)"
   info "No tienes Node 22.13 o superior. Voy a descargar Node $NODE_MAJOR LTS (portable, no instala nada en tu Mac)."
   RES="$(resolve_node_tarball)" || die "No he podido consultar nodejs.org." "Comprueba tu conexión a internet y vuelve a intentarlo. Si estás en una red de empresa o colegio, prueba con otra red (por ejemplo, el móvil como punto de acceso)."
-  [ -n "$RES" ] || die "No encuentro una versión de Node para tu Mac en nodejs.org." "Escribe a hola@willyseo.net indicando tu modelo de Mac."
+  [ -n "$RES" ] || die "No encuentro una versión de Node para tu Mac en nodejs.org." "Escribe a nuria.olive@gmail.com indicando tu modelo de Mac."
   NODE_FILE="${RES%% *}"; NODE_SHA="${RES##* }"
   NODE_URL="https://nodejs.org/dist/latest-v${NODE_MAJOR}.x/${NODE_FILE}"
   info "Descargando $NODE_FILE"

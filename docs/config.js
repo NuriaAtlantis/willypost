@@ -18,8 +18,7 @@ window.WILLYPOST_CONFIG = {
   // Dirección de WillyPost en el ordenador del alumno
   appUrl: 'http://localhost:4747',
 
-  // TODO: confirmar el email de contacto definitivo
-  contactEmail: 'hola@willyseo.net',
+  contactEmail: 'nuria.olive@gmail.com',
 
   // Web de la academia
   academyUrl: 'https://willyseo.net/'

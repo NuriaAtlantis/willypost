@@ -4,7 +4,7 @@
   "description": "Programador de redes sociales local de la Willy SEO Academy, conectable con Claude (MCP).",
   "type": "module",
   "private": true,
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "node": ">=22.13"
   },
@@ -14,7 +14,7 @@
     "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
     "mcp": "node --disable-warning=ExperimentalWarning mcp/server.js",
     "build:web": "npm --prefix web run build",
-    "test": "node --disable-warning=ExperimentalWarning --test test/"
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/**/*.test.js\""
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",

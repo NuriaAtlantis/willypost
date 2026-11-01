@@ -85,6 +85,6 @@ try {
 }
 catch {
     Write-Fail ('Algo no ha ido bien: ' + $_.Exception.Message)
-    Write-Host '      Cierra WillyPost y vuelve a intentarlo. Si sigue fallando, escribe a hola@willyseo.net y pega este mensaje.' -ForegroundColor Yellow
+    Write-Host '      Cierra WillyPost y vuelve a intentarlo. Si sigue fallando, escribe a nuria.olive@gmail.com y pega este mensaje.' -ForegroundColor Yellow
     exit 1
 }

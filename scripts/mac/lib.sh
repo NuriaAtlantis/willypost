@@ -42,7 +42,7 @@ info()  { echo "${C_GRAY}      $1${C_RESET}"; }
 warn()  { echo "${C_YELLOW}      ! $1${C_RESET}"; }
 dry()   { echo "${C_MAGENTA}      [DRYRUN] $1${C_RESET}"; }
 fail()  { echo "${C_RED}      X  $1${C_RESET}"; }
-die()   { echo ""; fail "$1"; [ -n "${2:-}" ] && echo "${C_YELLOW}      $2${C_RESET}"; echo "${C_GRAY}      Si no consigues arreglarlo, escribe a hola@willyseo.net contando en qué paso se ha parado.${C_RESET}"; echo ""; pause_end; exit 1; }
+die()   { echo ""; fail "$1"; [ -n "${2:-}" ] && echo "${C_YELLOW}      $2${C_RESET}"; echo "${C_GRAY}      Si no consigues arreglarlo, escribe a nuria.olive@gmail.com contando en qué paso se ha parado.${C_RESET}"; echo ""; pause_end; exit 1; }
 
 # Ejecuta (o, en DRYRUN, describe) una accion:  act "descripcion" comando args...
 act() {
