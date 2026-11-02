@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Conecta YouTube Shorts con WillyPost</title>
-<meta name="description" content="Guía paso a paso para subir tus Shorts a YouTube desde WillyPost con tu propio carné de Google Cloud. Unos 15 minutos.">
+<meta name="description" content="Conecta tu canal de YouTube con WillyPost para programar Shorts: pulsa Conectar y acepta. Incluye la opción avanzada con tu propio proyecto de Google.">
 <meta name="theme-color" content="#4A73AA">
 <meta property="og:title" content="Conecta YouTube Shorts con WillyPost">
-<meta property="og:description" content="Guía paso a paso para subir tus Shorts a YouTube desde WillyPost con tu propio carné de Google Cloud. Unos 15 minutos.">
+<meta property="og:description" content="Conecta tu canal de YouTube con WillyPost para programar Shorts: pulsa Conectar y acepta. Incluye la opción avanzada con tu propio proyecto de Google.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://nuriaatlantis.github.io/willypost/assets/icon-512.png">
+<meta property="og:image" content="https://willypost.com/assets/icon-512.png">
 <link rel="icon" href="../assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="apple-touch-icon" href="../assets/icon-192.png">
@@ -29,7 +29,7 @@
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
     <nav class="main" id="menu" aria-label="Principal">
       <a href="../index.html">Inicio</a><a href="../index.html#instalar">Cómo se instala</a><a href="../guias/index.html" aria-current="page">Guías</a><a href="../guias/claude.html">Claude</a><a href="../index.html#faq">Preguntas</a>
-      <a class="btn btn-sm" data-repo="zip" href="#">Descargar</a>
+      <a class="btn btn-sm" data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>
     </nav>
   </div>
 </header>
@@ -38,10 +38,18 @@
   <div class="crumbs"><a href="../index.html">Inicio</a> › <a href="index.html">Guías</a> › YouTube</div>
   <span class="eyebrow">Guía paso a paso</span>
   <h1>Conecta tus <span class="pill">Shorts de YouTube</span></h1>
-  <p class="lead">Sube tus vídeos verticales a tu canal desde WillyPost. Creas tu carné de Google una vez (también sirve para tu ficha de Google).</p>
-  <ul class="meta"><li><span>Tiempo:</span> 15 minutos</li><li><span>Dificultad:</span> Media</li><li><span>Coste:</span> gratis</li></ul>
+  <p class="lead">Sube tus vídeos verticales (Shorts) a tu canal de YouTube. Pulsas «Conectar», eliges tu cuenta de Google y aceptas.</p>
+  <ul class="meta"><li><span>Tiempo:</span> 2 minutos</li><li><span>Dificultad:</span> Fácil</li><li><span>Coste:</span> gratis</li></ul>
 </div></section>
 <section class="guide-body"><div class="container narrow">
+<h2>Lo normal: pulsa «Conectar» y acepta</h2>
+<ul class="checklist"><li>Un <strong>canal de YouTube</strong>.</li><li>WillyPost <strong>instalado y abierto</strong> en tu ordenador.</li></ul>
+<ol class="steps"><li>En WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → YouTube, pulsa <span class="btnlabel">Conectar YouTube</span>. Se abre Google en tu navegador.</li><li>Elige la <strong>cuenta de Google</strong> de tu canal (si tienes varios canales, Google te pedirá elegir cuál). Google te dice que <strong>WillyPost</strong> quiere acceder a tu cuenta: <strong>marca todas las casillas</strong> (gestionar tus vídeos de YouTube / subir vídeos y ver tu cuenta de YouTube) y pulsa <span class="btnlabel">Continuar</span>.</li><li>Vuelves solo a WillyPost y tu canal aparece conectado en Redes. ¡Listo!</li></ol>
+<p class="small muted">Cada conexión dura 30 días: desde el día 25 WillyPost te avisa y, en <strong>Redes → Reconectar</strong>, repites estos pasos en un momento.</p>
+<details class="faq"><summary>Google dice «Google no ha verificado esta aplicación»</summary><div class="body"><p>Google todavía está revisando la app de WillyPost. Mientras tanto solo pueden conectarse las cuentas de prueba. Usa la <a href="#avanzada">opción avanzada</a> o el modo manual, o espera a que termine la revisión.</p></div></details><details class="faq"><summary>WillyPost dice que faltan permisos</summary><div class="body"><p>No marcaste todas las casillas en la pantalla de Google. Pulsa <strong>Conectar</strong> otra vez y márcalas todas.</p></div></details>
+<div class="callout"><span class="t">¿WillyPost te pide un «carné» en vez de dejarte conectar?</span><p>Eso significa que la app de WillyPost todavía no está disponible para YouTube (la red aún la está revisando) o que tienes guardado tu propio carné. Tienes dos salidas: usar la <a href="#avanzada">opción avanzada</a> de abajo, o añadir YouTube en <strong>modo manual</strong> (WillyPost te avisa a la hora y publicas tú en dos clics).</p></div>
+<div class="advanced-intro" id="avanzada"><span class="eyebrow">Opcional</span><h2>Opción avanzada: usa tu propia app</h2><p>Solo la necesitas si la red todavía no está disponible con la app de WillyPost, o si prefieres que tus claves sean solo tuyas. Creas gratis tu propia app de desarrollador (tu “carné”), la pegas en WillyPost → Redes → <strong>Mi carné</strong> / <strong>Configura tu carné</strong>, y WillyPost la usa en lugar de la app central. Con tu propia app, el servicio de conexión <code>auth.willypost.com</code> no interviene.</p></div>
+<div class="advanced">
 <h2>Antes de empezar</h2>
 <ul class="checklist"><li>La <strong>cuenta de Google dueña de tu canal de YouTube</strong>.</li><li>WillyPost abierto en tu ordenador.</li></ul>
 <div class="callout ok"><span class="t">Esta guía vale también para Google Business Profile</span><p>El “carné” de Google es el mismo para YouTube y para tu ficha de Google. Solo tienes que hacerlo <strong>una vez</strong>.</p></div>
@@ -69,6 +77,7 @@
 <details class="faq"><summary>El vídeo se ha subido pero está en privado</summary><div class="body"><p>Si te pasa, entra en <a href="https://studio.youtube.com" target="_blank" rel="noopener">YouTube Studio</a> → Contenido, abre el vídeo y cámbialo a <strong>Público</strong>. (Según la documentación actual de Google, las apps sin verificar ya no están obligadas a subir en privado, pero tu canal puede tener esa opción puesta por defecto.) En WillyPost también puedes elegir la privacidad al crear el Short.</p></div></details>
 <details class="faq"><summary>“Has llegado al límite diario”</summary><div class="body"><p>YouTube permite unas 100 subidas al día por proyecto. Espera a mañana.</p></div></details>
 <details class="faq"><summary>Al volver, veo “No se puede acceder a este sitio”</summary><div class="body"><p>WillyPost estaba cerrado. Ábrelo y recarga esa pestaña (F5).</p></div></details>
+</div>
 <div class="guide-nav"><a class="btn btn-secondary btn-sm" href="tiktok.html">← TikTok</a><a class="btn btn-secondary btn-sm" href="gbp.html">Google Business Profile →</a></div>
 </div></section>
 </main>
@@ -78,9 +87,10 @@
       <div>
         <a class="brand" href="../index.html"><img src="../assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
         <p style="margin-top:16px;max-width:320px">Programa tus redes sociales desde tu propio ordenador. Gratis, sin ánimo de lucro y con tus datos en tus manos.</p>
+        <p class="small" style="max-width:320px;opacity:.85">Apps de conexión con las redes y servicio <code>auth.willypost.com</code>: Diving With Us SL.</p>
       </div>
       <div><h4>WillyPost</h4><ul>
-        <li><a data-repo="zip" href="#">Descargar</a></li>
+        <li><a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a></li>
         <li><a href="../index.html#instalar">Cómo se instala</a></li>
         <li><a href="../guias/index.html">Guías de cada red</a></li>
         <li><a href="../guias/claude.html">Conecta con Claude</a></li>
@@ -89,10 +99,11 @@
         <li><a href="../privacidad.html">Política de privacidad</a></li>
         <li><a href="../terminos.html">Términos del servicio</a></li>
         <li><a href="../borrar-datos.html">Borrar mis datos</a></li>
+        <li><a href="../en.html" lang="en">English (for reviewers)</a></li>
       </ul></div>
       <div><h4>Ayuda</h4><ul>
         <li><a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a></li>
-        <li><a data-repo="issues" href="#">Avisar de un problema</a></li>
+        <li><a data-repo="issues" href="https://github.com/NuriaAtlantis/willypost/issues">Avisar de un problema</a></li>
         <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
       </ul></div>
     </div>

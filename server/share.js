@@ -233,6 +233,7 @@ export async function publicUrl(item) {
   shares.set(token, { path: item.path, mime: item.mime, expires: Date.now() + TOKEN_TTL_MS });
   for (const [t, v] of shares) if (v.expires < Date.now()) shares.delete(t);
   const base = await publicBase();
-  const ext = path.extname(item.path) || (item.mime === 'image/jpeg' ? '.jpg' : '');
+  // Extensión siempre en minúsculas: el proxy de medios del modo central (TikTok) solo acepta media.jpg, .png…
+  const ext = path.extname(item.path).toLowerCase() || (item.mime === 'image/jpeg' ? '.jpg' : '');
   return `${base}/m/${token}/media${ext}`;
 }

@@ -34,8 +34,11 @@ export const _tuning = {
 /* Helpers OAuth de Google (compartidos con gbp.js)                    */
 /* ------------------------------------------------------------------ */
 
-/** URL de autorización. access_type=offline + prompt=consent para obtener refresh_token siempre. */
-export function googleAuthUrl({ creds, redirectUri, state, scopes }) {
+/**
+ * URL de autorización. access_type=offline + prompt=consent para obtener refresh_token siempre.
+ * Modo central (cliente "App de escritorio" de WillyPost): se añade PKCE (S256) con el reto que genera el core.
+ */
+export function googleAuthUrl({ creds, redirectUri, state, scopes, codeChallenge }) {
   const p = new URLSearchParams({
     client_id: creds.client_id,
     redirect_uri: redirectUri,
@@ -45,6 +48,10 @@ export function googleAuthUrl({ creds, redirectUri, state, scopes }) {
     prompt: 'consent',
     state,
   });
+  if (creds.central && codeChallenge) {
+    p.set('code_challenge', codeChallenge);
+    p.set('code_challenge_method', 'S256');
+  }
   return `${GOOGLE_AUTH_URL}?${p.toString()}`;
 }
 
@@ -84,7 +91,7 @@ export function googleApiError(e, { service = 'Google' } = {}) {
 }
 
 /** Pide tokens a Google. Convierte invalid_grant en un error de reconexión. */
-async function googleTokenRequest(form, { reconnectMsg } = {}) {
+async function googleTokenRequest(form, { reconnectMsg, central = false } = {}) {
   try {
     return await fetchJson(GOOGLE_TOKEN_URL, { form, label: 'Google' });
   } catch (e) {
@@ -93,9 +100,18 @@ async function googleTokenRequest(form, { reconnectMsg } = {}) {
       if (code === 'invalid_grant') {
         throw new ProviderError(
           reconnectMsg ||
-            'Google ha cancelado la conexión (puede pasar si tu app está en modo "Testing": caduca a los 7 días). Reconecta tu cuenta y pasa la app a "Producción".',
+            (central
+              ? 'Google ha cancelado la conexión (quizá quitaste el acceso de WillyPost en tu cuenta de Google). Reconecta tu cuenta en Redes.'
+              : 'Google ha cancelado la conexión (puede pasar si tu app está en modo "Testing": caduca a los 7 días). Reconecta tu cuenta y pasa la app a "Producción".'),
           { auth: true, status: e.status, raw: e.raw },
         );
+      }
+      if (central && (code === 'invalid_client' || code === 'unauthorized_client')) {
+        throw new ProviderError('Google no ha aceptado la app de WillyPost ahora mismo. Espera unos minutos y vuelve a pulsar Conectar (o Reconectar).', {
+          auth: true,
+          status: e.status,
+          raw: e.raw,
+        });
       }
       if (code === 'invalid_client' || code === 'unauthorized_client') {
         throw new ProviderError('El ID de cliente o el secreto de Google no son correctos. Revisa tu carné de Google en Redes.', {
@@ -116,14 +132,20 @@ async function googleTokenRequest(form, { reconnectMsg } = {}) {
 }
 
 /** Intercambia el code por tokens. Comprueba que se han concedido los scopes necesarios. */
-export async function googleExchange({ creds, redirectUri, code, requiredScopes = [] }) {
-  const tok = await googleTokenRequest({
+export async function googleExchange({ creds, redirectUri, code, requiredScopes = [], codeVerifier }) {
+  const form = {
     code,
     client_id: creds.client_id,
     client_secret: creds.client_secret,
     redirect_uri: redirectUri,
     grant_type: 'authorization_code',
-  }, { reconnectMsg: 'Google no ha aceptado el código de conexión (ya se usó o caducó). Cierra la ventana de Google y vuelve a pulsar Conectar en WillyPost.' });
+  };
+  // Modo central: el canje va directo a Google desde el ordenador, con el verificador PKCE.
+  if (creds.central && codeVerifier) form.code_verifier = codeVerifier;
+  const tok = await googleTokenRequest(form, {
+    central: !!creds.central,
+    reconnectMsg: 'Google no ha aceptado el código de conexión (ya se usó o caducó). Cierra la ventana de Google y vuelve a pulsar Conectar en WillyPost.',
+  });
   const granted = String(tok.scope || '').split(/\s+/);
   const missing = requiredScopes.filter((s) => !granted.includes(s));
   if (missing.length) {
@@ -144,12 +166,16 @@ export async function googleExchange({ creds, redirectUri, code, requiredScopes 
 /** Refresca el access_token de Google. */
 export async function googleRefresh({ account, creds }) {
   if (!account?.refresh_token) return null;
+  if (creds?.central && !creds.client_id) {
+    // Cuenta conectada sin carné y sin poder leer la configuración del servidor central (sin internet).
+    throw new ProviderError('No hemos podido contactar con el servidor de WillyPost para renovar la conexión con Google. Lo reintentaremos en unos minutos.', { retryable: true });
+  }
   const tok = await googleTokenRequest({
     client_id: creds.client_id,
     client_secret: creds.client_secret,
     refresh_token: account.refresh_token,
     grant_type: 'refresh_token',
-  });
+  }, { central: !!creds?.central });
   const out = { access_token: tok.access_token, token_expires_at: addSeconds(tok.expires_in) };
   if (tok.refresh_token) out.refresh_token = tok.refresh_token; // Google casi nunca lo rota
   return out;
@@ -307,20 +333,24 @@ export default {
   // 3 min: YouTube clasifica como Short los vídeos verticales/cuadrados de hasta 3 min (oct 2024; fuentes de terceros).
   limits: { captionMax: 5000, carouselMax: 0, videoMaxSec: 180 },
   needsApproval: null,
+  centralNotes:
+    'Sube el vídeo a tu canal como Short. Al programar eliges el título y quién puede verlo (público, oculto o privado).',
   notes:
     'Sube el vídeo a tu canal. Si tu proyecto de Google no está verificado, YouTube puede dejarlo en privado. En modo "Testing" la conexión caduca a los 7 días: pasa la app a "Producción".',
   // Opciones específicas que puede mostrar el compositor.
   optionsSchema: [
-    { key: 'title', label: 'Título (máx. 100)', type: 'text' },
-    { key: 'privacy', label: 'Privacidad', type: 'select', values: PRIVACY, default: 'public' },
+    // Required Minimum Functionality: título, descripción (el texto) y visibilidad los elige el usuario
+    // (obligatorios al programar; ver server/compliance.js).
+    { key: 'title', label: 'Título (máx. 100)', type: 'text', required: true },
+    { key: 'privacy', label: 'Visibilidad', type: 'select', values: PRIVACY, required: true },
   ],
 
-  getAuthUrl({ creds, redirectUri, state }) {
-    return googleAuthUrl({ creds, redirectUri, state, scopes: YT_SCOPES });
+  getAuthUrl({ creds, redirectUri, state, codeChallenge }) {
+    return googleAuthUrl({ creds, redirectUri, state, scopes: YT_SCOPES, codeChallenge });
   },
 
-  async exchangeCode({ creds, redirectUri, code }) {
-    const tok = await googleExchange({ creds, redirectUri, code, requiredScopes: YT_SCOPES });
+  async exchangeCode({ creds, redirectUri, code, codeVerifier }) {
+    const tok = await googleExchange({ creds, redirectUri, code, requiredScopes: YT_SCOPES, codeVerifier });
     let data;
     try {
       data = await fetchJson(`${YT_API}/channels?part=snippet&mine=true`, {
@@ -390,6 +420,8 @@ export default {
     const stat = await fs.promises.stat(item.path).catch(() => null);
     if (!stat || !stat.size) throw new ProviderError('No se encuentra el archivo de vídeo en tu ordenador.');
 
+    // La visibilidad la elige el usuario (obligatoria al programar). Solo las publicaciones programadas antes de
+    // esa regla pueden llegar sin ella: entonces se respeta lo que les mostraba el compositor («Público»).
     const privacy = PRIVACY.includes(options.privacy) ? options.privacy : 'public';
     const body = {
       snippet: {

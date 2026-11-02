@@ -12,6 +12,7 @@
 import fs from 'node:fs';
 import { ProviderError, fetchJson, waitFor, ambiguousPublish, oauthExchangeError } from './_http.js';
 import { fitImage, durationErrors, MAX_IMAGE_BYTES } from './_media.js';
+import { centralFetchJson } from '../central.js';
 
 export const GRAPH_VERSION = 'v26.0'; // única constante de versión
 const GRAPH = `https://graph.facebook.com/${GRAPH_VERSION}`;
@@ -57,6 +58,15 @@ async function call(url, opts = {}) {
     return await fetchJson(url, { label: LABEL, ...opts });
   } catch (e) {
     throw classify(e);
+  }
+}
+
+/** Canje de tokens a través del servidor central de WillyPost (modo sin carné): el secreto lo pone el broker. */
+async function centralCall(op, body) {
+  try {
+    return await centralFetchJson('meta', op, body, { label: LABEL });
+  } catch (e) {
+    throw e.central ? e : classify(e);
   }
 }
 
@@ -253,6 +263,8 @@ export default {
   needsApproval: null,
   notes:
     'Publica en Páginas de Facebook de las que eres administrador. Para que el público vea las publicaciones, la app de Meta debe estar en modo Live. Las stories se intentan por API; si Facebook las rechaza, pasan a modo manual.',
+  centralNotes:
+    'Publica en Páginas de Facebook de las que eres administrador. Al conectar, marca la Página en la ventana de permisos. Las stories se intentan por API; si Facebook las rechaza, pasan a modo manual.',
 
   getAuthUrl({ creds, redirectUri, state }) {
     const scopes = creds?.extra?.scopes
@@ -277,13 +289,18 @@ export default {
   async exchangeCode({ creds, redirectUri, code }) {
     const cleanCode = String(code).replace(/#_(=_)?$/, '');
     // 1) code → token de usuario corto
-    const short = await call(`${GRAPH}/oauth/access_token?${qs({
-      client_id: creds.client_id, client_secret: creds.client_secret, redirect_uri: redirectUri, code: cleanCode,
-    })}`, { method: 'GET' }).catch((e) => { throw oauthExchangeError('Facebook', e, { appName: 'tu app de Meta' }); });
+    const short = await (creds.central
+      ? centralCall('code', { code: cleanCode, redirect_uri: redirectUri })
+      : call(`${GRAPH}/oauth/access_token?${qs({
+        client_id: creds.client_id, client_secret: creds.client_secret, redirect_uri: redirectUri, code: cleanCode,
+      })}`, { method: 'GET' })
+    ).catch((e) => { throw oauthExchangeError('Facebook', e, { appName: 'tu app de Meta', central: creds.central }); });
     // 2) corto → largo (~60 días)
-    const long = await call(`${GRAPH}/oauth/access_token?${qs({
-      grant_type: 'fb_exchange_token', client_id: creds.client_id, client_secret: creds.client_secret, fb_exchange_token: short.access_token,
-    })}`, { method: 'GET' });
+    const long = await (creds.central
+      ? centralCall('long_lived', { access_token: short.access_token })
+      : call(`${GRAPH}/oauth/access_token?${qs({
+        grant_type: 'fb_exchange_token', client_id: creds.client_id, client_secret: creds.client_secret, fb_exchange_token: short.access_token,
+      })}`, { method: 'GET' }));
     const userToken = long.access_token || short.access_token;
     const userExpires = long.expires_in ? new Date(Date.now() + Number(long.expires_in) * 1000).toISOString() : null;
 

@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Conecta Instagram con WillyPost</title>
-<meta name="description" content="Guía paso a paso para conectar tu Instagram profesional con WillyPost, sin Página de Facebook. Unos 25 minutos.">
+<meta name="description" content="Conecta tu Instagram profesional con WillyPost, sin Página de Facebook: pulsa Conectar y acepta. Incluye la opción avanzada con tu propia app.">
 <meta name="theme-color" content="#4A73AA">
 <meta property="og:title" content="Conecta Instagram con WillyPost">
-<meta property="og:description" content="Guía paso a paso para conectar tu Instagram profesional con WillyPost, sin Página de Facebook. Unos 25 minutos.">
+<meta property="og:description" content="Conecta tu Instagram profesional con WillyPost, sin Página de Facebook: pulsa Conectar y acepta. Incluye la opción avanzada con tu propia app.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://nuriaatlantis.github.io/willypost/assets/icon-512.png">
+<meta property="og:image" content="https://willypost.com/assets/icon-512.png">
 <link rel="icon" href="../assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="apple-touch-icon" href="../assets/icon-192.png">
@@ -29,7 +29,7 @@
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
     <nav class="main" id="menu" aria-label="Principal">
       <a href="../index.html">Inicio</a><a href="../index.html#instalar">Cómo se instala</a><a href="../guias/index.html" aria-current="page">Guías</a><a href="../guias/claude.html">Claude</a><a href="../index.html#faq">Preguntas</a>
-      <a class="btn btn-sm" data-repo="zip" href="#">Descargar</a>
+      <a class="btn btn-sm" data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>
     </nav>
   </div>
 </header>
@@ -38,10 +38,18 @@
   <div class="crumbs"><a href="../index.html">Inicio</a> › <a href="index.html">Guías</a> › Instagram</div>
   <span class="eyebrow">Guía paso a paso</span>
   <h1>Conecta tu <span class="pill">Instagram</span></h1>
-  <p class="lead">Publica posts, carruseles, Reels y stories en tu cuenta profesional, sin necesitar una Página de Facebook.</p>
-  <ul class="meta"><li><span>Tiempo:</span> 25 minutos</li><li><span>Dificultad:</span> Media</li><li><span>Coste:</span> gratis</li></ul>
+  <p class="lead">Publica posts, carruseles, Reels y stories en tu cuenta profesional de Instagram, sin necesitar una Página de Facebook.</p>
+  <ul class="meta"><li><span>Tiempo:</span> 2 minutos</li><li><span>Dificultad:</span> Fácil</li><li><span>Coste:</span> gratis</li></ul>
 </div></section>
 <section class="guide-body"><div class="container narrow">
+<h2>Lo normal: pulsa «Conectar» y acepta</h2>
+<ul class="checklist"><li>Una cuenta de Instagram <strong>profesional</strong> (de empresa o de creador). Si la tuya es personal, cámbiala en Instagram → <strong>Configuración</strong> → <strong>Tipo de cuenta y herramientas</strong> → <strong>Cambiar a cuenta profesional</strong> (es gratis y se puede deshacer).</li><li>WillyPost <strong>instalado y abierto</strong> en tu ordenador.</li></ul>
+<ol class="steps"><li>En WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → Instagram, pulsa <span class="btnlabel">Conectar Instagram</span>. Se abre Instagram en tu navegador.</li><li>Inicia sesión con tu cuenta profesional. Instagram te enseña que <strong>WillyPost</strong> quiere ver tu perfil y publicar contenido en tu cuenta: pulsa <span class="btnlabel">Permitir</span>.</li><li>Durante un segundo verás la página <strong>«Volviendo a WillyPost…»</strong> de willypost.com, que te devuelve a tu ordenador. Si ves «No se puede acceder a este sitio», es que WillyPost estaba cerrado: ábrelo y recarga la pestaña (F5).</li><li>Tu cuenta aparece conectada en Redes. ¡Listo!</li></ol>
+<p class="small muted">Cada conexión dura 30 días: desde el día 25 WillyPost te avisa y, en <strong>Redes → Reconectar</strong>, repites estos pasos en un momento.</p>
+<details class="faq"><summary>Instagram dice que mi cuenta no es compatible</summary><div class="body"><p>Tu cuenta es personal. Pásala a profesional (arriba) y vuelve a pulsar <strong>Conectar</strong>.</p></div></details>
+<div class="callout"><span class="t">¿WillyPost te pide un «carné» en vez de dejarte conectar?</span><p>Eso significa que la app de WillyPost todavía no está disponible para Instagram (la red aún la está revisando) o que tienes guardado tu propio carné. Tienes dos salidas: usar la <a href="#avanzada">opción avanzada</a> de abajo, o añadir Instagram en <strong>modo manual</strong> (WillyPost te avisa a la hora y publicas tú en dos clics).</p></div>
+<div class="advanced-intro" id="avanzada"><span class="eyebrow">Opcional</span><h2>Opción avanzada: usa tu propia app</h2><p>Solo la necesitas si la red todavía no está disponible con la app de WillyPost, o si prefieres que tus claves sean solo tuyas. Creas gratis tu propia app de desarrollador (tu “carné”), la pegas en WillyPost → Redes → <strong>Mi carné</strong> / <strong>Configura tu carné</strong>, y WillyPost la usa en lugar de la app central. Con tu propia app, el servicio de conexión <code>auth.willypost.com</code> no interviene.</p></div>
+<div class="advanced">
 <h2>Antes de empezar</h2>
 <ul class="checklist"><li>Una cuenta de Instagram <strong>tuya</strong>, que pasaremos a <strong>profesional</strong> (si no lo es ya).</li><li>Haber hecho el registro de desarrollador de Meta (está explicado en la <a href="facebook.html" target="_blank" rel="noopener">guía de Facebook</a>; si ya tienes cuenta de desarrollador, sigue).</li><li>WillyPost abierto en tu ordenador.</li></ul>
 <div class="callout "><span class="t">No necesitas una Página de Facebook</span><p>Usamos el “Inicio de sesión de Instagram”, que funciona <strong>sin Página de Facebook</strong>. Y recuerda: el ID y la clave de Instagram <strong>no son</strong> los de la app de Facebook.</p></div>
@@ -50,7 +58,7 @@
 <h2>Crea la app</h2>
 <ol class="steps" style="counter-reset: st 2"><li>En <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">developers.facebook.com/apps</a> pulsa <span class="btnlabel">Crear app</span>.</li><li>Nombre: <strong>WillyPost Instagram de [tu nombre]</strong> y tu email. Siguiente.</li><li>En los casos de uso elige <span class="btnlabel">Gestionar mensajes y contenido en Instagram</span> (<em>Manage messaging &amp; content on Instagram</em>). Si no lo ves, usa el filtro <span class="btnlabel">Todos</span>, elige <span class="btnlabel">Otro → Empresa</span> y luego añade el producto <strong>Instagram</strong> desde “Añadir productos a tu app”. La app tiene que ser de tipo <strong>Empresa</strong> (<em>Business</em>).</li><li>Pulsa <span class="btnlabel">Crear app</span>.</li></ol>
 <h2>Configura el inicio de sesión de Instagram</h2>
-<ol class="steps" style="counter-reset: st 6"><li>Menú de la izquierda → <span class="btnlabel">Casos de uso</span> → tu caso de uso de Instagram → <span class="btnlabel">Personalizar</span> → <span class="btnlabel">Configuración de la API con inicio de sesión de Instagram</span> (<em>API setup with Instagram login</em>). También puede estar en el menú <em>Instagram → Configuración de la API con inicio de sesión de Instagram</em>.</li><li>Añade los permisos <code>instagram_business_basic</code> y <code>instagram_business_content_publish</code>.</li><li>Baja hasta el paso <strong>3. Configurar el inicio de sesión empresarial de Instagram</strong> (<em>Set up Instagram business login</em>) y pulsa <span class="btnlabel">Configurar</span>. Se abre la <strong>Configuración del inicio de sesión empresarial</strong> (<em>Business login settings</em>).</li><li>En <strong>URI de redireccionamiento de OAuth</strong> (<em>OAuth redirect URIs</em>) pega esta dirección y guarda:<div class="copybox"><span class="lbl">Cópiala exactamente así</span><div class="row"><code data-fill="relayUrl">https://nuriaatlantis.github.io/willypost/callback.html</code><button type="button" aria-label="Copiar Cópiala exactamente así">Copiar</button></div></div></li><li>Mira la dirección que ha quedado guardada: tiene que ser <strong>idéntica</strong>. Si Meta le ha añadido una “/” al final, bórrala y guarda otra vez.</li></ol>
+<ol class="steps" style="counter-reset: st 6"><li>Menú de la izquierda → <span class="btnlabel">Casos de uso</span> → tu caso de uso de Instagram → <span class="btnlabel">Personalizar</span> → <span class="btnlabel">Configuración de la API con inicio de sesión de Instagram</span> (<em>API setup with Instagram login</em>). También puede estar en el menú <em>Instagram → Configuración de la API con inicio de sesión de Instagram</em>.</li><li>Añade los permisos <code>instagram_business_basic</code> y <code>instagram_business_content_publish</code>.</li><li>Baja hasta el paso <strong>3. Configurar el inicio de sesión empresarial de Instagram</strong> (<em>Set up Instagram business login</em>) y pulsa <span class="btnlabel">Configurar</span>. Se abre la <strong>Configuración del inicio de sesión empresarial</strong> (<em>Business login settings</em>).</li><li>En <strong>URI de redireccionamiento de OAuth</strong> (<em>OAuth redirect URIs</em>) pega esta dirección y guarda:<div class="copybox"><span class="lbl">Cópiala exactamente así</span><div class="row"><code data-fill="relayUrl">https://willypost.com/callback.html</code><button type="button" aria-label="Copiar Cópiala exactamente así">Copiar</button></div></div></li><li>Mira la dirección que ha quedado guardada: tiene que ser <strong>idéntica</strong>. Si Meta le ha añadido una “/” al final, bórrala y guarda otra vez.</li></ol>
 <h2>Copia el ID y la clave de Instagram</h2>
 <div class="callout warn"><span class="t">Ojo</span><p>Son <strong>distintos</strong> de los de “Configuración de la app → Básica”. Copia los que aparecen en la pantalla de la API de Instagram.</p></div>
 <ol class="steps" style="counter-reset: st 11"><li>En esa misma pantalla (<em>Configuración del inicio de sesión empresarial</em>) verás el <strong>Identificador de la app de Instagram</strong> (<em>Instagram app ID</em>) y la <strong>Clave secreta de la app de Instagram</strong> (<em>Instagram app secret</em>). Copia los dos (usa <span class="btnlabel">Mostrar</span> para ver la clave).</li><li>En WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → Instagram → <span class="btnlabel">Configura tu carné</span> pega el <strong>ID de la app de Instagram</strong> y la <strong>Clave secreta de la app de Instagram</strong>. Pulsa <span class="btnlabel">Guardar</span> (o <span class="btnlabel">Guardar y conectar</span>).</li></ol>
@@ -70,6 +78,7 @@
 <details class="faq"><summary>Mi cuenta no aparece / dice que no es profesional</summary><div class="body"><p>Cambia la cuenta a <strong>profesional</strong> (Creador o Empresa) en la app de Instagram.</p></div></details>
 <details class="faq"><summary>Al publicar tarda la primera vez</summary><div class="body"><p>Es normal: WillyPost descarga la herramienta del enlace temporal. Las siguientes veces es más rápido.</p></div></details>
 <details class="faq"><summary>Al volver, veo “No se puede acceder a este sitio”</summary><div class="body"><p>WillyPost estaba cerrado. Ábrelo y recarga esa pestaña (F5).</p></div></details>
+</div>
 <div class="guide-nav"><a class="btn btn-secondary btn-sm" href="facebook.html">← Facebook</a><a class="btn btn-secondary btn-sm" href="threads.html">Threads →</a></div>
 </div></section>
 </main>
@@ -79,9 +88,10 @@
       <div>
         <a class="brand" href="../index.html"><img src="../assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
         <p style="margin-top:16px;max-width:320px">Programa tus redes sociales desde tu propio ordenador. Gratis, sin ánimo de lucro y con tus datos en tus manos.</p>
+        <p class="small" style="max-width:320px;opacity:.85">Apps de conexión con las redes y servicio <code>auth.willypost.com</code>: Diving With Us SL.</p>
       </div>
       <div><h4>WillyPost</h4><ul>
-        <li><a data-repo="zip" href="#">Descargar</a></li>
+        <li><a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a></li>
         <li><a href="../index.html#instalar">Cómo se instala</a></li>
         <li><a href="../guias/index.html">Guías de cada red</a></li>
         <li><a href="../guias/claude.html">Conecta con Claude</a></li>
@@ -90,10 +100,11 @@
         <li><a href="../privacidad.html">Política de privacidad</a></li>
         <li><a href="../terminos.html">Términos del servicio</a></li>
         <li><a href="../borrar-datos.html">Borrar mis datos</a></li>
+        <li><a href="../en.html" lang="en">English (for reviewers)</a></li>
       </ul></div>
       <div><h4>Ayuda</h4><ul>
         <li><a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a></li>
-        <li><a data-repo="issues" href="#">Avisar de un problema</a></li>
+        <li><a data-repo="issues" href="https://github.com/NuriaAtlantis/willypost/issues">Avisar de un problema</a></li>
         <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
       </ul></div>
     </div>

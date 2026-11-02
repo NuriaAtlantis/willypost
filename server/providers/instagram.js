@@ -16,6 +16,7 @@
 // error_subcode concretos (2207xxx) usados solo para dar mensajes más claros.
 import { ProviderError, fetchJson, waitFor, sleep, ambiguousPublish, oauthExchangeError } from './_http.js';
 import { fitImage, checkVideoSize, durationErrors, MAX_IMAGE_BYTES } from './_media.js';
+import { centralFetchJson } from '../central.js';
 
 export const IG_VERSION = 'v26.0';
 const IG = `https://graph.instagram.com/${IG_VERSION}`;
@@ -82,6 +83,15 @@ async function call(url, opts = {}) {
     return await fetchJson(url, { label: LABEL, ...opts });
   } catch (e) {
     throw classify(e);
+  }
+}
+
+/** Canje de tokens a través del servidor central de WillyPost (modo sin carné): el secreto lo pone el broker. */
+async function centralCall(op, body) {
+  try {
+    return await centralFetchJson('instagram', op, body, { label: LABEL });
+  } catch (e) {
+    throw e.central ? e : classify(e);
   }
 }
 
@@ -179,6 +189,8 @@ export default {
   needsApproval: null,
   notes:
     'Requiere cuenta profesional (Empresa o Creador) y haberte añadido como probador de Instagram en tu app de Meta. Las imágenes se convierten a JPEG automáticamente y se publican a través de un enlace temporal.',
+  centralNotes:
+    'Requiere cuenta profesional (Empresa o Creador). Las imágenes se convierten a JPEG automáticamente y se publican a través de un enlace temporal.',
 
   getAuthUrl({ creds, redirectUri, state }) {
     const p = new URLSearchParams({
@@ -195,22 +207,27 @@ export default {
   async exchangeCode({ creds, redirectUri, code }) {
     const cleanCode = String(code).replace(/#_$/, '');
     // 1) code → token corto (1 h)
-    const r1 = await call('https://api.instagram.com/oauth/access_token', {
-      method: 'POST',
-      form: {
-        client_id: creds.client_id,
-        client_secret: creds.client_secret,
-        grant_type: 'authorization_code',
-        redirect_uri: redirectUri,
-        code: cleanCode,
-      },
-    }).catch((e) => { throw oauthExchangeError('Instagram', e, { appName: 'tu app de Instagram (no uses los de Facebook)' }); });
+    const r1 = await (creds.central
+      ? centralCall('code', { code: cleanCode, redirect_uri: redirectUri })
+      : call('https://api.instagram.com/oauth/access_token', {
+        method: 'POST',
+        form: {
+          client_id: creds.client_id,
+          client_secret: creds.client_secret,
+          grant_type: 'authorization_code',
+          redirect_uri: redirectUri,
+          code: cleanCode,
+        },
+      })
+    ).catch((e) => { throw oauthExchangeError('Instagram', e, { appName: 'tu app de Instagram (no uses los de Facebook)', central: creds.central }); });
     const short = Array.isArray(r1.data) ? r1.data[0] : r1;
     if (!short?.access_token) throw new ProviderError('Instagram no ha devuelto un token. Vuelve a conectar la cuenta.', { raw: r1 });
     // 2) corto → largo (60 días)
-    const r2 = await call(`${IG_UNVERSIONED}/access_token?${qs({
-      grant_type: 'ig_exchange_token', client_secret: creds.client_secret, access_token: short.access_token,
-    })}`, { method: 'GET' });
+    const r2 = await (creds.central
+      ? centralCall('long_lived', { access_token: short.access_token })
+      : call(`${IG_UNVERSIONED}/access_token?${qs({
+        grant_type: 'ig_exchange_token', client_secret: creds.client_secret, access_token: short.access_token,
+      })}`, { method: 'GET' }));
     const token = r2.access_token;
     const expiresAt = r2.expires_in ? new Date(Date.now() + Number(r2.expires_in) * 1000).toISOString() : new Date(Date.now() + TOKEN_LIFETIME_MS).toISOString();
     // 3) perfil

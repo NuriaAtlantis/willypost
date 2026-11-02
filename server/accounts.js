@@ -1,13 +1,48 @@
 import { get, run, parseJson, now } from './db.js';
 import { RECONNECT_DAYS, RECONNECT_WARN_DAYS } from './config.js';
 import { getProvider } from './providers/index.js';
+import { centralCredsFor, loadCentralConfig } from './central.js';
 
 const DAY = 86400000;
 
+/** Carné propio guardado por el alumno (o null). */
 export function getCreds(userId, family) {
   if (!family) return null;
   const c = get('SELECT * FROM credentials WHERE user_id = ? AND family = ?', userId, family);
   return c ? { client_id: c.client_id, client_secret: c.client_secret, extra: parseJson(c.extra, {}) } : null;
+}
+
+/**
+ * Credenciales con las que conectar una familia: 1) el carné propio si está guardado; 2) si no, la app
+ * central de WillyPost (modo sin carné) si el servidor central la ofrece; 3) si no, null.
+ */
+export async function resolveCreds(userId, family) {
+  if (!family) return null;
+  const own = getCreds(userId, family);
+  if (own?.client_id) return own;
+  await loadCentralConfig();
+  return centralCredsFor(family);
+}
+
+/** Con qué se conectó una cuenta: 'central' (app de WillyPost) u 'own' (carné propio; también las antiguas). */
+export function accountAuthMode(acc) {
+  return parseJson(acc?.meta, {})?.auth_mode === 'central' ? 'central' : 'own';
+}
+
+/**
+ * Credenciales para renovar/usar el token de una cuenta ya conectada. Un token solo lo puede renovar la
+ * misma app que lo emitió: una cuenta conectada en modo central sigue usando la app central aunque luego
+ * se guarde un carné propio (y al revés).
+ */
+export async function credsForAccount(acc, family = getProvider(acc.network)?.family) {
+  if (!family) return null;
+  if (accountAuthMode(acc) === 'central') {
+    await loadCentralConfig();
+    // Sin conexión con el servidor central y sin copia guardada: los refrescos que pasan por el broker
+    // (TikTok) funcionan igual; los de Google avisan ellos mismos de que falta el cliente.
+    return centralCredsFor(family) || { client_id: null, extra: {}, central: true };
+  }
+  return getCreds(acc.user_id, family);
 }
 
 export function reconnectDueAt(acc) {
@@ -39,6 +74,8 @@ export function serializeAccount(acc) {
     reconnect_due_at: acc.mode === 'manual' ? null : reconnectDueAt(acc),
     days_left: acc.mode === 'manual' ? null : Math.max(0, daysLeft(acc)),
     last_error: acc.last_error,
+    // 'central' = conectada con la app de WillyPost (sin carné); 'own' = con el carné propio.
+    auth_mode: acc.mode === 'manual' ? null : accountAuthMode(acc),
   };
 }
 
@@ -82,7 +119,7 @@ export async function ensureFreshToken(acc, { force = false } = {}) {
   const exp = acc.token_expires_at ? new Date(acc.token_expires_at).getTime() : null;
   const soon = exp !== null && exp < Date.now() + 10 * 60 * 1000;
   if (!force && !soon) return acc;
-  const creds = getCreds(acc.user_id, provider.family);
+  const creds = await credsForAccount(acc, provider.family);
   const r = await provider.refresh({ account: providerAccount(acc), creds });
   if (!r) return acc;
   run(

@@ -35,7 +35,13 @@ export function getProvider(id) {
   return providers[id] || null;
 }
 
-export function networkInfo(id, configuredFamilies = new Set()) {
+/**
+ * Datos públicos de una red para la interfaz.
+ * - central: true si se puede conectar SIN carné (la app de WillyPost está disponible para esta red).
+ * - mode: con qué se conectará al pulsar Conectar: 'own' (carné propio guardado, tiene preferencia),
+ *   'central' (sin carné), 'carne' (hace falta configurar un carné), 'password' (Bluesky) o 'manual'.
+ */
+export function networkInfo(id, configuredFamilies = new Set(), centralFamilies = new Set()) {
   const p = providers[id];
   const fb = FALLBACK[id];
   if (!p) {
@@ -44,9 +50,12 @@ export function networkInfo(id, configuredFamilies = new Set()) {
       supports: { post: false, carousel: false, reel: false, story: false, textOnly: false },
       limits: { captionMax: 2200 }, needsApproval: null,
       notes: 'Esta red solo está disponible en modo manual en esta versión.',
-      credsConfigured: false, guide: `guias/${id}.html`, available: false,
+      credsConfigured: false, guide: `guias/${id}.html`, available: false, central: false, mode: 'manual',
     };
   }
+  const isPwd = p.authType === 'apppassword';
+  const own = !isPwd && configuredFamilies.has(p.family);
+  const central = !isPwd && !!p.family && centralFamilies.has(p.family);
   return {
     id,
     label: p.label || fb.label,
@@ -57,11 +66,14 @@ export function networkInfo(id, configuredFamilies = new Set()) {
     redirectUri: p.authType === 'apppassword' ? null : redirectUriFor(p),
     supports: p.supports,
     limits: p.limits || {},
-    needsApproval: p.needsApproval || null,
-    notes: p.notes || '',
-    credsConfigured: p.authType === 'apppassword' ? true : configuredFamilies.has(p.family),
+    needsApproval: (central && !own && p.centralNeedsApproval) || p.needsApproval || null,
+    // En modo central se enseñan las notas sin instrucciones de "tu app de desarrollador" (si la red las tiene).
+    notes: (central && !own && p.centralNotes) || p.notes || '',
+    credsConfigured: isPwd ? true : own,
     guide: `guias/${id}.html`,
     available: true,
+    central,
+    mode: isPwd ? 'password' : own ? 'own' : central ? 'central' : 'carne',
   };
 }
 

@@ -5,6 +5,9 @@ import { getProvider, apiSupports } from './providers/index.js';
 import { checkLimits, nextQueueSlot } from './limits.js';
 import { reconnectDueAt } from './accounts.js';
 import { MISSED_GRACE_MIN } from './config.js';
+import {
+  normalizeOptions, protectHumanChoices, withoutHumanChoices, complianceErrors, knownCreatorInfo,
+} from './compliance.js';
 
 export const TYPES = ['post', 'carousel', 'reel', 'story'];
 const TYPE_LABEL = { post: 'post', carousel: 'carrusel', reel: 'reel', story: 'story' };
@@ -150,6 +153,12 @@ export function savePost(user, body, existingId = null) {
   const rawTargets = Array.isArray(body.targets) ? body.targets : [];
   const seen = new Set();
   const targets = [];
+  // Reglas obligatorias de TikTok/YouTube (privacidad, título…): bloquean al programar, no en borradores.
+  const compliance = [];
+  const previousOptions = new Map(existing
+    ? all('SELECT account_id, options FROM post_targets WHERE post_id = ?', existing.id).map((r) => [r.account_id, parseJson(r.options, {})])
+    : []);
+  let claudeTouchedTikTok = false;
   for (const t of rawTargets) {
     const acc = t && get('SELECT * FROM accounts WHERE id = ? AND user_id = ?', Number(t.account_id), user.id);
     if (!acc) throw new HttpError(400, 'Una de las redes elegidas ya no está conectada. Revisa las redes de la publicación (o conéctala en Redes).');
@@ -159,7 +168,13 @@ export function savePost(user, body, existingId = null) {
     const label = provider?.label || acc.network;
     const tCaption = t.caption != null && t.caption !== '' ? String(t.caption) : null;
     const effective = tCaption ?? caption;
-    const options = t.options && typeof t.options === 'object' ? t.options : {};
+    let options = normalizeOptions(acc.network, type, t.options);
+    if (fromClaude) {
+      // La privacidad y la publicidad de TikTok las elige siempre la persona, al aprobar.
+      const r = protectHumanChoices(acc.network, options, previousOptions.get(acc.id));
+      options = r.options;
+      if (r.stripped) claudeTouchedTikTok = true;
+    }
     let delivery = 'api';
     if (acc.mode === 'manual' || !provider) {
       delivery = 'manual';
@@ -178,6 +193,12 @@ export function savePost(user, body, existingId = null) {
         msgs = [String(e.message || e)];
       }
       for (const message of msgs) errors.push({ account_id: acc.id, network: acc.network, message: `${label}: ${message}` });
+    }
+    if (delivery === 'api') {
+      const creator = acc.network === 'tiktok' ? knownCreatorInfo(acc.id) : null;
+      for (const message of complianceErrors(acc.network, { type, options, creator })) {
+        compliance.push({ account_id: acc.id, network: acc.network, message: `${label}: ${message}` });
+      }
     }
     const max = provider?.limits?.captionMax;
     if (max && [...effective].length > max && delivery === 'manual') {
@@ -203,6 +224,21 @@ export function savePost(user, body, existingId = null) {
     }
     status = 'scheduled';
     if (fromClaude && settings.claude_mode !== 'schedule') status = 'draft';
+  }
+
+  if (claudeTouchedTikTok) {
+    warnings.push({ network: 'tiktok', message: 'TikTok: la privacidad, los comentarios/dúos/stitch y la publicidad los elige la persona al aprobar; Claude no puede marcarlos.' });
+  }
+  if (compliance.length) {
+    if (status !== 'draft' && fromClaude) {
+      // Claude no puede completar esas elecciones: queda como borrador para que la persona decida.
+      status = 'draft';
+      warnings.push(...compliance);
+    } else if (status !== 'draft') {
+      errors.push(...compliance);
+    } else {
+      warnings.push(...compliance);
+    }
   }
 
   if (errors.length) {
@@ -325,7 +361,8 @@ export function duplicatePost(user, id) {
   const s = serializePost(p);
   return savePost(user, {
     type: s.type, caption: s.caption, media_ids: s.media.map((m) => m.id),
-    targets: s.targets.map((t) => ({ account_id: t.account_id, caption: t.caption_override, options: t.options })),
+    // La privacidad y la publicidad de TikTok se eligen de nuevo en cada publicación (sin valores heredados).
+    targets: s.targets.map((t) => ({ account_id: t.account_id, caption: t.caption_override, options: withoutHumanChoices(t.network, t.options) })),
     scheduled_at: null, action: 'draft', campaign_id: p.campaign_id, notes: p.notes,
   });
 }

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WillyPost · English overview for reviewers</title>
+<meta name="description" content="WillyPost is a free, non-profit social media scheduler that runs on your own computer. English overview of what it does, permissions requested and data handling.">
+<meta name="theme-color" content="#4A73AA">
+<meta property="og:title" content="WillyPost · English overview">
+<meta property="og:description" content="WillyPost is a free, non-profit social media scheduler that runs on your own computer. English overview of what it does, permissions requested and data handling.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://willypost.com/assets/icon-512.png">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Skip to content</a>
+<div class="topbar">Free software for the students of the <a href="https://willyseo.net/" target="_blank" rel="noopener">Willy SEO Academy</a></div>
+<header class="site">
+  <div class="container hbar">
+    <a class="brand" href="index.html" aria-label="WillyPost, home">
+      <img src="assets/icon-192.png" alt="" width="38" height="38">
+      <span><b>WillyPost</b><small>by Willy SEO Academy</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+    <nav class="main" id="menu" aria-label="Main">
+      <a href="#what">What it does</a><a href="#permissions">Permissions</a><a href="#privacy">Privacy</a><a href="#deletion">Data deletion</a><a href="index.html" lang="es">Español</a>
+      <a class="btn btn-sm" data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Download</a>
+    </nav>
+  </div>
+</header>
+<main id="contenido">
+<section class="guide-hero"><div class="container narrow"><span class="eyebrow">English · for platform reviewers</span><h1>WillyPost in <span class="pill">English</span></h1><p class="lead">WillyPost is a free, non-profit social media scheduler that runs on the user's own computer. This page summarises, in English, what the app does, who it is for, how it connects to each platform and how user data is handled. The Spanish pages are the authoritative versions.</p><p class="updated muted small">Last updated: 2 November 2026 · <a href="index.html" lang="es">Versión en español</a></p></div></section>
+<section class="guide-body"><div class="container narrow prose">
+
+<h2 id="what">1. What WillyPost does</h2>
+<p>WillyPost is a desktop application (Windows and macOS) that lets a person prepare posts in a visual calendar and publish them at the scheduled time to <strong>their own</strong> accounts on Facebook Pages, Instagram (professional accounts), Threads, TikTok, YouTube, Google Business Profile, LinkedIn (personal profile) and Bluesky. It only publishes content that the user writes (or approves) and schedules. It does not read private messages, it does not follow, like or comment, and it has no analytics or advertising.</p>
+<ul>
+<li><strong>Who it is for:</strong> students of the Willy SEO Academy (a Spanish digital-marketing school) — small businesses, freelancers and local-marketing professionals who manage their own social media or their clients'.</li>
+<li><strong>Price:</strong> free. It is a non-profit gift; the licence (MIT + Commons Clause) forbids selling it. Source code: <a data-repo="home" href="https://github.com/NuriaAtlantis/willypost" target="_blank" rel="noopener">github.com/NuriaAtlantis/willypost</a>.</li>
+<li><strong>User interface language:</strong> Spanish.</li>
+</ul>
+
+<h2 id="who">2. Who is behind it</h2>
+<table class="simple"><thead><tr><th>Party</th><th>Role</th></tr></thead><tbody>
+<tr><td><strong>Nuria Olive Soler</strong> (private individual, Barcelona, Spain)</td><td>Author of the program and of this website.</td></tr>
+<tr><td><strong>Diving With Us SL</strong> (Spanish company, tax ID [[CIF_DIVING]], [[DOMICILIO_DIVING]])</td><td>Owner of the WillyPost apps registered with Meta, TikTok, Google and LinkedIn, and operator of the connection service <code>auth.willypost.com</code> and the media proxy <code>media.willypost.com</code>. Non-profit, no fees.</td></tr>
+</tbody></table>
+<p>Contact: <a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a></p>
+
+<h2 id="how">3. How it works</h2>
+<ol class="steps">
+<li>The user downloads WillyPost from GitHub and installs it on their computer. It runs a local web interface at <code>http://localhost:4747</code>, only reachable from that computer.</li>
+<li>The user creates a <strong>local</strong> WillyPost account (stored only on their computer; there is no online sign-up).</li>
+<li>In <em>Redes</em> (Networks), the user clicks <em>Conectar</em> (Connect). The official authorization screen of the platform opens in the browser and the user approves the requested permissions.</li>
+<li>The platform redirects to <code>https://willypost.com/callback.html</code>, a static page that immediately forwards the authorization code to the user's own computer (<code>localhost</code>). For Google (YouTube, Business Profile) the redirect goes directly to <code>localhost</code> (desktop OAuth client with PKCE).</li>
+<li>To exchange the code for a token, WillyPost sends the code to <code>auth.willypost.com</code>, which adds the app secret, calls the platform's official token endpoint and returns the response unchanged. <strong>It stores nothing and keeps no logs of codes or tokens.</strong></li>
+<li>Tokens are stored on the user's computer. All publishing API calls go directly from the user's computer to the platform.</li>
+</ol>
+
+<h2 id="permissions">4. Permissions requested and why</h2>
+<table class="simple"><thead><tr><th>Platform</th><th>Permissions / scopes</th><th>Use</th></tr></thead><tbody>
+<tr><td>Facebook (Pages)</td><td><code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>pages_manage_posts</code>, <code>publish_video</code>, <code>business_management</code></td><td>List the Pages the user manages so they can choose one, read the Page name and Page access token, and publish the posts, photos, videos and Reels the user schedules. <code>business_management</code> is needed so Pages owned by a business portfolio appear in the list.</td></tr>
+<tr><td>Instagram</td><td><code>instagram_business_basic</code>, <code>instagram_business_content_publish</code></td><td>Identify the professional account (username, profile picture) and publish feed posts, carousels, Reels and stories.</td></tr>
+<tr><td>Threads</td><td><code>threads_basic</code>, <code>threads_content_publish</code></td><td>Identify the profile and publish text, image, video and carousel posts.</td></tr>
+<tr><td>TikTok</td><td><code>user.info.basic</code>, <code>video.upload</code>, <code>video.publish</code></td><td>Show which account will receive the post (display name, avatar), send videos to the user's TikTok inbox to finish in the app, or post directly with the privacy and interaction settings the user selects.</td></tr>
+<tr><td>YouTube</td><td><code>youtube.upload</code>, <code>youtube.readonly</code></td><td>Identify the user's channel (name, ID) and upload the videos the user schedules.</td></tr>
+<tr><td>Google Business Profile</td><td><code>business.manage</code></td><td>List the user's business locations so they can choose one, and publish local posts (updates) to it.</td></tr>
+<tr><td>LinkedIn</td><td><code>openid</code>, <code>profile</code>, <code>w_member_social</code></td><td>Identify the member (name, picture) and publish posts on their personal profile.</td></tr>
+</tbody></table>
+
+<h2 id="privacy">5. Data handling (privacy summary)</h2>
+<ul>
+<li>All user data — the local account, access tokens, connected account names and pictures, scheduled posts, images and videos — is stored <strong>only on the user's computer</strong> (<code>%APPDATA%\WillyPost</code> on Windows, <code>~/Library/Application Support/WillyPost</code> on macOS).</li>
+<li><code>auth.willypost.com</code> (hosted by Diving With Us SL at Hostinger) only receives authorization codes and tokens <strong>in transit</strong> to add the app secret; it has no database and keeps no logs of codes, tokens or request bodies. Google tokens never pass through it.</li>
+<li><code>media.willypost.com</code> passes photos to TikTok <strong>in transit</strong> (TikTok requires a verified domain for photo URLs); nothing is stored.</li>
+<li>Media files are served to the platforms through a temporary Cloudflare Quick Tunnel from the user's computer, with links that expire after 2 hours.</li>
+<li>No analytics, no advertising, no sale or sharing of data, no use of platform data to train AI models. Neither the author nor Diving With Us SL nor the Academy can see users' data.</li>
+<li>Full policy (Spanish): <a href="privacidad.html">willypost.com/privacidad.html</a>.</li>
+</ul>
+
+<h3 id="google">Google user data</h3>
+<p>WillyPost's use and transfer to any other app of information received from Google APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements. Google user data is used only to upload the user's videos and publish the user's Business Profile posts, is stored only on the user's computer, is not transferred to anyone, is not used for advertising, is not read by humans and is not used to develop, improve or train generalized AI/ML models.</p>
+<p>WillyPost uses YouTube API Services. By connecting YouTube, users agree to the <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">YouTube Terms of Service</a>; the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a> also applies. Users can revoke WillyPost's access at any time via the <a href="https://security.google.com/settings/security/permissions" target="_blank" rel="noopener">Google security settings page</a>.</p>
+
+<h2 id="deletion">6. Data deletion</h2>
+<p>Because all data lives on the user's computer, users delete it themselves: disconnect each account in WillyPost (deletes its tokens), revoke WillyPost in each platform's settings, and uninstall WillyPost choosing to delete its data folder. The connection service holds no user data, so there is nothing to delete server-side; users can still email <a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a> for written confirmation. Step-by-step instructions for every platform (Spanish): <a href="borrar-datos.html">willypost.com/borrar-datos.html</a>.</p>
+
+<h2 id="terms">7. Terms summary</h2>
+<p>WillyPost is provided free of charge, "as is", without warranties. Users are responsible for the content they publish and must comply with each platform's terms (including the YouTube Terms of Service and TikTok's Music Usage Confirmation and Branded Content Policy). The central apps and the connection service may only be used with WillyPost. Spanish law applies. Full terms (Spanish): <a href="terminos.html">willypost.com/terminos.html</a>.</p>
+
+<h2 id="install">8. Installing WillyPost (for reviewers)</h2>
+<ol class="steps">
+<li>Download the ZIP: <a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">github.com/NuriaAtlantis/willypost → main.zip</a>, right-click → <em>Extract All</em>.</li>
+<li>Double-click <strong>Instalar WillyPost</strong> (“Install WillyPost”). If Windows SmartScreen appears, click <em>More info → Run anyway</em>. Installation takes a few minutes and needs no administrator rights.</li>
+<li>WillyPost opens in the browser at <code>http://localhost:4747</code>. Create a local account (any email and password; it never leaves the computer).</li>
+<li>Go to <strong>Redes</strong> (Networks) → click <strong>Conectar</strong> (Connect) next to the platform → approve the permissions.</li>
+<li>Click <strong>+ Crear publicación</strong> (Create post), write a text, attach a file, choose the account and <strong>Publicar ahora</strong> (Publish now) or pick a date.</li>
+</ol>
+</div></section>
+</main>
+<footer class="site">
+  <div class="container">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="index.html"><img src="assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
+        <p style="margin-top:16px;max-width:320px">Schedule your social media from your own computer. Free, non-profit, and your data stays with you.</p>
+        <p class="small" style="max-width:320px;opacity:.85">Platform apps and the <code>auth.willypost.com</code> connection service: Diving With Us SL.</p>
+      </div>
+      <div><h4>WillyPost</h4><ul>
+        <li><a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Download</a></li>
+        <li><a href="index.html#instalar">How to install (ES)</a></li>
+        <li><a href="guias/index.html">Guides per network (ES)</a></li>
+        <li><a href="guias/claude.html">Connect Claude (ES)</a></li>
+      </ul></div>
+      <div><h4>Legal</h4><ul>
+        <li><a href="privacidad.html">Privacy policy (ES)</a></li>
+        <li><a href="terminos.html">Terms of service (ES)</a></li>
+        <li><a href="borrar-datos.html">Data deletion (ES)</a></li>
+        <li><a href="en.html" lang="en">English (for reviewers)</a></li>
+      </ul></div>
+      <div><h4>Help</h4><ul>
+        <li><a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a></li>
+        <li><a data-repo="issues" href="https://github.com/NuriaAtlantis/willypost/issues">Report a problem</a></li>
+        <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
+      </ul></div>
+    </div>
+    <div class="fbottom"><span>Made by Nuria Olive Soler for the Willy SEO Academy.</span><span>Free, non-profit gift · © <span data-year>2026</span> Nuria Olive Soler</span></div>
+  </div>
+</footer>
+<script src="config.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

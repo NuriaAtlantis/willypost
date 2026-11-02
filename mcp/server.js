@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+import { TIKTOK_HUMAN_KEYS } from '../server/compliance.js';
 
 // Blindaje: cualquier console.log accidental NO debe ensuciar stdout.
 console.log = (...a) => console.error(...a);
@@ -283,13 +284,28 @@ const postItemShape = {
   networks: z.array(networkEnum).optional().describe('Redes donde publicar: se usan TODAS las cuentas conectadas de cada red. Alternativa a account_ids.'),
   account_ids: z.array(z.number().int()).optional().describe('IDs concretos de cuentas (ver list_accounts). Úsalo si el alumno tiene varias cuentas de una misma red y quieres solo algunas.'),
   captions_by_network: z.record(z.string(), z.string()).optional().describe('Texto propio por red, p. ej. {"linkedin":"…","instagram":"…"}. Sustituye al texto base en esa red. Respeta los límites de cada red (get_network_specs).'),
-  options_by_network: z.record(z.string(), z.record(z.string(), z.any())).optional().describe('Opciones específicas por red, p. ej. {"youtube":{"title":"…"},"gbp":{"cta":{"actionType":"LEARN_MORE","url":"https://…"}}}.'),
+  options_by_network: z.record(z.string(), z.record(z.string(), z.any())).optional().describe('Opciones específicas por red, p. ej. {"youtube":{"title":"…","privacy":"public"},"gbp":{"cta":{"actionType":"LEARN_MORE","url":"https://…"}},"tiktok":{"tiktok_mode":"direct"}}. En TikTok NO se puede poner la privacidad, comentarios/dúos/stitch ni el contenido comercial: los elige el alumno al aprobar.'),
   media_ids: z.array(z.number().int()).optional().describe('IDs de archivos ya subidos con upload_media, en orden (el primero es la portada del carrusel). Los medios se suben ANTES de crear la pieza.'),
   scheduled_at: z.string().optional().describe('Fecha y hora de publicación en la HORA LOCAL del usuario, en ISO 8601 CON desfase, p. ej. 2026-11-03T09:30:00+01:00. Si no la pones, se guarda como borrador sin fecha.'),
   notes: z.string().optional().describe('Nota interna para el alumno (idea, objetivo de la pieza, qué grabar…). No se publica.'),
 };
 
+/**
+ * Reglas de TikTok (Content Sharing Guidelines): la privacidad, Comentarios/Dúo/Stitch y la divulgación de
+ * contenido comercial las elige SIEMPRE la persona en WillyPost, al aprobar. Claude no puede fijarlas.
+ */
+function assertNoTikTokHumanChoices(optionsByNetwork) {
+  const tt = optionsByNetwork?.tiktok;
+  const bad = tt && typeof tt === 'object' ? Object.keys(tt).filter((k) => TIKTOK_HUMAN_KEYS.includes(k)) : [];
+  if (bad.length) {
+    throw new UserError(
+      `En TikTok no puedes elegir ${bad.join(', ')}: la privacidad (quién puede verlo), los comentarios/dúos/stitch y la divulgación de contenido comercial los elige el alumno en WillyPost al aprobar. Quita esas claves de options_by_network.tiktok (puedes dejar "tiktok_mode") y crea la pieza: quedará como borrador "Propuesto por Claude" para que el alumno lo complete.`,
+    );
+  }
+}
+
 function resolveTargets(a, accounts) {
+  assertNoTikTokHumanChoices(a.options_by_network);
   const warnings = [];
   const chosen = new Map();
   for (const id of a.account_ids || []) {
@@ -415,15 +431,15 @@ const SPECS = {
     reel: 'Vídeo 9:16 = 1080x1920 px, MP4/WebM/MOV, H.264/H.265, 23-60 fps, lados entre 360 y 4096 px. Hasta 10 min por API (4 GB), pero lo habitual es 15-60 s. Gancho en el primer segundo, subtítulos incrustados, formato nativo (no reutilices el vídeo con marca de agua de otra red).',
     texto: 'Descripción hasta 2.200 caracteres; lo importante en la primera línea.',
     hashtags: '3-5: 1-2 amplios + 2-3 de nicho. Palabras clave del tema en el texto ayudan a la búsqueda de TikTok.',
-    notas: 'Sin auditoría de TikTok el vídeo llega a la bandeja de TikTok del alumno (tiene que abrir la app y pulsar Publicar) o queda privado: avísale. options: {"tiktok_mode":"inbox"|"direct"}.',
+    notas: 'options: {"tiktok_mode":"direct"|"inbox"} ("direct" publica directamente; "inbox" lo deja en la bandeja de TikTok del alumno para terminarlo en la app). Reglas de TikTok: la privacidad (quién puede verlo, sin opción por defecto), permitir comentarios/dúos/stitch y la divulgación de contenido comercial las elige SIEMPRE el alumno en WillyPost al aprobar; tú no puedes ponerlas (error si lo intentas). Por eso una pieza de TikTok en modo directo queda como borrador "Propuesto por Claude" aunque lleve fecha: avisa al alumno de que la abra, elija esas opciones y pulse Programar. No añadas marcas de agua ni logos de WillyPost al contenido.',
   },
   youtube: {
     nombre: 'YouTube Shorts',
     tipos_en_willypost: 'SOLO reel (vídeo vertical). El resto de tipos va a modo manual.',
     reel: 'Vertical 9:16 (o cuadrado), MP4. Un vídeo vertical de hasta 3 min se clasifica como Short; para máxima compatibilidad usa ≤ 60 s. 1080x1920 px.',
-    texto: 'Título (options_by_network.youtube.title) hasta 100 caracteres, con la palabra clave al principio; si no lo pones se usa la primera línea del texto. Descripción hasta 5.000 caracteres. Incluye #Shorts.',
+    texto: 'Título OBLIGATORIO (options_by_network.youtube.title) hasta 100 caracteres, con la palabra clave al principio. La descripción es el texto (hasta 5.000 caracteres). Incluye #Shorts.',
     hashtags: '2-3 hashtags + #Shorts (los 3 primeros aparecen sobre el título).',
-    notas: 'Si el vídeo aparece en privado, el alumno puede ponerlo en público en YouTube Studio. options.privacy: public | unlisted | private.',
+    notas: 'Visibilidad OBLIGATORIA: options_by_network.youtube.privacy = public | unlisted | private (propón una; el alumno la revisa al aprobar). Sin título o sin visibilidad la pieza queda como borrador hasta que el alumno los ponga. Si el vídeo aparece en privado, el alumno puede ponerlo en público en YouTube Studio.',
   },
   gbp: {
     nombre: 'Google Business Profile (ficha de Google)',
@@ -650,7 +666,7 @@ tool('list_media', {
 tool('create_post', {
   title: 'Crear publicación',
   description:
-    `Crea UNA publicación (post, carrusel, reel o story) en una o varias redes. Reglas importantes: (1) sube antes los medios con upload_media; (2) scheduled_at va en la HORA LOCAL del usuario, ISO con desfase (2026-11-03T09:30:00+01:00); consulta la hora actual con willypost_status; (3) límite por cuenta y día: ${FEED_MAX} publicaciones de feed y ${STORY_MAX} stories (si lo superas, error 409; mira get_free_slots); (4) networks=["instagram","tiktok"] usa todas las cuentas conectadas de esas redes, o usa account_ids; (5) captions_by_network permite un texto nativo distinto por red (recomendado: no copies el mismo texto en todas partes); (6) si una red no admite ese tipo por API (p. ej. carrusel en TikTok, story en Threads) la pieza se crea en MODO MANUAL: a su hora saltará un aviso para que el alumno la publique a mano; (7) sin scheduled_at se guarda como borrador; con scheduled_at se programa, pero si el alumno tiene el modo "borrador" (por defecto) queda como borrador "Propuesto por Claude" con esa fecha, y debe aprobarlo en WillyPost. Consulta get_network_specs para formatos, longitudes y hashtags.`,
+    `Crea UNA publicación (post, carrusel, reel o story) en una o varias redes. Reglas importantes: (1) sube antes los medios con upload_media; (2) scheduled_at va en la HORA LOCAL del usuario, ISO con desfase (2026-11-03T09:30:00+01:00); consulta la hora actual con willypost_status; (3) límite por cuenta y día: ${FEED_MAX} publicaciones de feed y ${STORY_MAX} stories (si lo superas, error 409; mira get_free_slots); (4) networks=["instagram","tiktok"] usa todas las cuentas conectadas de esas redes, o usa account_ids; (5) captions_by_network permite un texto nativo distinto por red (recomendado: no copies el mismo texto en todas partes); (6) si una red no admite ese tipo por API (p. ej. carrusel en TikTok, story en Threads) la pieza se crea en MODO MANUAL: a su hora saltará un aviso para que el alumno la publique a mano; (7) sin scheduled_at se guarda como borrador; con scheduled_at se programa, pero si el alumno tiene el modo "borrador" (por defecto) queda como borrador "Propuesto por Claude" con esa fecha, y debe aprobarlo en WillyPost; (8) TikTok: NO pongas privacidad, comentarios/dúos/stitch ni contenido comercial (los elige el alumno al aprobar; con modo directo la pieza queda como borrador aunque lleve fecha); YouTube: pon title y privacy (public|unlisted|private) en options_by_network.youtube o quedará como borrador. Consulta get_network_specs para formatos, longitudes y hashtags.`,
   inputSchema: { ...postItemShape, campaign: z.union([z.string(), z.number().int()]).optional().describe('Campaña a la que pertenece: nombre (se crea si no existe) o id. Para varias piezas relacionadas usa mejor create_campaign.') },
 }, async (args) => {
   const accounts = await api('GET', '/api/accounts');
@@ -782,6 +798,7 @@ tool('update_post', {
   const accounts = await api('GET', '/api/accounts');
   let targets;
   let warnings = [];
+  assertNoTikTokHumanChoices(args.options_by_network);
   if (args.networks?.length || args.account_ids?.length) {
     const r = resolveTargets(args, accounts);
     targets = r.targets;

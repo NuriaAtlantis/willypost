@@ -255,3 +255,10 @@ noscript .nojs { background: var(--warn-bg); padding: 10px 14px; border-radius: 
 /* Móvil: nada se sale de la pantalla (textos largos, direcciones y tablas) */
 .guide-body code, .prose code, .guide-body a, .prose a { overflow-wrap: anywhere; }
 @media (max-width: 640px) { table.simple { display: block; overflow-x: auto; } }
+
+/* Guías: camino principal («Conectar») y opción avanzada (tu propia app), claramente secundaria */
+.advanced-intro { margin-top: 64px; padding-top: 30px; border-top: 2px dashed var(--azul-100); }
+.advanced-intro h2 { margin-top: 6px !important; }
+.advanced { border-left: 4px solid var(--azul-100); padding-left: 22px; }
+.advanced h2 { font-size: 22px; margin-top: 40px; }
+@media (max-width: 640px) { .advanced { padding-left: 14px; } }

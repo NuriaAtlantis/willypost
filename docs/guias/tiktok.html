@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Conecta TikTok con WillyPost</title>
-<meta name="description" content="Guía paso a paso para conectar TikTok con WillyPost: cómo crear tu app de desarrollador y qué esperar de la publicación sin auditoría.">
+<meta name="description" content="Conecta TikTok con WillyPost: pulsa Conectar y acepta. Publicación directa o a tu bandeja. Incluye la opción avanzada con tu propia app.">
 <meta name="theme-color" content="#4A73AA">
 <meta property="og:title" content="Conecta TikTok con WillyPost">
-<meta property="og:description" content="Guía paso a paso para conectar TikTok con WillyPost: cómo crear tu app de desarrollador y qué esperar de la publicación sin auditoría.">
+<meta property="og:description" content="Conecta TikTok con WillyPost: pulsa Conectar y acepta. Publicación directa o a tu bandeja. Incluye la opción avanzada con tu propia app.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://nuriaatlantis.github.io/willypost/assets/icon-512.png">
+<meta property="og:image" content="https://willypost.com/assets/icon-512.png">
 <link rel="icon" href="../assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="apple-touch-icon" href="../assets/icon-192.png">
@@ -29,7 +29,7 @@
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
     <nav class="main" id="menu" aria-label="Principal">
       <a href="../index.html">Inicio</a><a href="../index.html#instalar">Cómo se instala</a><a href="../guias/index.html" aria-current="page">Guías</a><a href="../guias/claude.html">Claude</a><a href="../index.html#faq">Preguntas</a>
-      <a class="btn btn-sm" data-repo="zip" href="#">Descargar</a>
+      <a class="btn btn-sm" data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>
     </nav>
   </div>
 </header>
@@ -38,10 +38,18 @@
   <div class="crumbs"><a href="../index.html">Inicio</a> › <a href="index.html">Guías</a> › TikTok</div>
   <span class="eyebrow">Guía paso a paso</span>
   <h1>Conecta tu <span class="pill">TikTok</span></h1>
-  <p class="lead">Sube tus vídeos a la bandeja de TikTok desde WillyPost (o en privado) con tu propia app de desarrollador.</p>
-  <ul class="meta"><li><span>Tiempo:</span> 30 minutos (+ revisión de TikTok si eliges Producción)</li><li><span>Dificultad:</span> Difícil</li><li><span>Coste:</span> gratis</li><li><span>Publicación abierta:</span> solo con auditoría</li></ul>
+  <p class="lead">Publica tus vídeos en TikTok o mándalos a tu bandeja para terminarlos en la app. Pulsas «Conectar», aceptas y listo.</p>
+  <ul class="meta"><li><span>Tiempo:</span> 2 minutos</li><li><span>Dificultad:</span> Fácil</li><li><span>Coste:</span> gratis</li></ul>
 </div></section>
 <section class="guide-body"><div class="container narrow">
+<h2>Lo normal: pulsa «Conectar» y acepta</h2>
+<ul class="checklist"><li>Una cuenta de <strong>TikTok</strong>.</li><li>WillyPost <strong>instalado y abierto</strong> en tu ordenador.</li></ul>
+<ol class="steps"><li>En WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → TikTok, pulsa <span class="btnlabel">Conectar TikTok</span>. Se abre TikTok en tu navegador.</li><li>Inicia sesión. TikTok te enseña que <strong>WillyPost</strong> quiere: leer la información básica de tu perfil (nombre y foto), subir contenido a tu bandeja y publicar contenido en tu cuenta. Pulsa <span class="btnlabel">Continuar</span> / <span class="btnlabel">Autorizar</span>.</li><li>Durante un segundo verás la página <strong>«Volviendo a WillyPost…»</strong> de willypost.com, que te devuelve a tu ordenador. Si ves «No se puede acceder a este sitio», es que WillyPost estaba cerrado: ábrelo y recarga la pestaña (F5).</li><li>Tu cuenta aparece conectada en Redes. ¡Listo!</li></ol>
+<p class="small muted">Cada conexión dura 30 días: desde el día 25 WillyPost te avisa y, en <strong>Redes → Reconectar</strong>, repites estos pasos en un momento.</p>
+<h3>Cómo se publica después</h3><p>En cada publicación eliges cómo se envía a TikTok: <strong>a tu bandeja</strong> (abres la app de TikTok, lo repasas y pulsas Publicar) o <strong>publicación directa</strong>, donde eliges tú la privacidad y si permites comentarios, dúos y stitch. TikTok exige una auditoría para que una app publique en abierto: mientras la app de WillyPost no la tenga, la publicación directa sale como <strong>privada</strong> («solo yo») y la bandeja funciona siempre.</p>
+<div class="callout"><span class="t">¿WillyPost te pide un «carné» en vez de dejarte conectar?</span><p>Eso significa que la app de WillyPost todavía no está disponible para TikTok (la red aún la está revisando) o que tienes guardado tu propio carné. Tienes dos salidas: usar la <a href="#avanzada">opción avanzada</a> de abajo, o añadir TikTok en <strong>modo manual</strong> (WillyPost te avisa a la hora y publicas tú en dos clics).</p></div>
+<div class="advanced-intro" id="avanzada"><span class="eyebrow">Opcional</span><h2>Opción avanzada: usa tu propia app</h2><p>Solo la necesitas si la red todavía no está disponible con la app de WillyPost, o si prefieres que tus claves sean solo tuyas. Creas gratis tu propia app de desarrollador (tu “carné”), la pegas en WillyPost → Redes → <strong>Mi carné</strong> / <strong>Configura tu carné</strong>, y WillyPost la usa en lugar de la app central. Con tu propia app, el servicio de conexión <code>auth.willypost.com</code> no interviene.</p></div>
+<div class="advanced">
 <div class="callout warn"><span class="t">Léelo antes de empezar: TikTok no deja publicar “en abierto” a apps sin auditoría</span><p>Una app sin <strong>auditoría</strong> de TikTok solo puede:</p><ul class="plain"><li>mandar tu vídeo a <strong>tu bandeja de TikTok</strong> (como borrador): abres la app de TikTok, lo revisas y pulsas <strong>Publicar</strong>. Es el modo por defecto de WillyPost; o</li><li>publicarlo en <strong>privado</strong> (solo lo ves tú), si tu cuenta está en modo privado.</li></ul><p>La auditoría es una revisión que TikTok hace a apps de empresas; una app personal de un solo usuario normalmente no la pasa. Aun así, el modo bandeja te ahorra subir el vídeo y escribir: solo abres TikTok y le das a Publicar.</p></div>
 <div class="callout"><span class="t">Dos caminos: elige uno</span><p><strong>Camino A, Sandbox (el más fácil):</strong> TikTok te deja probar tu app con tu propia cuenta <strong>sin enviarla a revisión</strong>. Es lo que recomendamos para uso propio.</p><p><strong>Camino B, Producción:</strong> envías la app a revisión de TikTok. Exige verificar una web propia (subiendo un archivo a ella o poniendo un registro en su dominio) y un vídeo de demostración. Solo merece la pena si tienes web propia y paciencia.</p><p>Y si nada de esto te convence, añade TikTok a WillyPost en <strong>modo manual</strong>: sin carné y sin perder nada.</p></div>
 <h2>Antes de empezar</h2>
@@ -49,7 +57,7 @@
 <h2>Crea tu cuenta de desarrollador</h2>
 <ol class="steps" style="counter-reset: st 0"><li>Entra en <a href="https://developers.tiktok.com" target="_blank" rel="noopener">developers.tiktok.com</a> e inicia sesión con tu cuenta de TikTok (o crea una cuenta de desarrollador con tu correo).</li><li>Acepta los términos.</li></ol>
 <h2>Crea la app</h2>
-<ol class="steps" style="counter-reset: st 2"><li>Arriba a la derecha, pulsa tu foto → <span class="btnlabel">Manage apps</span>. Después <span class="btnlabel">Connect an app</span>.</li><li>Cuando pregunte por el propietario (<em>app owner</em>), elige tu cuenta personal (TikTok recomienda una organización, pero para uso propio no hace falta).</li><li>Rellena: <strong>App icon</strong> (imagen de 1024×1024, JPG o PNG, máx. 5 MB: vale cualquier logo tuyo), <strong>App name</strong> (“WillyPost - tu nombre”), <strong>Category</strong> (la que más se parezca, p. ej. “Productivity”) y <strong>Description</strong> (“Programador personal de mis vídeos.”).</li><li>En <strong>Platforms</strong> marca <strong>Desktop</strong> y, como <strong>Official website URL</strong>, escribe la web de tu negocio o tu perfil. TikTok no comprueba esta dirección al escribirla (solo la verifica si envías la app a revisión, Camino B).</li><li>Si ves los campos <strong>Terms of Service URL</strong> y <strong>Privacy Policy URL</strong>, rellénalos con las de WillyPost:<div class="copybox"><span class="lbl">Condiciones del servicio (Terms of Service)</span><div class="row"><code data-fill="termsUrl">https://nuriaatlantis.github.io/willypost/terminos.html</code><button type="button" aria-label="Copiar Condiciones del servicio (Terms of Service)">Copiar</button></div></div><div class="copybox"><span class="lbl">Política de privacidad (Privacy Policy)</span><div class="row"><code data-fill="privacyUrl">https://nuriaatlantis.github.io/willypost/privacidad.html</code><button type="button" aria-label="Copiar Política de privacidad (Privacy Policy)">Copiar</button></div></div></li></ol>
+<ol class="steps" style="counter-reset: st 2"><li>Arriba a la derecha, pulsa tu foto → <span class="btnlabel">Manage apps</span>. Después <span class="btnlabel">Connect an app</span>.</li><li>Cuando pregunte por el propietario (<em>app owner</em>), elige tu cuenta personal (TikTok recomienda una organización, pero para uso propio no hace falta).</li><li>Rellena: <strong>App icon</strong> (imagen de 1024×1024, JPG o PNG, máx. 5 MB: vale cualquier logo tuyo), <strong>App name</strong> (“WillyPost - tu nombre”), <strong>Category</strong> (la que más se parezca, p. ej. “Productivity”) y <strong>Description</strong> (“Programador personal de mis vídeos.”).</li><li>En <strong>Platforms</strong> marca <strong>Desktop</strong> y, como <strong>Official website URL</strong>, escribe la web de tu negocio o tu perfil. TikTok no comprueba esta dirección al escribirla (solo la verifica si envías la app a revisión, Camino B).</li><li>Si ves los campos <strong>Terms of Service URL</strong> y <strong>Privacy Policy URL</strong>, rellénalos con las de WillyPost:<div class="copybox"><span class="lbl">Condiciones del servicio (Terms of Service)</span><div class="row"><code data-fill="termsUrl">https://willypost.com/terminos.html</code><button type="button" aria-label="Copiar Condiciones del servicio (Terms of Service)">Copiar</button></div></div><div class="copybox"><span class="lbl">Política de privacidad (Privacy Policy)</span><div class="row"><code data-fill="privacyUrl">https://willypost.com/privacidad.html</code><button type="button" aria-label="Copiar Política de privacidad (Privacy Policy)">Copiar</button></div></div></li></ol>
 <h2>Añade los productos</h2>
 <ol class="steps" style="counter-reset: st 7"><li>En la sección <strong>Products</strong> pulsa <span class="btnlabel">Add products</span>.</li><li>Añade <strong>Login Kit</strong>.</li><li>Añade <strong>Content Posting API</strong> y activa <strong>Direct Post</strong> (<em>Direct Post configuration</em>).</li></ol>
 <h2>La dirección de retorno (Login Kit para escritorio)</h2>
@@ -75,6 +83,7 @@
 <details class="faq"><summary>El vídeo no llega a la bandeja</summary><div class="body"><p>Abre la app de TikTok con la <strong>misma cuenta</strong> que conectaste y mira la bandeja y las notificaciones. El formato debe ser MP4, MOV o WebM con H.264, entre 23 y 60 fps.</p></div></details>
 <details class="faq"><summary>Tengo que reconectar</summary><div class="body"><p>WillyPost renueva el permiso de TikTok solo antes de publicar; aun así, cada 30 días pulsa <strong>Reconectar</strong> en Redes (regla de WillyPost).</p></div></details>
 <details class="faq"><summary>Al volver, veo “No se puede acceder a este sitio”</summary><div class="body"><p>WillyPost estaba cerrado. Ábrelo y recarga esa pestaña (F5).</p></div></details>
+</div>
 <div class="guide-nav"><a class="btn btn-secondary btn-sm" href="threads.html">← Threads</a><a class="btn btn-secondary btn-sm" href="youtube.html">YouTube →</a></div>
 </div></section>
 </main>
@@ -84,9 +93,10 @@
       <div>
         <a class="brand" href="../index.html"><img src="../assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
         <p style="margin-top:16px;max-width:320px">Programa tus redes sociales desde tu propio ordenador. Gratis, sin ánimo de lucro y con tus datos en tus manos.</p>
+        <p class="small" style="max-width:320px;opacity:.85">Apps de conexión con las redes y servicio <code>auth.willypost.com</code>: Diving With Us SL.</p>
       </div>
       <div><h4>WillyPost</h4><ul>
-        <li><a data-repo="zip" href="#">Descargar</a></li>
+        <li><a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a></li>
         <li><a href="../index.html#instalar">Cómo se instala</a></li>
         <li><a href="../guias/index.html">Guías de cada red</a></li>
         <li><a href="../guias/claude.html">Conecta con Claude</a></li>
@@ -95,10 +105,11 @@
         <li><a href="../privacidad.html">Política de privacidad</a></li>
         <li><a href="../terminos.html">Términos del servicio</a></li>
         <li><a href="../borrar-datos.html">Borrar mis datos</a></li>
+        <li><a href="../en.html" lang="en">English (for reviewers)</a></li>
       </ul></div>
       <div><h4>Ayuda</h4><ul>
         <li><a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a></li>
-        <li><a data-repo="issues" href="#">Avisar de un problema</a></li>
+        <li><a data-repo="issues" href="https://github.com/NuriaAtlantis/willypost/issues">Avisar de un problema</a></li>
         <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
       </ul></div>
     </div>

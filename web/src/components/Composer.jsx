@@ -12,6 +12,7 @@ import { Button, Modal, Badge, Field, useConfirm } from './ui.jsx';
 import { NetIcon, netLabel, netColor } from './NetIcon.jsx';
 import { Dropzone, MediaPicker, MediaThumb } from './Media.jsx';
 import { Preview } from './Previews.jsx';
+import { TikTokPanel, YouTubePanel, tiktokBlockers, tiktokModeOf } from './NetworkSettings.jsx';
 
 const TYPE_ICONS = { Image: ImageIcon, Images, Clapperboard, CircleDot };
 const TYPE_PLURAL = { post: 'posts', carousel: 'carruseles', reel: 'reels y vídeos', story: 'stories' };
@@ -27,6 +28,8 @@ function initState(app) {
     (p.targets || []).forEach((t) => {
       if (t.caption_override != null) overrides[t.account_id] = t.caption_override;
       if (t.options && Object.keys(t.options).length) options[t.account_id] = t.options;
+      // Publicaciones antiguas de TikTok sin modo guardado: se enviaban a la bandeja.
+      if (t.network === 'tiktok' && !(t.options && t.options.tiktok_mode)) options[t.account_id] = { ...(options[t.account_id] || {}), tiktok_mode: 'inbox' };
     });
   }
   const connected = app.accounts.filter((a) => a.status !== 'expired');
@@ -45,43 +48,13 @@ function initState(app) {
 }
 
 
-function OptionsPanel({ account, label, value, onChange, caption }) {
+// Opciones de Google Business Profile. TikTok y YouTube tienen su propio panel (NetworkSettings.jsx).
+function OptionsPanel({ account, label, value, onChange }) {
   const n = account.network;
-  const check = (key, text) => (
-    <label className="check-row tight"><input type="checkbox" checked={!!value[key]} onChange={(e) => onChange({ [key]: e.target.checked })} /><span>{text}</span></label>
-  );
   return (
     <details className="opts">
       <summary><NetIcon id={n} size={20} /> Opciones de {label}{account.name ? ` · ${account.name}` : ''}</summary>
       <div className="opts-body">
-        {n === 'youtube' && (
-          <>
-            <Field label="Título del vídeo" hint="Si lo dejas vacío usaré la primera línea del texto.">
-              <input className="input" maxLength={100} value={value.title || ''} placeholder={(caption || '').split(/\r?\n/)[0].slice(0, 100) || 'Un título que haga clic'} onChange={(e) => onChange({ title: e.target.value })} />
-            </Field>
-            <Field label="Visibilidad">
-              <select className="input" value={value.privacy || 'public'} onChange={(e) => onChange({ privacy: e.target.value })}>
-                <option value="public">Público</option>
-                <option value="unlisted">No listado (solo con el enlace)</option>
-                <option value="private">Privado</option>
-              </select>
-            </Field>
-          </>
-        )}
-        {n === 'tiktok' && (
-          <>
-            <Field label="Cómo se envía a TikTok">
-              <select className="input" value={value.tiktok_mode || 'inbox'} onChange={(e) => onChange({ tiktok_mode: e.target.value })}>
-                <option value="inbox">Enviar a tu bandeja de TikTok para terminarlo en la app</option>
-                <option value="direct">Publicar directamente (privado hasta que TikTok audite tu app)</option>
-              </select>
-            </Field>
-            {check('disable_comment', 'Desactivar comentarios')}
-            {check('disable_duet', 'Desactivar dúos')}
-            {check('disable_stitch', 'Desactivar stitch')}
-            {check('is_aigc', 'Contenido generado con IA')}
-          </>
-        )}
         {n === 'gbp' && (
           <>
             <Field label="Botón de la publicación">
@@ -139,6 +112,8 @@ function ComposerInner() {
   const [slotWarn, setSlotWarn] = useState([]);
   const [queueNext, setQueueNext] = useState(null);
   const [dragIdx, setDragIdx] = useState(null);
+  // Datos de cada cuenta de TikTok (creator_info): se piden de nuevo cada vez que se abre el compositor.
+  const [creators, setCreators] = useState({});
   const taRef = useRef(null);
   const dirty = useRef(false);
   const submitting = useRef(false);
@@ -177,6 +152,30 @@ function ComposerInner() {
     return { manual: false };
   };
   const manualNotices = selected.map((a) => ({ a, ...infoFor(a) })).filter((x) => x.manual);
+  const apiTikTok = selected.filter((a) => a.network === 'tiktok' && !infoFor(a).manual);
+  const apiYouTube = selected.filter((a) => a.network === 'youtube' && !infoFor(a).manual);
+
+  const loadCreator = (id) => {
+    setCreators((c) => ({ ...c, [id]: { loading: true, data: c[id] && c[id].data, error: '' } }));
+    api.get(`/api/accounts/${id}/tiktok/creator-info`)
+      .then((data) => setCreators((c) => ({ ...c, [id]: { loading: false, data, error: '' } })))
+      .catch((e) => setCreators((c) => ({ ...c, [id]: { loading: false, data: null, error: e.message } })));
+  };
+  const tiktokIds = apiTikTok.map((a) => a.id).join(',');
+  useEffect(() => {
+    apiTikTok.forEach((a) => { if (!creators[a.id]) loadCreator(a.id); });
+  }, [tiktokIds]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Lo que impide programar/publicar en TikTok (las reglas de TikTok piden desactivar el botón).
+  const blockAll = [];
+  const blockNow = [];
+  apiTikTok.forEach((a) => {
+    const b = tiktokBlockers({ value: options[a.id] || {}, creator: creators[a.id], type, media });
+    blockAll.push(...b.all);
+    blockNow.push(...b.now);
+  });
+  const blockAllMsg = blockAll[0] || '';
+  const blockNowMsg = blockAll[0] || blockNow[0] || '';
   const approvalNotices = selected.filter((a) => { const n = netOf(a); return n && n.needsApproval && a.mode !== 'manual'; });
 
   // ----- Textos -----
@@ -297,7 +296,7 @@ function ComposerInner() {
       targets: selected.map((a) => ({
         account_id: a.id,
         caption: overrides[a.id] != null && overrides[a.id] !== caption ? overrides[a.id] : null,
-        options: options[a.id] || {},
+        options: a.network === 'tiktok' ? { ...(options[a.id] || {}), tiktok_mode: tiktokModeOf(options[a.id]) } : (options[a.id] || {}),
       })),
       scheduled_at: action === 'queue' || action === 'publish_now' ? null : whenIso,
       action,
@@ -346,7 +345,8 @@ function ComposerInner() {
         queue: res && res.scheduled_at ? `Añadida a la cola para el ${fmtDateTime(res.scheduled_at)}.` : 'Añadida a la cola.',
         publish_now: 'Publicando ahora. Te aviso cuando termine.',
       }[action];
-      toast.success(msg);
+      const ttNote = action !== 'draft' && apiTikTok.length > 0;
+      toast.success(ttNote ? `${msg} TikTok puede tardar unos minutos en mostrarlo en tu perfil.` : msg, ttNote ? 8000 : undefined);
       app.bump();
       app.closeComposer();
     } catch (e) {
@@ -402,10 +402,15 @@ function ComposerInner() {
           </div>
           <Button variant="ghost" onClick={requestClose}>Cancelar</Button>
           <Button variant="secondary" icon={Save} loading={busy === 'draft'} disabled={!!busy} onClick={() => submit('draft')}>Guardar borrador</Button>
-          <Button variant="secondary" icon={Send} loading={busy === 'publish_now'} disabled={!!busy || publishedLocked} onClick={() => submit('publish_now')}>Publicar ahora</Button>
-          {mode === 'queue'
-            ? <Button icon={ListOrdered} loading={busy === 'queue'} disabled={!!busy} onClick={() => submit('queue')}>Añadir a la cola</Button>
-            : <Button icon={CalendarClock} loading={busy === 'schedule'} disabled={!!busy} onClick={() => submit('schedule')}>Programar</Button>}
+          {/* Un botón desactivado no muestra su "title": lo lleva el contenedor (reglas de TikTok). */}
+          <span className="btn-wrap" title={blockNowMsg || undefined}>
+            <Button variant="secondary" icon={Send} loading={busy === 'publish_now'} disabled={!!busy || publishedLocked || !!blockNowMsg} onClick={() => submit('publish_now')}>Publicar ahora</Button>
+          </span>
+          <span className="btn-wrap" title={blockAllMsg || undefined}>
+            {mode === 'queue'
+              ? <Button icon={ListOrdered} loading={busy === 'queue'} disabled={!!busy || !!blockAllMsg} onClick={() => submit('queue')}>Añadir a la cola</Button>
+              : <Button icon={CalendarClock} loading={busy === 'schedule'} disabled={!!busy || !!blockAllMsg} onClick={() => submit('schedule')}>Programar</Button>}
+          </span>
         </>
       )}>
       {confirmEl}
@@ -431,6 +436,7 @@ function ComposerInner() {
           {/* 2 · Redes */}
           <section className="cmp-sec">
             <h3><i>2</i> ¿Dónde?</h3>
+            {connectedAccounts.length > 0 ? <p className="sec-hint">Toca cada red para marcarla o desmarcarla. Solo se publicará en las que tengan el check.</p> : null}
             {connectedAccounts.length === 0 ? (
               <div className="notice info"><Info size={18} /><div><b>Aún no tienes ninguna red.</b> Puedes guardar un borrador, pero para programar conecta una red (o añádela en modo manual) en <a href="#/redes" onClick={() => app.closeComposer()}>Redes</a>.</div></div>
             ) : (
@@ -542,8 +548,16 @@ function ComposerInner() {
               <div className="notice warn"><TriangleAlert size={18} /><div>El texto es demasiado largo para {overLimits.map((a) => `${netLabel(a.network, app.networks)} (máx. ${limitOf(a)})`).join(', ')}. Acórtalo en su pestaña.</div></div>
             )}
             {activeAcc && errors.byAccount[activeAcc.id] && errors.byAccount[activeAcc.id].map((m) => <div className="field-error" key={m}>{m}</div>)}
-            {selected.filter((a) => ['youtube', 'tiktok', 'gbp'].includes(a.network)).map((a) => (
-              <OptionsPanel key={a.id} account={a} label={netLabel(a.network, app.networks)} value={options[a.id] || {}} caption={caption}
+            {apiTikTok.map((a) => (
+              <TikTokPanel key={a.id} account={a} value={options[a.id] || {}} creator={creators[a.id]} onRetry={() => loadCreator(a.id)}
+                type={type} media={media} onChange={(patch) => setOptions((o) => ({ ...o, [a.id]: { ...(o[a.id] || {}), ...patch } }))} />
+            ))}
+            {apiYouTube.map((a) => (
+              <YouTubePanel key={a.id} account={a} value={options[a.id] || {}} caption={effective(a)}
+                onChange={(patch) => setOptions((o) => ({ ...o, [a.id]: { ...(o[a.id] || {}), ...patch } }))} />
+            ))}
+            {selected.filter((a) => a.network === 'gbp').map((a) => (
+              <OptionsPanel key={a.id} account={a} label={netLabel(a.network, app.networks)} value={options[a.id] || {}}
                 onChange={(patch) => setOptions((o) => ({ ...o, [a.id]: { ...(o[a.id] || {}), ...patch } }))} />
             ))}
           </section>

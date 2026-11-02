@@ -35,6 +35,7 @@
 import fs from 'node:fs';
 import { ProviderError, sleep, ambiguousPublish } from './_http.js';
 import { durationErrors } from './_media.js';
+import { centralToken } from '../central.js';
 
 export const LINKEDIN_VERSION = process.env.WILLYPOST_LINKEDIN_VERSION || '202610';
 const API = 'https://api.linkedin.com';
@@ -135,6 +136,31 @@ export function escapeLittle(text) {
 function isVideo(m) { return m.kind === 'video' || /^video\//.test(m.mime || ''); }
 function isImage(m) { return m.kind === 'image' || /^image\//.test(m.mime || ''); }
 
+/** Con el token ya canjeado, lee el perfil (OpenID userinfo) y devuelve la cuenta a guardar. */
+async function linkedinCandidates(tok) {
+  const ui = await fetch(`${API}/v2/userinfo`, { headers: { Authorization: `Bearer ${tok.access_token}` } });
+  const info = await ui.json().catch(() => ({}));
+  if (!ui.ok || !info.sub) {
+    throw new ProviderError(
+      'LinkedIn no ha devuelto tu perfil. Comprueba que tu app tiene el producto "Sign In with LinkedIn using OpenID Connect" activado y vuelve a conectar.',
+      { auth: true, status: ui.status, raw: info },
+    );
+  }
+  const expiresIn = Number(tok.expires_in) || 60 * 24 * 3600;
+  return [
+    {
+      external_id: info.sub,
+      name: info.name || [info.given_name, info.family_name].filter(Boolean).join(' ') || 'LinkedIn',
+      username: info.email || null,
+      avatar_url: info.picture || null,
+      access_token: tok.access_token,
+      refresh_token: tok.refresh_token || null,
+      token_expires_at: new Date(Date.now() + expiresIn * 1000).toISOString(),
+      meta: { urn: `urn:li:person:${info.sub}`, scope: tok.scope || SCOPES },
+    },
+  ];
+}
+
 export default {
   id: 'linkedin',
   label: 'LinkedIn',
@@ -147,6 +173,8 @@ export default {
   needsApproval: null,
   notes:
     'Perfil personal (las páginas de empresa exigen aprobación de LinkedIn). Necesitas los productos "Share on LinkedIn" y "Sign In with LinkedIn using OpenID Connect". La conexión dura 60 días en LinkedIn (WillyPost te pide reconectar a los 30).',
+  centralNotes:
+    'Publica en tu perfil personal (las páginas de empresa exigen aprobación de LinkedIn). La conexión dura 60 días en LinkedIn (WillyPost te pide reconectar a los 30).',
 
   getAuthUrl({ creds, redirectUri, state }) {
     const p = new URLSearchParams({
@@ -160,6 +188,19 @@ export default {
   },
 
   async exchangeCode({ creds, redirectUri, code }) {
+    if (creds.central) {
+      // Modo sin carné: el broker añade client_id y client_secret y devuelve la respuesta de LinkedIn tal cual.
+      const { status, json } = await centralToken('linkedin', 'code', { code, redirect_uri: redirectUri });
+      const tok = json && typeof json === 'object' ? json : {};
+      if (status < 200 || status >= 300 || !tok.access_token) {
+        const d = tok.error_description || tok.error || `HTTP ${status}`;
+        throw new ProviderError(
+          `LinkedIn no ha aceptado la conexión (${String(d).slice(0, 160)}). Vuelve a pulsar Conectar y acepta los permisos; si se repite, espera unos minutos y prueba otra vez.`,
+          { auth: true, status, raw: tok },
+        );
+      }
+      return linkedinCandidates(tok);
+    }
     let res;
     try {
       res = await fetch(TOKEN_URL, {
@@ -184,27 +225,7 @@ export default {
         { auth: true, status: res.status, raw: tok },
       );
     }
-    const ui = await fetch(`${API}/v2/userinfo`, { headers: { Authorization: `Bearer ${tok.access_token}` } });
-    const info = await ui.json().catch(() => ({}));
-    if (!ui.ok || !info.sub) {
-      throw new ProviderError(
-        'LinkedIn no ha devuelto tu perfil. Comprueba que tu app tiene el producto "Sign In with LinkedIn using OpenID Connect" activado y vuelve a conectar.',
-        { auth: true, status: ui.status, raw: info },
-      );
-    }
-    const expiresIn = Number(tok.expires_in) || 60 * 24 * 3600;
-    return [
-      {
-        external_id: info.sub,
-        name: info.name || [info.given_name, info.family_name].filter(Boolean).join(' ') || 'LinkedIn',
-        username: info.email || null,
-        avatar_url: info.picture || null,
-        access_token: tok.access_token,
-        refresh_token: tok.refresh_token || null,
-        token_expires_at: new Date(Date.now() + expiresIn * 1000).toISOString(),
-        meta: { urn: `urn:li:person:${info.sub}`, scope: tok.scope || SCOPES },
-      },
-    ];
+    return linkedinCandidates(tok);
   },
 
   // LinkedIn no da refresh_token a apps normales: hay que reautorizar (el alumno reconecta).

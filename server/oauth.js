@@ -2,13 +2,29 @@ import crypto from 'node:crypto';
 import { get, run, now, parseJson } from './db.js';
 import { HttpError } from './auth.js';
 import { getProvider } from './providers/index.js';
-import { getCreds, saveCandidate } from './accounts.js';
+import { getCreds, resolveCreds, saveCandidate } from './accounts.js';
 import { redirectUriFor } from './config.js';
+import { centralCredsFor, loadCentralConfig } from './central.js';
 
 // Una conexión a medio hacer (o una elección de Páginas sin terminar) caduca a los 30 min: así no
 // quedan tokens guardados en la base de datos y un enlace de retorno antiguo no vale.
 export const PENDING_TTL_MS = 30 * 60 * 1000;
 const isStale = (p) => !p.created_at || Date.parse(p.created_at) < Date.now() - PENDING_TTL_MS;
+
+// Con qué se empezó cada conexión ('central' u 'own'), por "state". Así la vuelta usa la misma app y la
+// misma dirección de retorno aunque entre medias se guarde o se borre un carné. Si WillyPost se reinicia
+// a mitad, se vuelve a decidir con la misma regla (carné propio > central).
+const pendingMode = new Map();
+
+async function credsForPending(pending, family) {
+  const mode = pendingMode.get(pending.state)?.mode;
+  if (mode === 'central') {
+    await loadCentralConfig();
+    return centralCredsFor(family);
+  }
+  if (mode === 'own') return getCreds(pending.user_id, family);
+  return resolveCreds(pending.user_id, family);
+}
 
 const b64url = (buf) => buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
@@ -20,13 +36,16 @@ function pkce(provider) {
   return { verifier, challenge };
 }
 
-/** Empieza un flujo OAuth y devuelve la URL a la que mandar al alumno. */
-export function startOAuth(user, network, reconnectAccountId = null) {
+/**
+ * Empieza un flujo OAuth y devuelve la URL a la que mandar al alumno.
+ * Usa el carné propio si está guardado; si no, la app central de WillyPost (modo sin carné).
+ */
+export async function startOAuth(user, network, reconnectAccountId = null) {
   const provider = getProvider(network);
   if (!provider) throw new HttpError(400, 'Esta red no está disponible por API en esta versión. Añádela en modo manual.');
   if (provider.authType !== 'oauth') throw new HttpError(400, 'Esta red no usa este tipo de conexión.');
   run('DELETE FROM oauth_pending WHERE created_at < ?', new Date(Date.now() - PENDING_TTL_MS).toISOString());
-  const creds = getCreds(user.id, provider.family);
+  const creds = await resolveCreds(user.id, provider.family);
   if (!creds?.client_id) {
     throw new HttpError(400, `Primero configura tu "carné" de ${provider.label}: pulsa "Configurar carné" y sigue los pasos.`);
   }
@@ -36,21 +55,27 @@ export function startOAuth(user, network, reconnectAccountId = null) {
     'INSERT INTO oauth_pending (user_id, network, state, code_verifier, account_id_reconnect, created_at) VALUES (?, ?, ?, ?, ?, ?)',
     user.id, network, state, verifier, reconnectAccountId, now(),
   );
+  for (const [k, v] of pendingMode) if (v.at < Date.now() - PENDING_TTL_MS) pendingMode.delete(k);
+  pendingMode.set(state, { mode: creds.central ? 'central' : 'own', at: Date.now() });
   const authUrl = provider.getAuthUrl({
-    creds, redirectUri: redirectUriFor(provider), state, codeChallenge: challenge, codeVerifier: verifier,
+    creds, redirectUri: redirectUriFor(provider, creds), state, codeChallenge: challenge, codeVerifier: verifier,
   });
-  return { authUrl };
+  return { authUrl, central: !!creds.central };
 }
 
 const CANCEL_CODES = new Set(['access_denied', 'user_cancelled_login', 'user_cancelled_authorize', 'user_denied', 'consent_required']);
 
 /** Mensaje en español para un error devuelto por la red en la URL de retorno. */
-export function friendlyOAuthError(label, error, description) {
+export function friendlyOAuthError(label, error, description, { central = false } = {}) {
   const e = String(error || '');
   const d = String(description || '');
   if (!e && !d) return `${label}: has cancelado la conexión. Pulsa Conectar para intentarlo de nuevo.`;
   if (CANCEL_CODES.has(e.toLowerCase()) || /denied|cancel/i.test(d)) {
     return `${label}: has cancelado la conexión o no has aceptado los permisos. Pulsa Conectar y acepta todos los permisos.`;
+  }
+  if (central) {
+    // Sin carné: no hay app propia que revisar.
+    return `${label} ha devuelto un error al conectar (${(d || e).slice(0, 160)}). Vuelve a pulsar Conectar y acepta todos los permisos; si se repite, espera unos minutos y prueba otra vez.`;
   }
   if (/redirect_uri|redirect uri/i.test(d + e)) {
     return `${label}: la dirección de redirección no coincide con la de tu app. Cópiala otra vez desde el asistente de Redes y pégala exactamente igual en la web de ${label}.`;
@@ -90,15 +115,21 @@ export async function handleCallback(query) {
     // La elección de Páginas ya está hecha y esperando: un segundo retorno con el mismo "state" no hace nada.
     return `/#/redes?pick=${pending.id}`;
   }
+  const startedCentral = pendingMode.get(pending.state)?.mode === 'central';
   if (error || !code) {
     run('DELETE FROM oauth_pending WHERE id = ?', pending.id);
-    return `/#/redes?error=${encodeURIComponent(friendlyOAuthError(provider?.label || pending.network, error, errorDescription))}`;
+    pendingMode.delete(pending.state);
+    return `/#/redes?error=${encodeURIComponent(friendlyOAuthError(provider?.label || pending.network, error, errorDescription, { central: startedCentral }))}`;
   }
+  let creds = null;
   try {
-    const creds = getCreds(pending.user_id, provider.family);
+    creds = await credsForPending(pending, provider.family);
+    pendingMode.delete(pending.state);
     const candidates = await provider.exchangeCode({
-      creds, redirectUri: redirectUriFor(provider), code: String(code), codeVerifier: pending.code_verifier,
+      creds, redirectUri: redirectUriFor(provider, creds), code: String(code), codeVerifier: pending.code_verifier,
     });
+    // Se apunta en la cuenta con qué app se conectó: el token solo lo puede renovar esa misma app.
+    for (const c of candidates || []) c.meta = { ...(c.meta || {}), auth_mode: creds?.central ? 'central' : 'own' };
     if (!candidates?.length) {
       run('DELETE FROM oauth_pending WHERE id = ?', pending.id);
       const what = pending.network === 'facebook' ? 'ninguna Página de Facebook que administres'
@@ -132,7 +163,8 @@ export async function handleCallback(query) {
     console.error('[oauth]', pending.network, e);
     // Los ProviderError ya traen un mensaje en español; cualquier otro fallo interno se explica en genérico.
     const msg = e?.name === 'ProviderError' ? e.message
-      : `No hemos podido completar la conexión con ${provider?.label || pending.network}. Vuelve a pulsar Conectar; si se repite, revisa el ID y el secreto de tu carné.`;
+      : `No hemos podido completar la conexión con ${provider?.label || pending.network}. Vuelve a pulsar Conectar; si se repite, ${
+        creds?.central ? 'espera unos minutos y prueba otra vez.' : 'revisa el ID y el secreto de tu carné.'}`;
     return `/#/redes?error=${encodeURIComponent(msg)}`;
   }
 }

@@ -1,5 +1,5 @@
-// Dónde viven las guías paso a paso (GitHub Pages del repositorio). Cámbialo aquí si cambia la URL.
-export const DOCS_BASE = 'https://nuriaatlantis.github.io/willypost/';
+// Web de WillyPost (guías paso a paso, privacidad…). Debe coincidir con DOMAIN de server/config.js.
+export const DOCS_BASE = 'https://willypost.com/';
 
 export const FEED_MAX = 5;
 export const STORY_MAX = 10;

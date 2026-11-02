@@ -7,8 +7,49 @@ import {
 import { slots, nextQueueSlot, checkLimits } from '../limits.js';
 import { getProvider } from '../providers/index.js';
 import { publishTarget, tick } from '../scheduler.js';
+import { accountStatus, ensureFreshToken } from '../accounts.js';
+import { ProviderError } from '../providers/_http.js';
+import { queryCreatorInfo, tiktokErrorCode, CANNOT_POST_CODES } from '../providers/tiktok.js';
+import { rememberCreatorInfo } from '../compliance.js';
 
 export const postsRouter = express.Router();
+
+/**
+ * Datos del creador de TikTok para el compositor (reglas de TikTok: mostrar el nombre de la cuenta, ofrecer
+ * solo las privacidades permitidas, desactivar Comentarios/Dúo/Stitch si el creador los tiene cerrados,
+ * duración máxima del vídeo y si puede publicar ahora). Se consulta cada vez que se abre el panel.
+ */
+postsRouter.get('/api/accounts/:id/tiktok/creator-info', requireAuth, async (req, res) => {
+  const acc = get('SELECT * FROM accounts WHERE id = ? AND user_id = ?', Number(req.params.id), req.user.id);
+  if (!acc) throw new HttpError(404, 'Esa cuenta no existe.');
+  if (acc.network !== 'tiktok') throw new HttpError(400, 'Esa cuenta no es de TikTok.');
+  if (acc.mode === 'manual') throw new HttpError(400, 'Esa cuenta de TikTok está en modo manual: no hay nada que consultar.');
+  if (accountStatus(acc) === 'expired') throw new HttpError(409, 'Tu conexión con TikTok ha caducado. Reconéctala en Redes.');
+  const fallback = { nickname: acc.name || null, username: acc.username || null, avatar_url: acc.avatar_url || null };
+  let fresh;
+  try {
+    fresh = await ensureFreshToken(acc);
+  } catch (e) {
+    throw new HttpError(409, e instanceof ProviderError ? e.message : 'No he podido renovar tu conexión con TikTok. Reconéctala en Redes.');
+  }
+  try {
+    const info = await queryCreatorInfo(fresh.access_token);
+    rememberCreatorInfo(acc.id, info);
+    res.json({ ...fallback, ...Object.fromEntries(Object.entries(info).filter(([, v]) => v != null)), can_post: true, reason: null });
+  } catch (e) {
+    if (CANNOT_POST_CODES.includes(tiktokErrorCode(e))) {
+      // TikTok dice que ahora mismo esta cuenta no puede publicar (límite diario, restricción…).
+      return res.json({
+        ...fallback, privacy_level_options: [], comment_disabled: false, duet_disabled: false, stitch_disabled: false,
+        max_video_post_duration_sec: null, can_post: false, reason: e.message,
+      });
+    }
+    if (e instanceof ProviderError) {
+      throw new HttpError(e.auth ? 409 : 502, e.auth ? e.message : `No he podido consultar tu cuenta de TikTok. ${e.message}`);
+    }
+    throw new HttpError(502, 'No he podido hablar con TikTok. Revisa tu conexión a internet y vuelve a intentarlo.');
+  }
+});
 
 const kick = () => setTimeout(() => tick().catch(() => {}), 50);
 

@@ -9,7 +9,7 @@
 <meta property="og:title" content="Borrar mis datos · WillyPost">
 <meta property="og:description" content="Instrucciones para borrar los datos de WillyPost y quitar los permisos en Facebook, Instagram, Threads, TikTok, Google, LinkedIn y Bluesky.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://nuriaatlantis.github.io/willypost/assets/icon-512.png">
+<meta property="og:image" content="https://willypost.com/assets/icon-512.png">
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
@@ -29,19 +29,19 @@
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
     <nav class="main" id="menu" aria-label="Principal">
       <a href="index.html">Inicio</a><a href="index.html#instalar">Cómo se instala</a><a href="guias/index.html">Guías</a><a href="guias/claude.html">Claude</a><a href="index.html#faq">Preguntas</a>
-      <a class="btn btn-sm" data-repo="zip" href="#">Descargar</a>
+      <a class="btn btn-sm" data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>
     </nav>
   </div>
 </header>
 <main id="contenido">
-<section class="guide-hero"><div class="container narrow"><span class="eyebrow">Tus datos, tus reglas</span><h1>Cómo <span class="pill">borrar</span> tus datos</h1><p class="lead">WillyPost guarda todo en tu ordenador, así que borrarlo está en tu mano. Esta página explica cómo hacerlo, también para quitar los permisos en cada red social.</p><p class="updated muted small">Última actualización: 1 de noviembre de 2026</p></div></section>
+<section class="guide-hero"><div class="container narrow"><span class="eyebrow">Tus datos, tus reglas</span><h1>Cómo <span class="pill">borrar</span> tus datos</h1><p class="lead">WillyPost guarda todo en tu ordenador, así que borrarlo está en tu mano. Esta página explica cómo hacerlo y cómo quitar el permiso de WillyPost en cada red social.</p><p class="updated muted small">Última actualización: 2 de noviembre de 2026 · <a href="en.html#deletion" lang="en">English summary</a></p></div></section>
 <section class="guide-body"><div class="container narrow prose">
-<div class="callout "><span class="t">Importante: nadie más tiene tus datos</span><p>No existe ninguna base de datos de WillyPost en servidores de la autora ni de la Willy SEO Academy, así que no hay nada que “solicitar” ni que “nos tengamos que borrar”. Todo lo que WillyPost guarda está en tu propio ordenador. Esta página es la <strong>URL de instrucciones de eliminación de datos</strong> que piden Meta y otras plataformas.</p></div>
+<div class="callout"><span class="t">Importante: nadie más tiene tus datos</span><p>No existe ninguna base de datos de WillyPost en servidores de la autora, de Diving With Us SL (titular de las apps de WillyPost en las redes) ni de la Willy SEO Academy. El servicio de conexión <code>auth.willypost.com</code> y el proxy de fotos <code>media.willypost.com</code> solo ven tus códigos, tokens o fotos <strong>de paso</strong> y <strong>no guardan nada</strong>, así que tampoco hay nada que borrar allí. Todo lo que WillyPost guarda está en tu propio ordenador. Esta página es la <strong>URL de instrucciones de eliminación de datos</strong> que piden Meta y las demás plataformas.</p></div>
 
 <h2>Opción rápida: lo borro todo</h2>
 <ol class="steps">
-<li><strong>Desconecta tus redes en WillyPost.</strong> En <em>Redes</em>, pulsa el icono de la papelera de cada cuenta. Así se borran los tokens guardados.</li>
-<li><strong>Quita el permiso en cada red social</strong> (tabla de abajo). Así la red deja de aceptar esa conexión, aunque alguien tuviera una copia del token.</li>
+<li><strong>Desconecta tus redes en WillyPost.</strong> En <em>Redes</em>, pulsa el icono de la papelera de cada cuenta. Así se borran los tokens guardados en tu ordenador.</li>
+<li><strong>Quita el permiso de WillyPost en cada red social</strong> (tabla de abajo). Así la red deja de aceptar esa conexión.</li>
 <li><strong>Desinstala WillyPost</strong> con <strong>Desinstalar WillyPost</strong> (en Windows, también desde el menú Inicio) y, cuando te pregunte por tus datos, escribe <code>BORRAR</code>.</li>
 <li><strong>Comprueba que no quedan datos</strong> y, si quieres, borra a mano la carpeta de datos (abajo).</li>
 </ol>
@@ -51,28 +51,29 @@
 <tr><td>Windows</td><td><code>%APPDATA%\WillyPost</code> (escribe esto en la barra del Explorador de archivos). Contiene la base de datos <code>willypost.db</code>, las carpetas <code>media</code> (tus imágenes y vídeos), <code>bin</code> y <code>logs</code>.</td></tr>
 <tr><td>Mac</td><td><code>~/Library/Application Support/WillyPost</code> (en Finder: Ir → Ir a la carpeta…).</td></tr>
 </tbody></table>
-<p>Borrar esa carpeta elimina <strong>todo</strong>: tu cuenta local, tus claves, tus tokens, tus publicaciones y tus archivos. La aplicación se desinstala aparte (con el desinstalador) o borrando su carpeta.</p>
+<p>Borrar esa carpeta elimina <strong>todo</strong>: tu cuenta local, tus tokens, tus claves (si usabas tu propia app), tus publicaciones y tus archivos. La aplicación se desinstala aparte (con el desinstalador) o borrando su carpeta.</p>
 
-<h2>Quitar el permiso en cada red</h2>
+<h2>Quitar el permiso de WillyPost en cada red</h2>
+<p>La app aparece con el nombre <strong>WillyPost</strong> (o con el nombre que le pusiste, si usabas tu propia app).</p>
 <table class="simple"><thead><tr><th>Red</th><th>Dónde se quita</th></tr></thead><tbody>
-<tr><td>Facebook</td><td>Facebook → Configuración y privacidad → Configuración → <strong>Apps y sitios web</strong> → busca tu app “WillyPost…” → <strong>Eliminar</strong> (marca también eliminar publicaciones si lo deseas; las ya publicadas siguen en tu Página salvo que las borres).</td></tr>
-<tr><td>Instagram</td><td>Instagram → Configuración → <strong>Apps y sitios web</strong> (o instagram.com/accounts/manage_access) → pestaña Activas → <strong>Eliminar</strong>.</td></tr>
-<tr><td>Threads</td><td>Threads → Configuración → Cuenta → <strong>Permisos de sitios web</strong> → quita la app.</td></tr>
-<tr><td>TikTok</td><td>TikTok → Ajustes y privacidad → Seguridad y permisos → <strong>Permisos de apps</strong> → quita la app.</td></tr>
-<tr><td>YouTube y Google Business Profile</td><td>Entra en <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a> → tu app “WillyPost” → <strong>Eliminar acceso</strong>.</td></tr>
-<tr><td>LinkedIn</td><td>LinkedIn → Preferencias y privacidad → <strong>Privacidad de los datos</strong> → Servicios de terceros → <strong>Aplicaciones permitidas</strong> → quita la tuya.</td></tr>
-<tr><td>Bluesky</td><td>Ajustes → Privacidad y seguridad → <strong>Contraseñas de aplicación</strong> → borra la de WillyPost.</td></tr>
+<tr><td>Facebook</td><td>Facebook → tu foto → <strong>Configuración y privacidad</strong> → <strong>Configuración</strong> → <strong>Integraciones comerciales</strong> (<a href="https://www.facebook.com/settings?tab=business_tools" target="_blank" rel="noopener">enlace directo</a>) → marca WillyPost → <strong>Eliminar</strong>. Si no aparece ahí, mira en <strong>Apps y sitios web</strong> (<a href="https://www.facebook.com/settings?tab=applications" target="_blank" rel="noopener">enlace directo</a>). Las publicaciones ya hechas siguen en tu Página salvo que las borres.</td></tr>
+<tr><td>Instagram</td><td>Instagram → <strong>Configuración</strong> → <strong>Permisos de sitios web</strong> → <strong>Apps y sitios web</strong> (en la web: <a href="https://www.instagram.com/accounts/manage_access/" target="_blank" rel="noopener">instagram.com/accounts/manage_access</a>) → pestaña <em>Activas</em> → WillyPost → <strong>Eliminar</strong>.</td></tr>
+<tr><td>Threads</td><td>Threads → <strong>Configuración</strong> → <strong>Cuenta</strong> → <strong>Permisos de sitios web</strong> → WillyPost → <strong>Eliminar</strong>.</td></tr>
+<tr><td>TikTok</td><td>TikTok → Perfil → menú ☰ → <strong>Ajustes y privacidad</strong> → <strong>Seguridad</strong> (en algunas versiones, <em>Seguridad y permisos</em>) → <strong>Gestionar permisos de apps</strong> (o <em>Apps y servicios</em>) → WillyPost → <strong>Eliminar acceso</strong>.</td></tr>
+<tr><td>YouTube y Google Business Profile</td><td>Entra en <a href="https://myaccount.google.com/connections" target="_blank" rel="noopener">myaccount.google.com/connections</a> (Cuenta de Google → <strong>Seguridad</strong> → <strong>Tus conexiones con aplicaciones y servicios de terceros</strong>) → WillyPost → <strong>Eliminar todas las conexiones</strong> / <strong>Eliminar acceso</strong>. También desde la <a href="https://security.google.com/settings/security/permissions" target="_blank" rel="noopener">página de permisos de seguridad de Google</a>.</td></tr>
+<tr><td>LinkedIn</td><td>LinkedIn → <strong>Yo</strong> → <strong>Ajustes y privacidad</strong> → <strong>Privacidad de datos</strong> → <strong>Otras aplicaciones</strong> → <strong>Servicios permitidos</strong> (<a href="https://www.linkedin.com/mypreferences/d/permitted-services" target="_blank" rel="noopener">enlace directo</a>) → WillyPost → <strong>Eliminar</strong>.</td></tr>
+<tr><td>Bluesky</td><td>Ajustes → <strong>Privacidad y seguridad</strong> → <strong>Contraseñas de aplicación</strong> → borra la de WillyPost.</td></tr>
 </tbody></table>
-<p class="small muted">Los nombres de los menús cambian de vez en cuando; si no encuentras uno, busca “apps conectadas” o “aplicaciones de terceros” en los ajustes de la red.</p>
+<p class="small muted">Los nombres de los menús cambian de vez en cuando y dependen de la versión de la app; si no encuentras uno, busca “apps conectadas”, “permisos de apps” o “aplicaciones de terceros” en los ajustes de la red.</p>
 
-<h2>Opcional: borra también tu app de desarrollador</h2>
+<h2>Si usabas tu propia app: bórrala también (opcional)</h2>
 <p>La app que creaste en cada portal (Meta, TikTok, Google Cloud, LinkedIn) es tuya. Si ya no la quieres, bórrala desde su portal: en Meta, <em>Configuración de la app → Básica → Eliminar app</em>; en Google Cloud, <em>Configuración del proyecto → Cerrar</em>; en TikTok y LinkedIn, desde la lista de tus apps.</p>
 
 <h2>Solo quiero quitar una cuenta</h2>
 <p>En WillyPost → Redes, pulsa la papelera de esa cuenta (borra sus tokens), y quita el permiso en la red como se indica arriba. Tus publicaciones ya programadas para esa cuenta pasarán a estar sin destino: revísalas en el calendario.</p>
 
-<h2>¿Y si tengo dudas?</h2>
-<p>Escríbenos a <a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a>. Mira también la <a href="privacidad.html">política de privacidad</a>.</p>
+<h2>¿Quieres que te lo confirmemos por escrito?</h2>
+<p>Escribe a <a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a> con el asunto «Borrar mis datos de WillyPost». Te responderemos confirmando que ni Diving With Us SL ni la autora conservan datos tuyos (el servicio de conexión no guarda nada). Mira también la <a href="privacidad.html">política de privacidad</a>.</p>
 </div></section>
 </main>
 <footer class="site">
@@ -81,9 +82,10 @@
       <div>
         <a class="brand" href="index.html"><img src="assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
         <p style="margin-top:16px;max-width:320px">Programa tus redes sociales desde tu propio ordenador. Gratis, sin ánimo de lucro y con tus datos en tus manos.</p>
+        <p class="small" style="max-width:320px;opacity:.85">Apps de conexión con las redes y servicio <code>auth.willypost.com</code>: Diving With Us SL.</p>
       </div>
       <div><h4>WillyPost</h4><ul>
-        <li><a data-repo="zip" href="#">Descargar</a></li>
+        <li><a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a></li>
         <li><a href="index.html#instalar">Cómo se instala</a></li>
         <li><a href="guias/index.html">Guías de cada red</a></li>
         <li><a href="guias/claude.html">Conecta con Claude</a></li>
@@ -92,10 +94,11 @@
         <li><a href="privacidad.html">Política de privacidad</a></li>
         <li><a href="terminos.html">Términos del servicio</a></li>
         <li><a href="borrar-datos.html">Borrar mis datos</a></li>
+        <li><a href="en.html" lang="en">English (for reviewers)</a></li>
       </ul></div>
       <div><h4>Ayuda</h4><ul>
         <li><a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a></li>
-        <li><a data-repo="issues" href="#">Avisar de un problema</a></li>
+        <li><a data-repo="issues" href="https://github.com/NuriaAtlantis/willypost/issues">Avisar de un problema</a></li>
         <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
       </ul></div>
     </div>

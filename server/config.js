@@ -11,10 +11,18 @@ export const SHARE_PORT = Number(process.env.WILLYPOST_SHARE_PORT || 4748);
 export const APP_URL = `http://localhost:${PORT}`;
 export const LOCAL_REDIRECT = `${APP_URL}/oauth/callback`;
 
-// Página estática HTTPS (GitHub Pages) que reenvía el código OAuth a localhost.
-// Necesaria para Meta y LinkedIn, que exigen redirect HTTPS.
-export const RELAY_URL =
-  process.env.WILLYPOST_RELAY || 'https://nuriaatlantis.github.io/willypost/callback.html';
+// Dominio de WillyPost: TODAS las direcciones públicas salen de aquí (web, relé OAuth, servidor central y
+// proxy de medios). Si algún día cambia el dominio, se cambia solo en esta línea (y en docs/config.js y broker/).
+export const DOMAIN = (process.env.WILLYPOST_DOMAIN || 'willypost.com').trim().toLowerCase();
+export const SITE_URL = `https://${DOMAIN}/`;
+// Servidor central (modo sin carné): añade la clave secreta de las apps de WillyPost en los canjes de tokens.
+export const BROKER_URL = `https://auth.${DOMAIN}`;
+// Proxy de medios para TikTok (sirve las fotos del túnel desde un dominio verificado).
+export const MEDIA_PROXY = `https://media.${DOMAIN}`;
+
+// Página estática HTTPS que reenvía el código OAuth a localhost.
+// Necesaria para Meta y LinkedIn (y TikTok en modo central), que exigen redirect HTTPS.
+export const RELAY_URL = process.env.WILLYPOST_RELAY || `${SITE_URL}callback.html`;
 
 function defaultDataDir() {
   if (process.env.WILLYPOST_DATA) return process.env.WILLYPOST_DATA;
@@ -40,6 +48,12 @@ export const RECONNECT_WARN_DAYS = 25;
 export const MISSED_GRACE_MIN = 15;
 export const DEFAULT_QUEUE_TIMES = ['09:00', '13:30', '19:00'];
 
-export function redirectUriFor(provider) {
+/**
+ * Dirección de retorno OAuth de una red. Con el carné propio, la de siempre (relé o localhost según la red).
+ * En modo central (creds.central): Google usa localhost (cliente de escritorio + PKCE) y el resto, el relé
+ * registrado en las apps de WillyPost (el que anuncia el servidor central).
+ */
+export function redirectUriFor(provider, creds = null) {
+  if (creds?.central) return provider.family === 'google' ? LOCAL_REDIRECT : (creds.relay || RELAY_URL);
   return provider.redirect === 'relay' ? RELAY_URL : LOCAL_REDIRECT;
 }

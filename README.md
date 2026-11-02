@@ -10,9 +10,10 @@ WillyPost es un programador de redes sociales **gratuito** que se instala en tu 
 - **Cola de publicaciones**: eliges tus horas y WillyPost busca el siguiente hueco libre.
 - **Claude te monta campañas**: conecta Claude Desktop o Claude Code y pídele “una campaña de Black Friday de 2 semanas”. Llega a tu calendario como borrador para que la apruebes.
 - **Modo manual**: si una red no deja publicar automáticamente, a su hora te avisa y te deja el texto y los archivos listos.
-- **Tus datos son solo tuyos**: todo se guarda en tu ordenador. Nada pasa por servidores de la Academia.
+- **Conectar es pulsar «Conectar» y aceptar**: WillyPost tiene sus propias apps registradas en Meta, TikTok, Google y LinkedIn (titular: Diving With Us SL). Ya no hace falta crear una app de desarrollador.
+- **Tus datos son solo tuyos**: todo se guarda en tu ordenador. El servicio de conexión `auth.willypost.com` solo ve los códigos de paso, al conectar, y no guarda nada.
 
-> **Web con las guías paso a paso:** <https://nuriaatlantis.github.io/willypost/>
+> **Web con las guías paso a paso:** <https://willypost.com/>
 
 ---
 
@@ -73,20 +74,17 @@ Cualquier error deja un registro en `%APPDATA%\WillyPost\logs\servidor.log` (Win
 ## Tus primeros pasos
 
 1. **Crea tu cuenta.** Email y contraseña, solo en tu ordenador. Guarda el **código de recuperación** que te muestra: sirve para restablecer la contraseña.
-2. **Conecta tu primera red** en **Redes**. Cada red te pide crear tu propio “carné” de desarrollador (gratis, una vez); las [guías](https://nuriaatlantis.github.io/willypost/guias/index.html) te llevan de la mano. Para probar, la más rápida es **Bluesky** (3 minutos).
+2. **Conecta tu primera red** en **Redes**: pulsa **Conectar** y acepta los permisos en la ventana de la red. Las [guías](https://willypost.com/guias/index.html) te enseñan qué vas a ver.
 3. **Programa tu primera publicación** con **+ Crear publicación**.
 
 | Guía | Tiempo |
 |---|---|
-| [Bluesky](https://nuriaatlantis.github.io/willypost/guias/bluesky.html) | 3 min |
-| [LinkedIn](https://nuriaatlantis.github.io/willypost/guias/linkedin.html) | 15 min |
-| [Facebook](https://nuriaatlantis.github.io/willypost/guias/facebook.html) | 25 min |
-| [Instagram](https://nuriaatlantis.github.io/willypost/guias/instagram.html) | 25 min |
-| [Threads](https://nuriaatlantis.github.io/willypost/guias/threads.html) | 20 min |
-| [YouTube Shorts](https://nuriaatlantis.github.io/willypost/guias/youtube.html) | 15 min |
-| [TikTok](https://nuriaatlantis.github.io/willypost/guias/tiktok.html) | 30 min + revisión de TikTok |
-| [Google Business Profile](https://nuriaatlantis.github.io/willypost/guias/gbp.html) | 15 min + aprobación de Google |
-| [Claude](https://nuriaatlantis.github.io/willypost/guias/claude.html) | 10 min |
+| [Facebook](https://willypost.com/guias/facebook.html) · [Instagram](https://willypost.com/guias/instagram.html) · [Threads](https://willypost.com/guias/threads.html) | 2 min cada una |
+| [TikTok](https://willypost.com/guias/tiktok.html) · [YouTube Shorts](https://willypost.com/guias/youtube.html) · [Google Business Profile](https://willypost.com/guias/gbp.html) · [LinkedIn](https://willypost.com/guias/linkedin.html) | 2 min cada una |
+| [Bluesky](https://willypost.com/guias/bluesky.html) | 3 min (contraseña de aplicación) |
+| [Claude](https://willypost.com/guias/claude.html) | 10 min |
+
+> **¿Ya no hace falta crear una app de desarrollador?** No, en cuanto cada red aprueba la app central de WillyPost: entonces conectar es pulsar **Conectar** y aceptar. Si una red todavía no está aprobada, WillyPost te pide un “carné” para ella: usa la **opción avanzada** de su guía (tu propia app, gratis) o el modo manual. Tu propia app sigue siendo una opción siempre que la prefieras: si la guardas, WillyPost la usa en lugar de la central.
 
 Ojo: **cada 30 días hay que reconectar cada red** (un clic en Redes → Reconectar). Desde el día 25, WillyPost te avisa.
 
@@ -96,7 +94,7 @@ Dentro de WillyPost, abre **Claude** y pulsa **Conectar con Claude Desktop** (o 
 
 > *“Hazme una campaña de Black Friday de 2 semanas para Instagram y TikTok.”*
 
-Por defecto, lo que crea Claude llega como **borrador “Propuesto por Claude”**: tú lo apruebas. Más detalles en la [guía de Claude](https://nuriaatlantis.github.io/willypost/guias/claude.html).
+Por defecto, lo que crea Claude llega como **borrador “Propuesto por Claude”**: tú lo apruebas. Más detalles en la [guía de Claude](https://willypost.com/guias/claude.html).
 
 ---
 
@@ -112,7 +110,7 @@ Es seguro: **tus datos se conservan** porque viven aparte, en `%APPDATA%\WillyPo
 - **Windows:** haz doble clic en **`Desinstalar WillyPost`** (también está en el menú Inicio → WillyPost).
 - **Mac:** abre la Terminal, escribe `bash ~/Library/Application\ Support/WillyPost/app/scripts/mac/desinstalar.sh` y pulsa Intro (o abre `Desinstalar WillyPost.command` de la carpeta que descomprimiste, igual que el instalador).
 
-Quita los iconos, el arranque automático y la aplicación. **Antes de borrar tus datos (publicaciones, cuentas conectadas…) te pregunta**, y tienes que escribir `BORRAR` para confirmarlo. Para quitar también los permisos en cada red social, mira [Borrar mis datos](https://nuriaatlantis.github.io/willypost/borrar-datos.html).
+Quita los iconos, el arranque automático y la aplicación. **Antes de borrar tus datos (publicaciones, cuentas conectadas…) te pregunta**, y tienes que escribir `BORRAR` para confirmarlo. Para quitar también los permisos en cada red social, mira [Borrar mis datos](https://willypost.com/borrar-datos.html).
 
 ## Preguntas frecuentes
 
@@ -120,9 +118,9 @@ Quita los iconos, el arranque automático y la aplicación. **Antes de borrar tu
 
 **¿Tiene que estar el ordenador encendido?** Sí: WillyPost vive en tu ordenador y publica a la hora programada si está encendido. Si estaba apagado, al arrancar te pregunta qué hacer con lo que se quedó atrás (publicar ahora, reprogramar u omitir).
 
-**¿Por qué tengo que crear mi propio “carné” en cada red?** Porque así tus claves son solo tuyas y no dependes de nadie. Es gratis y se hace una vez por red. Las guías van paso a paso.
+**¿Tengo que crear mi propio “carné” en cada red?** Ya no: WillyPost usa sus apps aprobadas por cada red y tú solo pulsas **Conectar**. Si prefieres que las claves sean solo tuyas, o una red aún no está aprobada, cada guía explica la opción avanzada de usar tu propia app.
 
-**¿Por qué TikTok no publica en abierto?** TikTok exige una auditoría a las apps antes de permitirles publicar en público. Con WillyPost, el vídeo llega a tu bandeja de TikTok y solo tienes que pulsar *Publicar* en la app.
+**¿Cómo publica en TikTok?** Tú eliges en cada publicación: directamente o a tu bandeja de TikTok (lo terminas en la app). TikTok exige una auditoría para publicar en abierto desde una app; hasta que la app de WillyPost la tenga, la publicación directa sale como privada.
 
 **¿Se abre en el navegador? ¿Es una web?** Se abre en tu navegador, pero funciona **en tu ordenador** (`http://localhost:4747`); no hay ninguna web de WillyPost con tus datos.
 
@@ -149,7 +147,8 @@ npm run mcp       # servidor MCP (stdio) para Claude
 - Node.js ≥ 22.13 (usa `node:sqlite`). Ejecuta siempre con `node --disable-warning=ExperimentalWarning server/index.js`.
 - Estructura y contrato entre módulos: [`SPEC.md`](SPEC.md).
 - `scripts/`: instaladores (`windows/*.ps1`, `mac/*.sh`) y `make-icons.mjs` (regenera los iconos con `sharp`).
-- `docs/`: web de documentación para **GitHub Pages** (Settings → Pages → *Deploy from a branch* → `main` / `/docs`). La URL del repositorio, la dirección de retorno OAuth y el email de contacto se cambian **solo en `docs/config.js`** (y `RELAY_URL` en `server/config.js` si cambia el dominio de Pages).
+- `docs/`: web de documentación para **GitHub Pages** con dominio propio `willypost.com` (Settings → Pages → *Deploy from a branch* → `main` / `/docs`; `docs/CNAME`). El dominio, la URL del repositorio y el email de contacto se cambian **solo en `docs/config.js`** (y en `server/config.js` y el broker si cambia el dominio). Modo central (apps aprobadas por cada red): ver [`CENTRAL.md`](CENTRAL.md).
+- `solicitudes/`: kit para pedir la aprobación de las apps centrales en Meta, TikTok, Google y LinkedIn (empieza por `solicitudes/LEEME.md`).
 - Variables de los instaladores (para pruebas): `DRYRUN=1` (solo muestra lo que haría), `WILLYPOST_APP_DIR`, `WILLYPOST_FORCE=1`, `WILLYPOST_NO_OPEN=1`.
 - **Antes de publicar** el repositorio (y cada vez que cambies los scripts), haz `git add` de los archivos modificados y da permiso de ejecución a los scripts de Mac (git no lo guarda por `.gitattributes`):
 

@@ -1,0 +1,41 @@
+# WillyPost · servidor central en Cloudflare Workers (alternativa a la versión PHP de broker/hostinger/).
+# Contrato: CENTRAL.md. Despliegue: `npx wrangler deploy` desde esta carpeta (broker/).
+#
+# Dominio: si algún día se usa otro dominio en lugar de willypost.com, se cambia SOLO aquí
+# (rutas y [vars]), en server/config.js y en docs/config.js.
+
+name = "willypost-auth"
+main = "worker.js"
+compatibility_date = "2025-09-01"
+
+# Dos dominios propios para el mismo Worker: el broker OAuth y el proxy de medios de TikTok.
+# (El dominio willypost.com tiene que estar en la misma cuenta de Cloudflare.)
+routes = [
+  { pattern = "auth.willypost.com", custom_domain = true },
+  { pattern = "media.willypost.com", custom_domain = true },
+]
+
+# Sin registros de peticiones: el broker no debe dejar rastro de tokens ni de URLs de medios.
+[observability]
+enabled = false
+
+[vars]
+SITE = "https://willypost.com"
+RELAY = "https://willypost.com/callback.html"
+MEDIA = "https://media.willypost.com"
+
+# Secretos (NUNCA aquí ni en el repositorio). Se añaden uno a uno, cuando cada red apruebe su app:
+#   npx wrangler secret put META_APP_ID
+#   npx wrangler secret put META_APP_SECRET
+#   npx wrangler secret put META_CONFIG_ID          (opcional: configuración de «Facebook Login for Business»)
+#   npx wrangler secret put IG_APP_ID
+#   npx wrangler secret put IG_APP_SECRET
+#   npx wrangler secret put THREADS_APP_ID
+#   npx wrangler secret put THREADS_APP_SECRET
+#   npx wrangler secret put TIKTOK_CLIENT_KEY
+#   npx wrangler secret put TIKTOK_CLIENT_SECRET
+#   npx wrangler secret put LINKEDIN_CLIENT_ID
+#   npx wrangler secret put LINKEDIN_CLIENT_SECRET
+#   npx wrangler secret put GOOGLE_CLIENT_ID
+#   npx wrangler secret put GOOGLE_CLIENT_SECRET    (cliente «App de escritorio»: se entrega en /config)
+# Una red cuyo par (ID + SECRET) no esté puesto no aparece en /config ni en /health.

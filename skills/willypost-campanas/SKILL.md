@@ -69,7 +69,7 @@ Para cada pieza escribe el **texto base** y, cuando proceda, un texto propio por
 - **LinkedIn**: profesional pero humano, frases cortas con líneas en blanco, hasta 3.000 caracteres, 3-5 hashtags.
 - **Facebook**: corto y conversacional; el enlace sí es clicable.
 - **Threads / Bluesky**: breve (500 / 300 caracteres), tono de conversación, 0-1 hashtags.
-- **YouTube Shorts**: título con la palabra clave primero (≤ 100 caracteres, en `options_by_network.youtube.title`) + `#Shorts`.
+- **YouTube Shorts**: título **obligatorio** con la palabra clave primero (≤ 100 caracteres, en `options_by_network.youtube.title`) + `#Shorts`, y visibilidad **obligatoria** en `options_by_network.youtube.privacy` (`public`, `unlisted` o `private`; propón una y el usuario la revisa). Sin título o sin visibilidad la pieza queda como borrador.
 - **Google Business Profile (ángulo SEO local)**: son alumnos de SEO, así que aprovecha la ficha. Texto de 150-300 palabras como máximo, **servicio + ciudad/zona** de forma natural en las primeras líneas, novedad u oferta concreta, y botón (`options_by_network.gbp.cta`: LEARN_MORE, BOOK, CALL…) con una URL a la página de servicio correspondiente. Sin hashtags ni emojis en exceso. Una foto real del negocio, no stock.
 - Si el usuario tiene guía de estilo o ejemplos de textos suyos, imítalos.
 
@@ -95,6 +95,7 @@ Añade 2-3 líneas con la lógica de la campaña y los supuestos. Pregunta si lo
 - `create_campaign` no se detiene por errores: devuelve las piezas creadas y las incidencias. Corrige las incidencias (límite diario → mueve de día con `get_free_slots`; red no conectada; medio inexistente) y créalas con `create_post` usando `campaign` con el id de la campaña.
 - Para cambios posteriores usa `update_post`; para quitar piezas, `delete_post` (solo si no están publicadas, y confirma antes de borrar algo que no creaste tú).
 - Si una red no admite el tipo por API (p. ej. carrusel en TikTok, story en Threads), la pieza se crea en **modo manual**: avisa al usuario de que a su hora saltará una notificación para publicarla a mano.
+- **TikTok (reglas de TikTok)**: tú NO eliges la privacidad («quién puede verlo»), ni permitir comentarios/dúos/stitch, ni la divulgación de contenido comercial («Tu marca» / «Contenido de marca»): no los pongas en `options_by_network.tiktok` (da error). Solo puedes indicar `tiktok_mode` (`direct` o `inbox`). Las piezas de TikTok en modo directo quedan como borrador **"Propuesto por Claude"** aunque lleven fecha: en el resumen dile al usuario que las abra en WillyPost, elija esas opciones y pulse **Programar**. Nunca añadas marcas de agua, logos ni el nombre de WillyPost al vídeo o a las fotos.
 
 ## 8. Cierra con resumen y recordatorios
 
@@ -105,6 +106,7 @@ Termina siempre con:
    - Modo `schedule`: "Ya están programadas. Revísalas en el calendario de WillyPost."
 3. Que el **ordenador debe estar encendido** a la hora de publicar (si no, WillyPost te preguntará qué hacer con las perdidas) y que las conexiones de las redes se **reconectan cada 30 días**.
 4. Los envíos en modo manual, si los hay.
+5. Si hay piezas de TikTok en modo directo: "En TikTok tienes que abrir cada pieza y elegir tú quién puede verla, si permites comentarios, dúos y stitch, y si es contenido comercial. Después pulsa **Programar**."
 
 ## Lo que NO puedes hacer (lo hace el alumno)
 

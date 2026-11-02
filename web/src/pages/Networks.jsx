@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Plug, RefreshCw, Trash2, Hand, KeyRound, ExternalLink, BookOpen, Check, X, Info, TriangleAlert, ShieldCheck, Link2, Plus, PartyPopper,
+  Plug, RefreshCw, Trash2, Hand, KeyRound, ExternalLink, BookOpen, Check, X, Info, TriangleAlert, ShieldCheck, Link2, Plus, PartyPopper, Sparkles,
 } from 'lucide-react';
 import { api } from '../lib/api.js';
 import { useApp } from '../lib/store.jsx';
@@ -89,12 +89,16 @@ export default function Networks({ query }) {
   };
 
   const connectedCount = app.accounts.length;
+  // ¿Alguna red se conecta sin carné (modo central)? Cambia el mensaje de bienvenida.
+  const anyCentral = app.networks.some((n) => n.central);
 
   return (
     <div>
       {confirmEl}
       <PageHeader eyebrow="Tus redes sociales" title="Conecta tus" pill="redes"
-        sub="Cada red se conecta con tu propio “carné” de desarrollador: es gratis, lo creas una vez y las claves se quedan solo en tu ordenador." />
+        sub={anyCentral
+          ? 'Pulsa “Conectar”, acepta los permisos en la red y listo: no tienes que configurar nada. Tus publicaciones y tus datos se quedan en tu ordenador.'
+          : 'Cada red se conecta con tu propio “carné” de desarrollador: es gratis, lo creas una vez y las claves se quedan solo en tu ordenador.'} />
 
       <div className="notice info big">
         <Info size={20} />
@@ -107,6 +111,8 @@ export default function Networks({ query }) {
             const accs = app.accounts.filter((a) => a.network === n.id);
             const isPwd = n.authType === 'apppassword';
             const configured = isPwd || n.credsConfigured;
+            // Sin carné: la red se conecta con la app de WillyPost (el carné propio, si se guarda, tiene preferencia).
+            const easy = !isPwd && !n.credsConfigured && n.central;
             return (
               <article className="card net-card" key={n.id}>
                 <header>
@@ -155,16 +161,30 @@ export default function Networks({ query }) {
                 <footer>
                   {isPwd ? (
                     <Button icon={Plug} onClick={() => setBsky({ network: n })}>{accs.length ? 'Añadir otra cuenta' : 'Conectar con contraseña de aplicación'}</Button>
+                  ) : easy ? (
+                    <div className="net-easy">
+                      <Button icon={Plug} loading={busy === n.id} onClick={() => startOAuth(n)}>{accs.length ? 'Añadir otra cuenta' : `Conectar ${n.label}`}</Button>
+                      <small><Sparkles size={14} /> Sin configurar nada: aceptas y listo.</small>
+                    </div>
                   ) : configured ? (
                     <>
                       <Button icon={Plug} loading={busy === n.id} onClick={() => startOAuth(n)}>{accs.length ? 'Añadir otra cuenta' : `Conectar ${n.label}`}</Button>
-                      <Button variant="ghost" size="sm" icon={KeyRound} onClick={() => setWizard(n)}>Mi carné</Button>
+                      <Button variant="ghost" size="sm" icon={KeyRound} onClick={() => setWizard(n)}>{n.central ? 'Mi propia app' : 'Mi carné'}</Button>
                     </>
                   ) : (
                     <Button icon={KeyRound} onClick={() => setWizard(n)}>Configura tu carné</Button>
                   )}
                   <button className="link" onClick={() => setManual(n)}><Hand size={14} /> Añadir en modo manual</button>
                 </footer>
+                {easy ? (
+                  <details className="opts net-adv">
+                    <summary><KeyRound size={15} /> Opción avanzada: usar tu propia app de desarrollador</summary>
+                    <div className="opts-body">
+                      <p className="muted">No te hace falta. Es solo para quien ya tiene (o quiere crear) su propia app en el portal de desarrolladores de {n.label}. Si la guardas, WillyPost la usará en lugar de la suya.</p>
+                      <div><Button variant="secondary" size="sm" icon={KeyRound} onClick={() => setWizard(n)}>Configurar mi propia app</Button></div>
+                    </div>
+                  </details>
+                ) : null}
               </article>
             );
           })}
@@ -230,6 +250,15 @@ function CredentialWizard({ network, networks, creds, onClose, onSaved }) {
         </>
       )}>
       <div className="wizard">
+        {network.central ? (
+          <div className="notice info">
+            <Sparkles size={18} />
+            <div>
+              <b>No lo necesitas para conectar {network.label}:</b> ya se conecta sin configurar nada.
+              Usa tu propia app solo si lo prefieres. Mientras la tengas guardada, WillyPost la usará en lugar de la suya; si la quitas, vuelves a conectar sin carné.
+            </div>
+          </div>
+        ) : null}
         <div className="wz-step">
           <i>1</i>
           <div>

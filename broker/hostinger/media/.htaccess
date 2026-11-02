@@ -1,0 +1,27 @@
+# WillyPost · servidor central · todas las direcciones van a index.php, siempre por HTTPS.
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Forzar HTTPS (también detrás de un proxy/CDN que avise con X-Forwarded-Proto)
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Todo lo demás → index.php (que decide qué es válido y responde 404 al resto)
+  RewriteRule ^index\.php$ - [L]
+  RewriteRule ^ index.php [L]
+</IfModule>
+
+# Que los buscadores no lo indexen
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+  Header always unset X-Powered-By
+</IfModule>
+
+# Por si alguien sube aquí por error el archivo de claves: nunca se sirve
+<FilesMatch "^(willypost-config|config)\.php$">
+  Require all denied
+</FilesMatch>

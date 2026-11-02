@@ -172,7 +172,8 @@ test('tiktok: publish directo con trozos, creator_info y privacidad SELF_ONLY', 
     const res = await tiktok.publish({
       account: { access_token: 'tok', meta: {} }, creds: {}, type: 'reel', caption: 'Mi vídeo #seo',
       media: [{ id: 1, path: file, mime: 'video/quicktime', kind: 'video', original_name: 'v.mov' }],
-      options: { tiktok_mode: 'direct' }, ctx,
+      // La privacidad la elige siempre la persona (reglas de TikTok: sin valor por defecto).
+      options: { tiktok_mode: 'direct', tiktok_privacy: 'SELF_ONLY' }, ctx,
     });
     const init = bodyJson(calls[1]);
     assert.equal(init.post_info.privacy_level, 'SELF_ONLY');
@@ -184,7 +185,7 @@ test('tiktok: publish directo con trozos, creator_info y privacidad SELF_ONLY', 
     assert.deepEqual(puts.map((p) => p.body.length), [4, 4, 6]);
     assert.equal(puts[0].headers['Content-Type'], 'video/quicktime');
     assert.equal(res.url, 'https://www.tiktok.com/@willy/video/7000000000000000001');
-    assert.match(res.warning, /privado/);
+    assert.match(res.warning, /Solo yo/);
   } finally {
     Object.assign(ttTuning, saved);
   }
@@ -202,7 +203,7 @@ test('tiktok: modo directo con app sin auditar cae a la bandeja con aviso', asyn
   };
   const res = await tiktok.publish({
     account: { access_token: 't', meta: {} }, creds: {}, type: 'reel', caption: 'c',
-    media: [{ path: file, mime: 'video/mp4', kind: 'video' }], options: { tiktok_mode: 'direct' }, ctx,
+    media: [{ path: file, mime: 'video/mp4', kind: 'video' }], options: { tiktok_mode: 'direct', tiktok_privacy: 'SELF_ONLY' }, ctx,
   });
   assert.match(res.warning, /no está auditada/);
   assert.match(res.warning, /bandeja/);

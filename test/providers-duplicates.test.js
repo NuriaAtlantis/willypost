@@ -159,7 +159,7 @@ test('oauth: reconectar mientras se está en OTRA cuenta de la red NO crea una c
   };
 
   // 1) otra cuenta distinta
-  let { authUrl } = oauth.startOAuth({ id: userId }, 'tiktok', accId);
+  let { authUrl } = await oauth.startOAuth({ id: userId }, 'tiktok', accId);
   let st = new URL(authUrl).searchParams.get('state');
   mockTikTok('NEW');
   const r1 = await oauth.handleCallback({ code: 'c', state: st });
@@ -172,7 +172,7 @@ test('oauth: reconectar mientras se está en OTRA cuenta de la red NO crea una c
   assert.equal(get('SELECT COUNT(*) AS n FROM oauth_pending WHERE state = ?', st).n, 0);
 
   // 2) la misma cuenta: sí se actualiza
-  ({ authUrl } = oauth.startOAuth({ id: userId }, 'tiktok', accId));
+  ({ authUrl } = await oauth.startOAuth({ id: userId }, 'tiktok', accId));
   st = new URL(authUrl).searchParams.get('state');
   mockTikTok('OLD');
   assert.equal(await oauth.handleCallback({ code: 'c', state: st }), '/#/redes?ok=tiktok');
@@ -180,7 +180,7 @@ test('oauth: reconectar mientras se está en OTRA cuenta de la red NO crea una c
   assert.equal(get("SELECT COUNT(*) AS n FROM accounts WHERE network = 'tiktok'").n, 1);
 
   // 3) conexión normal (sin reconectar) de una cuenta distinta sigue añadiéndola
-  ({ authUrl } = oauth.startOAuth({ id: userId }, 'tiktok'));
+  ({ authUrl } = await oauth.startOAuth({ id: userId }, 'tiktok'));
   st = new URL(authUrl).searchParams.get('state');
   mockTikTok('OTRA');
   assert.equal(await oauth.handleCallback({ code: 'c', state: st }), '/#/redes?ok=tiktok');

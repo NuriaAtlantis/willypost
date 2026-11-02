@@ -9,12 +9,16 @@
 <title>Volviendo a WillyPost…</title>
 <link rel="icon" href="assets/favicon.png">
 <!--
-  Relé OAuth de WillyPost.
-  Meta (Facebook, Instagram, Threads) y LinkedIn exigen una dirección de retorno HTTPS. Esta página, alojada en GitHub Pages,
-  recibe ?code=…&state=… y los reenvía, tal cual, a http://localhost:4747/oauth/callback (tu propio ordenador).
+  Relé OAuth de WillyPost (https://willypost.com/callback.html).
+  Meta (Facebook, Instagram, Threads), LinkedIn y TikTok (en modo central) exigen una dirección de retorno HTTPS. Esta página,
+  alojada en GitHub Pages con el dominio willypost.com, recibe ?code=…&state=… y los reenvía, tal cual, a
+  http://localhost:4747/oauth/callback (el ordenador de quien está conectando).
   - No usa analítica, ni fuentes externas, ni scripts externos, ni cookies, ni almacenamiento.
   - El destino es FIJO (no se puede cambiar con parámetros): no es un redirector abierto.
-  - El "code" por sí solo no sirve de nada: hace falta el secreto de tu app, que nunca sale de tu ordenador.
+  - El "code" por sí solo no sirve de nada: para canjearlo hace falta la clave secreta de la app (la tuya, que está en tu
+    ordenador, o la de la app central de WillyPost, que solo conoce el servicio de conexión auth.willypost.com) y, además,
+    WillyPost comprueba el "state" que generó al pulsar Conectar.
+  - Solo usa rutas relativas (assets/…), así que funciona igual en willypost.com que en cualquier otra dirección.
 -->
 <style>
   :root { color-scheme: light; }
@@ -49,7 +53,7 @@
     Comprueba que <b>WillyPost está abierto</b> en este mismo ordenador (haz doble clic en su icono) y pulsa el botón de arriba.
     Si sigue sin ir, vuelve a WillyPost → Redes y pulsa <b>Conectar</b> otra vez.
   </div>
-  <p class="small">Esta página solo reenvía a <b>localhost</b> (tu ordenador). No guarda nada ni lo envía a ningún sitio.</p>
+  <p class="small">Esta página solo reenvía a <b>localhost</b> (tu ordenador). No guarda nada ni lo envía a ningún sitio. <a href="privacidad.html" style="color:#4A73AA">Privacidad</a></p>
   <noscript><p>Necesitas activar JavaScript para que te lleve de vuelta automáticamente. También puedes pulsar el botón “Abrir WillyPost” después de copiar la dirección completa de esta página y pegarla cambiando <b>https://…/callback.html</b> por <b>http://localhost:4747/oauth/callback</b>.</p></noscript>
 </main>
 <script>
@@ -64,7 +68,7 @@
     // Alguien ha abierto la página sin venir de una red social
     $('title').textContent = 'Esta página es solo un puente';
     $('spin').style.display = 'none';
-    $('msg').textContent = 'Sirve para que redes como Facebook, Instagram, Threads o LinkedIn puedan devolverte a WillyPost. No tienes que hacer nada aquí: abre WillyPost y conecta tu red desde Redes.';
+    $('msg').textContent = 'Sirve para que redes como Facebook, Instagram, Threads, LinkedIn o TikTok puedan devolverte a WillyPost. No tienes que hacer nada aquí: abre WillyPost y conecta tu red desde Redes.';
     return;
   }
 

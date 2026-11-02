@@ -1,0 +1,6 @@
+# Claves reales del servidor central: NUNCA al repositorio.
+willypost-config.php
+config.php
+# Cloudflare (alternativa): secretos locales y caché de wrangler
+.dev.vars
+.wrangler/

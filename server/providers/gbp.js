@@ -69,18 +69,22 @@ export default {
   limits: { captionMax: 1500, carouselMax: 1, videoMaxSec: 0 },
   needsApproval:
     'Google tiene que aprobar el acceso a su API (ficha verificada con más de 60 días). Mientras tanto, se publica en modo manual.',
+  centralNeedsApproval:
+    'Mientras Google termina de aprobar WillyPost, si la publicación no sale por API pasa a modo manual: te aviso y la publicas en dos clics.',
+  centralNotes:
+    'Publica novedades en tu ficha de Google (texto o 1 foto, con botón opcional). Necesitas ser propietario o administrador de la ficha.',
   notes:
     'Publica novedades en tu ficha de Google (texto o 1 foto, con botón opcional). Usa las mismas credenciales de Google que YouTube.',
   optionsSchema: [
     { key: 'cta', label: 'Botón', type: 'cta', actionTypes: CTA_TYPES },
   ],
 
-  getAuthUrl({ creds, redirectUri, state }) {
-    return googleAuthUrl({ creds, redirectUri, state, scopes: [GBP_SCOPE] });
+  getAuthUrl({ creds, redirectUri, state, codeChallenge }) {
+    return googleAuthUrl({ creds, redirectUri, state, scopes: [GBP_SCOPE], codeChallenge });
   },
 
-  async exchangeCode({ creds, redirectUri, code }) {
-    const tok = await googleExchange({ creds, redirectUri, code, requiredScopes: [GBP_SCOPE] });
+  async exchangeCode({ creds, redirectUri, code, codeVerifier }) {
+    const tok = await googleExchange({ creds, redirectUri, code, requiredScopes: [GBP_SCOPE], codeVerifier });
     const common = {
       access_token: tok.access_token,
       refresh_token: tok.refresh_token,

@@ -5,14 +5,17 @@ import { recomputeStatus } from '../posts.js';
 import { NETWORK_IDS, networkInfo, getProvider, providers } from '../providers/index.js';
 import { serializeAccount, saveCandidate } from '../accounts.js';
 import { startOAuth, handleCallback, getPendingCandidates, pickCandidates } from '../oauth.js';
+import { loadCentralConfig, centralCredsFor } from '../central.js';
 
 export const accountsRouter = express.Router();
 
 const FAMILIES = ['meta', 'instagram', 'threads', 'google', 'tiktok', 'linkedin'];
 
-accountsRouter.get('/api/networks', requireAuth, (req, res) => {
+accountsRouter.get('/api/networks', requireAuth, async (req, res) => {
   const configured = new Set(all('SELECT family FROM credentials WHERE user_id = ?', req.user.id).map((r) => r.family));
-  res.json(NETWORK_IDS.map((id) => networkInfo(id, configured)));
+  await loadCentralConfig(); // caché de 1 h; sin conexión vale la última copia guardada
+  const centralFamilies = new Set(['meta', 'instagram', 'threads', 'google', 'tiktok', 'linkedin'].filter((f) => centralCredsFor(f)));
+  res.json(NETWORK_IDS.map((id) => networkInfo(id, configured, centralFamilies)));
 });
 
 // ---------- Credenciales ("carnés") ----------
@@ -84,7 +87,7 @@ accountsRouter.post('/api/accounts/connect/:network', requireAuth, async (req, r
     const acc = saveCandidate(req.user.id, network, c);
     return res.json({ account: serializeAccount(acc) });
   }
-  res.json(startOAuth(req.user, network));
+  res.json(await startOAuth(req.user, network));
 });
 
 accountsRouter.get('/api/accounts/pending/:id', requireAuth, (req, res) => {
@@ -124,7 +127,7 @@ accountsRouter.post('/api/accounts/:id/reconnect', requireAuth, async (req, res)
     const c = await provider.connectWithPassword({ handle, appPassword });
     return res.json({ account: serializeAccount(saveCandidate(req.user.id, acc.network, c)) });
   }
-  res.json(startOAuth(req.user, acc.network, acc.id));
+  res.json(await startOAuth(req.user, acc.network, acc.id));
 });
 
 accountsRouter.delete('/api/accounts/:id', requireSession, (req, res) => {

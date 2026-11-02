@@ -156,10 +156,10 @@ before(() => {
 
 const pendingFor = (state) => get('SELECT * FROM oauth_pending WHERE state = ?', state);
 
-test('oauth: state aleatorio y distinto en cada intento; PKCE de TikTok = SHA256 en HEXADECIMAL del verifier guardado', () => {
+test('oauth: state aleatorio y distinto en cada intento; PKCE de TikTok = SHA256 en HEXADECIMAL del verifier guardado', async () => {
   const states = new Set();
   for (let i = 0; i < 20; i++) {
-    const { authUrl } = oauth.startOAuth({ id: userId }, 'tiktok');
+    const { authUrl } = await oauth.startOAuth({ id: userId }, 'tiktok');
     const u = new URL(authUrl);
     states.add(u.searchParams.get('state'));
     assert.equal(u.searchParams.get('redirect_uri'), LOCAL_REDIRECT);
@@ -186,7 +186,7 @@ test('oauth: un "state" desconocido, reutilizado o caducado no conecta nada y av
   assert.match(await msg({ code: 'x' }), /caducado o ya se usó/);
 
   // caducado (>30 min)
-  const { authUrl } = oauth.startOAuth({ id: userId }, 'tiktok');
+  const { authUrl } = await oauth.startOAuth({ id: userId }, 'tiktok');
   const st = new URL(authUrl).searchParams.get('state');
   run('UPDATE oauth_pending SET created_at = ? WHERE state = ?', new Date(Date.now() - 31 * 60000).toISOString(), st);
   assert.match(await msg({ code: 'x', state: st }), /pasaron más de 30 minutos/);
@@ -194,7 +194,7 @@ test('oauth: un "state" desconocido, reutilizado o caducado no conecta nada y av
 });
 
 test('oauth: el usuario cancela → mensaje en español sin jerga; se borra el pendiente', async () => {
-  const { authUrl } = oauth.startOAuth({ id: userId }, 'tiktok');
+  const { authUrl } = await oauth.startOAuth({ id: userId }, 'tiktok');
   const st = new URL(authUrl).searchParams.get('state');
   const r = await oauth.handleCallback({ state: st, error: 'access_denied', error_description: 'The user denied the request' });
   const m = decodeURIComponent(r.split('error=')[1]);
@@ -204,7 +204,7 @@ test('oauth: el usuario cancela → mensaje en español sin jerga; se borra el p
 });
 
 test('oauth: conexión correcta guarda la cuenta, usa code_verifier y NO se puede reutilizar el mismo state', async () => {
-  const { authUrl } = oauth.startOAuth({ id: userId }, 'tiktok');
+  const { authUrl } = await oauth.startOAuth({ id: userId }, 'tiktok');
   const st = new URL(authUrl).searchParams.get('state');
   const verifier = pendingFor(st).code_verifier;
   globalThis.fetch = async (url, init = {}) => {
@@ -224,7 +224,7 @@ test('oauth: conexión correcta guarda la cuenta, usa code_verifier y NO se pued
 });
 
 test('oauth: un fallo interno (no de la red social) no enseña el error técnico en inglés al alumno', async () => {
-  const { authUrl } = oauth.startOAuth({ id: userId }, 'tiktok');
+  const { authUrl } = await oauth.startOAuth({ id: userId }, 'tiktok');
   const st = new URL(authUrl).searchParams.get('state');
   run("DELETE FROM credentials WHERE family = 'tiktok'"); // provoca un TypeError dentro del proveedor
   const r = decodeURIComponent((await oauth.handleCallback({ code: 'C', state: st })).split('error=')[1]);

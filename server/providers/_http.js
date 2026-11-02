@@ -57,20 +57,22 @@ export async function fetchJson(url, opts = {}) {
   const text = await res.text();
   let body;
   try { body = text ? JSON.parse(text) : {}; } catch { body = text; }
-  if (!res.ok) {
-    const s = res.status;
-    const msg = pickMessage(body) || `HTTP ${s}`;
-    // Solo se marca "reconectar" lo que lo es de verdad: un 401, o un 400/403 que habla del token/OAuth.
-    const tokenish = /(invalid|expired|revoked|malformed|missing)[^.]{0,30}(token|credential|grant)|(token|credential|grant)[^.]{0,30}(invalid|expired|revoked)|oauth/i.test(String(msg));
-    const auth = s === 401 || ((s === 400 || s === 403) && tokenish);
-    let text2;
-    if (s === 401) text2 = `${label} ha rechazado tu conexión. Reconecta la cuenta en Redes.`;
-    else if (s === 429) text2 = `${label} te pide ir más despacio (demasiadas peticiones). Lo reintentaremos en unos minutos.`;
-    else if (s >= 500) text2 = `${label} está teniendo problemas ahora mismo (error ${s}). Lo reintentaremos en unos minutos.`;
-    else text2 = `${label}: ${msg}`;
-    throw new ProviderError(text2, { auth, retryable: s >= 500 || s === 429, status: s, raw: body, rateLimited: s === 429 });
-  }
+  if (!res.ok) throw httpError(res.status, body, label);
   return body;
+}
+
+/** ProviderError para una respuesta HTTP no correcta (status + cuerpo ya leído). La usan fetchJson y el modo central. */
+export function httpError(s, body, label = 'la red social') {
+  const msg = pickMessage(body) || `HTTP ${s}`;
+  // Solo se marca "reconectar" lo que lo es de verdad: un 401, o un 400/403 que habla del token/OAuth.
+  const tokenish = /(invalid|expired|revoked|malformed|missing)[^.]{0,30}(token|credential|grant)|(token|credential|grant)[^.]{0,30}(invalid|expired|revoked)|oauth/i.test(String(msg));
+  const auth = s === 401 || ((s === 400 || s === 403) && tokenish);
+  let text2;
+  if (s === 401) text2 = `${label} ha rechazado tu conexión. Reconecta la cuenta en Redes.`;
+  else if (s === 429) text2 = `${label} te pide ir más despacio (demasiadas peticiones). Lo reintentaremos en unos minutos.`;
+  else if (s >= 500) text2 = `${label} está teniendo problemas ahora mismo (error ${s}). Lo reintentaremos en unos minutos.`;
+  else text2 = `${label}: ${msg}`;
+  return new ProviderError(text2, { auth, retryable: s >= 500 || s === 429, status: s, raw: body, rateLimited: s === 429 });
 }
 
 /**
@@ -89,14 +91,19 @@ export function ambiguousPublish(e, label) {
 }
 
 /** Error al canjear el código OAuth: explica qué revisar (casi siempre el ID/secreto o la URI de redirección). */
-export function oauthExchangeError(label, e, { appName = `la app de ${label}`, extra = '' } = {}) {
+export function oauthExchangeError(label, e, { appName = `la app de ${label}`, extra = '', central = false } = {}) {
   if (!(e instanceof ProviderError)) return e;
   if (e.retryable && !e.status) return e; // sin internet: el mensaje ya vale
+  if (e.central) return e; // error del servidor central de WillyPost: ya trae su mensaje
   const raw = e.raw && typeof e.raw === 'object' ? e.raw : {};
   const detail = raw.error?.message || raw.error_message || raw.error_description || (typeof raw.error === 'string' ? raw.error : '') || '';
   const out = new ProviderError(
-    `${label} no ha aceptado la conexión${detail ? ` (${String(detail).slice(0, 160)})` : ''}. Revisa que el ID y el secreto de ${appName} estén bien copiados en tu carné, ` +
-      `que la dirección de redirección sea exactamente la que te indica el asistente${extra}, y vuelve a pulsar Conectar.`,
+    central
+      // Modo central: el alumno no tiene carné que revisar.
+      ? `${label} no ha aceptado la conexión${detail ? ` (${String(detail).slice(0, 160)})` : ''}. Vuelve a pulsar Conectar y acepta todos los permisos; ` +
+        'si se repite, espera unos minutos y prueba otra vez.'
+      : `${label} no ha aceptado la conexión${detail ? ` (${String(detail).slice(0, 160)})` : ''}. Revisa que el ID y el secreto de ${appName} estén bien copiados en tu carné, ` +
+        `que la dirección de redirección sea exactamente la que te indica el asistente${extra}, y vuelve a pulsar Conectar.`,
     { auth: true, status: e.status, raw: e.raw },
   );
   out.cause = e;

@@ -1,7 +1,9 @@
 import { all, get, run, now, parseJson } from './db.js';
 import { MISSED_GRACE_MIN, RECONNECT_WARN_DAYS } from './config.js';
 import { getProvider } from './providers/index.js';
-import { getCreds, providerAccount, accountStatus, ensureFreshToken, daysLeft } from './accounts.js';
+import { credsForAccount, providerAccount, accountStatus, ensureFreshToken, daysLeft } from './accounts.js';
+import { mediaProxyUrl } from './central.js';
+import { rememberCreatorInfo } from './compliance.js';
 import { providerMediaItem, toJpeg } from './media.js';
 import { publicUrl } from './share.js';
 import { recomputeStatus, effectiveCaption } from './posts.js';
@@ -111,8 +113,16 @@ export async function publishTarget(targetId) {
         'SELECT m.* FROM post_media pm JOIN media m ON m.id = pm.media_id WHERE pm.post_id = ? ORDER BY pm.position',
         post.id,
       ).map(providerMediaItem);
+      const creds = await credsForAccount(acc, provider.family);
       const ctx = {
         publicUrl,
+        // Fotos de TikTok (PULL_FROM_URL) en modo central: TikTok solo descarga de dominios verificados, así que
+        // la URL del túnel se sirve a través del proxy de medios de WillyPost. Con carné propio no se define
+        // y el proveedor usa publicUrl.
+        verifiedUrl: creds?.central ? async (item) => mediaProxyUrl(await publicUrl(item)) : undefined,
+        central: !!creds?.central,
+        // Lo que TikTok dice de la cuenta justo antes de publicar refresca la caché del compositor.
+        onCreatorInfo: (info) => rememberCreatorInfo(acc.id, info),
         toJpeg,
         sleep,
         log: (...a) => console.log(`[${acc.network}]`, ...a),
@@ -120,7 +130,7 @@ export async function publishTarget(targetId) {
       const result = await withTimeout(
         Promise.resolve().then(() => provider.publish({
           account: providerAccount(acc),
-          creds: getCreds(acc.user_id, provider.family),
+          creds,
           type: post.type,
           caption: effectiveCaption(post, t),
           media,

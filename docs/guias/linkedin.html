@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Conecta LinkedIn con WillyPost</title>
-<meta name="description" content="Guía paso a paso para conectar tu perfil de LinkedIn con WillyPost creando tu propia app de desarrollador. Unos 15 minutos.">
+<meta name="description" content="Conecta tu perfil de LinkedIn con WillyPost: pulsa Conectar y acepta. Incluye la opción avanzada de usar tu propia app de desarrollador.">
 <meta name="theme-color" content="#4A73AA">
 <meta property="og:title" content="Conecta LinkedIn con WillyPost">
-<meta property="og:description" content="Guía paso a paso para conectar tu perfil de LinkedIn con WillyPost creando tu propia app de desarrollador. Unos 15 minutos.">
+<meta property="og:description" content="Conecta tu perfil de LinkedIn con WillyPost: pulsa Conectar y acepta. Incluye la opción avanzada de usar tu propia app de desarrollador.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://nuriaatlantis.github.io/willypost/assets/icon-512.png">
+<meta property="og:image" content="https://willypost.com/assets/icon-512.png">
 <link rel="icon" href="../assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="apple-touch-icon" href="../assets/icon-192.png">
@@ -29,7 +29,7 @@
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
     <nav class="main" id="menu" aria-label="Principal">
       <a href="../index.html">Inicio</a><a href="../index.html#instalar">Cómo se instala</a><a href="../guias/index.html" aria-current="page">Guías</a><a href="../guias/claude.html">Claude</a><a href="../index.html#faq">Preguntas</a>
-      <a class="btn btn-sm" data-repo="zip" href="#">Descargar</a>
+      <a class="btn btn-sm" data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>
     </nav>
   </div>
 </header>
@@ -38,23 +38,30 @@
   <div class="crumbs"><a href="../index.html">Inicio</a> › <a href="index.html">Guías</a> › LinkedIn</div>
   <span class="eyebrow">Guía paso a paso</span>
   <h1>Conecta tu <span class="pill">LinkedIn</span></h1>
-  <p class="lead">Publica texto, imágenes, carruseles y vídeo en tu perfil personal de LinkedIn.</p>
-  <ul class="meta"><li><span>Tiempo:</span> 15 minutos</li><li><span>Dificultad:</span> Fácil</li><li><span>Coste:</span> gratis</li></ul>
+  <p class="lead">Publica texto, imágenes, carruseles y vídeo en tu perfil personal de LinkedIn. Pulsas «Conectar», aceptas y listo.</p>
+  <ul class="meta"><li><span>Tiempo:</span> 2 minutos</li><li><span>Dificultad:</span> Fácil</li><li><span>Coste:</span> gratis</li></ul>
 </div></section>
 <section class="guide-body"><div class="container narrow">
+<h2>Lo normal: pulsa «Conectar» y acepta</h2>
+<ul class="checklist"><li>Un <strong>perfil personal de LinkedIn</strong> (las Páginas de empresa no están incluidas).</li><li>WillyPost <strong>instalado y abierto</strong> en tu ordenador.</li></ul>
+<ol class="steps"><li>En WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → LinkedIn, pulsa <span class="btnlabel">Conectar LinkedIn</span>. Se abre LinkedIn en tu navegador.</li><li>Inicia sesión si hace falta. LinkedIn te dice que <strong>WillyPost</strong> quiere usar tu nombre y foto y crear publicaciones en tu nombre: pulsa <span class="btnlabel">Permitir</span>.</li><li>Durante un segundo verás la página <strong>«Volviendo a WillyPost…»</strong> de willypost.com, que te devuelve a tu ordenador. Si ves «No se puede acceder a este sitio», es que WillyPost estaba cerrado: ábrelo y recarga la pestaña (F5).</li><li>Tu perfil aparece conectado en Redes. ¡Listo!</li></ol>
+<p class="small muted">Cada conexión dura 30 días: desde el día 25 WillyPost te avisa y, en <strong>Redes → Reconectar</strong>, repites estos pasos en un momento.</p>
+<div class="callout"><span class="t">¿WillyPost te pide un «carné» en vez de dejarte conectar?</span><p>Eso significa que la app de WillyPost todavía no está disponible para LinkedIn (la red aún la está revisando) o que tienes guardado tu propio carné. Tienes dos salidas: usar la <a href="#avanzada">opción avanzada</a> de abajo, o añadir LinkedIn en <strong>modo manual</strong> (WillyPost te avisa a la hora y publicas tú en dos clics).</p></div>
+<div class="advanced-intro" id="avanzada"><span class="eyebrow">Opcional</span><h2>Opción avanzada: usa tu propia app</h2><p>Solo la necesitas si la red todavía no está disponible con la app de WillyPost, o si prefieres que tus claves sean solo tuyas. Creas gratis tu propia app de desarrollador (tu “carné”), la pegas en WillyPost → Redes → <strong>Mi carné</strong> / <strong>Configura tu carné</strong>, y WillyPost la usa en lugar de la app central. Con tu propia app, el servicio de conexión <code>auth.willypost.com</code> no interviene.</p></div>
+<div class="advanced">
 <h2>Antes de empezar</h2>
 <ul class="checklist"><li>Tu cuenta personal de <strong>LinkedIn</strong>.</li><li>Una <strong>Página de LinkedIn</strong> que administres. LinkedIn obliga a asociar toda app de desarrollador a una Página. Si no tienes ninguna, en el primer paso creas una sencilla (2 minutos).</li><li>WillyPost abierto en tu ordenador.</li></ul>
 <div class="callout "><span class="t">Publicas en tu perfil personal</span><p>WillyPost publica en tu <strong>perfil personal</strong> de LinkedIn. Las Páginas de empresa exigen una aprobación especial de LinkedIn (solo para organizaciones registradas), así que no se pueden usar con este método.</p></div>
 <h2>Crea una Página de LinkedIn (si no tienes)</h2>
 <ol class="steps" style="counter-reset: st 0"><li>En LinkedIn, pulsa el icono <span class="btnlabel">Para empresas</span> (arriba a la derecha) → <span class="btnlabel">Crear una página de empresa</span>.</li><li>Elige <strong>Empresa pequeña</strong>. Pon un nombre (puede ser tu nombre o el de tu proyecto), una URL pública y el sector. Sube un logo, marca la casilla de que estás autorizado/a y pulsa <span class="btnlabel">Crear página</span>.</li></ol>
 <h2>Crea la app de desarrollador</h2>
-<ol class="steps" style="counter-reset: st 2"><li>Entra en <a href="https://www.linkedin.com/developers/apps/new" target="_blank" rel="noopener">linkedin.com/developers/apps/new</a>.</li><li><strong>App name:</strong> WillyPost de [tu nombre]. <strong>LinkedIn Page:</strong> escribe el nombre de tu Página y selecciónala.</li><li><strong>Privacy policy URL:</strong><div class="copybox"><span class="lbl">URL de la política de privacidad</span><div class="row"><code data-fill="privacyUrl">https://nuriaatlantis.github.io/willypost/privacidad.html</code><button type="button" aria-label="Copiar URL de la política de privacidad">Copiar</button></div></div></li><li><strong>App logo:</strong> sube una imagen cuadrada. Puedes usar el icono de WillyPost: <a href="../assets/icon-512.png">descargar el icono</a> (clic derecho → Guardar imagen como).</li><li>Marca la casilla de las condiciones y pulsa <span class="btnlabel">Create app</span>.</li></ol>
+<ol class="steps" style="counter-reset: st 2"><li>Entra en <a href="https://www.linkedin.com/developers/apps/new" target="_blank" rel="noopener">linkedin.com/developers/apps/new</a>.</li><li><strong>App name:</strong> WillyPost de [tu nombre]. <strong>LinkedIn Page:</strong> escribe el nombre de tu Página y selecciónala.</li><li><strong>Privacy policy URL:</strong><div class="copybox"><span class="lbl">URL de la política de privacidad</span><div class="row"><code data-fill="privacyUrl">https://willypost.com/privacidad.html</code><button type="button" aria-label="Copiar URL de la política de privacidad">Copiar</button></div></div></li><li><strong>App logo:</strong> sube una imagen cuadrada. Puedes usar el icono de WillyPost: <a href="../assets/icon-512.png">descargar el icono</a> (clic derecho → Guardar imagen como).</li><li>Marca la casilla de las condiciones y pulsa <span class="btnlabel">Create app</span>.</li></ol>
 <h2>Verifica la Página</h2>
 <ol class="steps" style="counter-reset: st 7"><li>En tu app, abre la pestaña <span class="btnlabel">Settings</span>. Junto a la Página asociada pulsa <span class="btnlabel">Verify</span> → <span class="btnlabel">Generate URL</span>.</li><li>Ábrela con tu cuenta (eres administrador/a de la Página) y pulsa <span class="btnlabel">Approve</span>. Vuelve a la app: la Página debe aparecer como <strong>Verified</strong>.</li></ol>
 <h2>Pide los dos productos</h2>
 <ol class="steps" style="counter-reset: st 9"><li>Abre la pestaña <span class="btnlabel">Products</span>. En <strong>Share on LinkedIn</strong> pulsa <span class="btnlabel">Request access</span>, acepta las condiciones y listo (es automático).</li><li>En <strong>Sign In with LinkedIn using OpenID Connect</strong> pulsa también <span class="btnlabel">Request access</span> y acepta.</li></ol>
 <h2>La dirección de retorno</h2>
-<ol class="steps" style="counter-reset: st 11"><li>Abre la pestaña <span class="btnlabel">Auth</span>. Baja hasta <strong>Authorized redirect URLs for your app</strong> y pulsa el lápiz.</li><li>Pulsa <span class="btnlabel">Add redirect URL</span>, pega esta dirección y <span class="btnlabel">Update</span>:<div class="copybox"><span class="lbl">Cópiala exactamente así</span><div class="row"><code data-fill="relayUrl">https://nuriaatlantis.github.io/willypost/callback.html</code><button type="button" aria-label="Copiar Cópiala exactamente así">Copiar</button></div></div></li><li>Comprueba que en <strong>OAuth 2.0 scopes</strong> aparecen <code>openid</code>, <code>profile</code> y <code>w_member_social</code>. Si no aparecen, falta pedir alguno de los dos productos.</li></ol>
+<ol class="steps" style="counter-reset: st 11"><li>Abre la pestaña <span class="btnlabel">Auth</span>. Baja hasta <strong>Authorized redirect URLs for your app</strong> y pulsa el lápiz.</li><li>Pulsa <span class="btnlabel">Add redirect URL</span>, pega esta dirección y <span class="btnlabel">Update</span>:<div class="copybox"><span class="lbl">Cópiala exactamente así</span><div class="row"><code data-fill="relayUrl">https://willypost.com/callback.html</code><button type="button" aria-label="Copiar Cópiala exactamente así">Copiar</button></div></div></li><li>Comprueba que en <strong>OAuth 2.0 scopes</strong> aparecen <code>openid</code>, <code>profile</code> y <code>w_member_social</code>. Si no aparecen, falta pedir alguno de los dos productos.</li></ol>
 <h2>Copia tu “carné” y conecta</h2>
 <ol class="steps" style="counter-reset: st 14"><li>En la misma pestaña <span class="btnlabel">Auth</span> copia el <strong>Client ID</strong> y el <strong>Primary Client Secret</strong> (pulsa el icono del ojo para verlo).</li><li>WillyPost → <a href="http://localhost:4747/#/redes" target="_blank" rel="noopener">Redes</a> → <strong>LinkedIn</strong> → <span class="btnlabel">Configura tu carné</span>: pega el <strong>Client ID</strong> y el <strong>Client Secret</strong>. Pulsa <span class="btnlabel">Guardar</span>.</li><li>Pulsa <span class="btnlabel">Conectar LinkedIn</span> (o <span class="btnlabel">Guardar y conectar</span> en el paso anterior), inicia sesión en LinkedIn y pulsa <span class="btnlabel">Permitir</span>.</li></ol>
 <div class="callout "><span class="t">Cuánto dura la conexión</span><p>LinkedIn da una conexión de <strong>60 días</strong> y no permite renovarla sola. WillyPost te pide reconectar a los 30: es un clic en Redes → Reconectar (LinkedIn no te vuelve a preguntar los permisos si sigues con la sesión iniciada).</p></div>
@@ -67,6 +74,7 @@
 <details class="faq"><summary>“Invalid client secret”</summary><div class="body"><p>Usa el <strong>Primary</strong> Client Secret, sin espacios al principio ni al final.</p></div></details>
 <details class="faq"><summary>Me sale un aviso de que mi app no se puede crear</summary><div class="body"><p>Comprueba que la Página es tuya y que tu cuenta de LinkedIn está al día (email y teléfono verificados).</p></div></details>
 <details class="faq"><summary>Al volver, veo “No se puede acceder a este sitio”</summary><div class="body"><p>WillyPost estaba cerrado. Ábrelo y recarga esa pestaña (F5): el código dura unos minutos.</p></div></details>
+</div>
 <div class="guide-nav"><a class="btn btn-secondary btn-sm" href="gbp.html">← Google Business Profile</a><a class="btn btn-secondary btn-sm" href="bluesky.html">Bluesky →</a></div>
 </div></section>
 </main>
@@ -76,9 +84,10 @@
       <div>
         <a class="brand" href="../index.html"><img src="../assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
         <p style="margin-top:16px;max-width:320px">Programa tus redes sociales desde tu propio ordenador. Gratis, sin ánimo de lucro y con tus datos en tus manos.</p>
+        <p class="small" style="max-width:320px;opacity:.85">Apps de conexión con las redes y servicio <code>auth.willypost.com</code>: Diving With Us SL.</p>
       </div>
       <div><h4>WillyPost</h4><ul>
-        <li><a data-repo="zip" href="#">Descargar</a></li>
+        <li><a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a></li>
         <li><a href="../index.html#instalar">Cómo se instala</a></li>
         <li><a href="../guias/index.html">Guías de cada red</a></li>
         <li><a href="../guias/claude.html">Conecta con Claude</a></li>
@@ -87,10 +96,11 @@
         <li><a href="../privacidad.html">Política de privacidad</a></li>
         <li><a href="../terminos.html">Términos del servicio</a></li>
         <li><a href="../borrar-datos.html">Borrar mis datos</a></li>
+        <li><a href="../en.html" lang="en">English (for reviewers)</a></li>
       </ul></div>
       <div><h4>Ayuda</h4><ul>
         <li><a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a></li>
-        <li><a data-repo="issues" href="#">Avisar de un problema</a></li>
+        <li><a data-repo="issues" href="https://github.com/NuriaAtlantis/willypost/issues">Avisar de un problema</a></li>
         <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
       </ul></div>
     </div>
