@@ -27,7 +27,7 @@ con 👤.
 | Dato | Valor |
 |---|---|
 | Nombre de la app | **WillyPost** |
-| Titular | **Diving With Us SL** — CIF `[[CIF_DIVING]]` — domicilio `[[DOMICILIO_DIVING]]` |
+| Titular | **Diving With Us SL** — CIF `B76160340` — domicilio `Calle Toscón 7, C.C. Montaña Tropical, local 6, 35510 Puerto del Carmen (Tías), Las Palmas` |
 | Web (página de inicio) | `https://willypost.com/` |
 | Política de privacidad | `https://willypost.com/privacidad.html` |
 | Condiciones del servicio | `https://willypost.com/terminos.html` |
@@ -39,7 +39,7 @@ con 👤.
 | Icono | `solicitudes/icono-1024.png` |
 | Descarga del programa (para revisores) | `https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip` |
 
-`[[CIF_DIVING]]` y `[[DOMICILIO_DIVING]]` están sin rellenar a propósito, también en la web
+`B76160340` y `Calle Toscón 7, C.C. Montaña Tropical, local 6, 35510 Puerto del Carmen (Tías), Las Palmas` están sin rellenar a propósito, también en la web
 (`docs/privacidad.html`, `docs/terminos.html`, `docs/en.html`): hay que poner los datos exactos de la
 escritura antes de publicar la web y antes de enviar nada.
 
@@ -118,7 +118,7 @@ propia app), así que puedes ir activando redes una a una según te las aprueben
 ## Lista de comprobación
 
 **Antes de empezar**
-- [ ] CIF y domicilio de Diving With Us SL puestos en la web (sustituir `[[CIF_DIVING]]` y `[[DOMICILIO_DIVING]]`) y en estos textos
+- [ ] CIF y domicilio de Diving With Us SL puestos en la web (sustituir `B76160340` y `Calle Toscón 7, C.C. Montaña Tropical, local 6, 35510 Puerto del Carmen (Tías), Las Palmas`) y en estos textos
 - [ ] willypost.com comprado en Hostinger
 - [ ] DNS: 4 registros A + CNAME www → GitHub Pages; subdominios auth y media (broker)
 - [ ] GitHub Pages con dominio propio y «Enforce HTTPS»

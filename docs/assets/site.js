@@ -67,4 +67,26 @@
 
   // Año del pie
   document.querySelectorAll('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
+
+  // Guías: ¿esta red ya se conecta sin app propia? Se pregunta al servidor central. Mientras la red esté
+  // en revisión (o si no se puede saber), se avisa arriba y se lleva a la opción avanzada.
+  var FAMILY = { facebook: 'meta', instagram: 'instagram', threads: 'threads', tiktok: 'tiktok', youtube: 'google', gbp: 'google', linkedin: 'linkedin' };
+  var page = (location.pathname.match(/guias\/([a-z]+)\.html$/) || [])[1];
+  var family = page && FAMILY[page];
+  var body = document.querySelector('.guide-body .container');
+  if (family && body && C.brokerUrl && document.getElementById('avanzada')) {
+    var warn = function () {
+      var box = document.createElement('div');
+      box.className = 'callout warn';
+      box.innerHTML = '<span class="t">Esta red todavía está en revisión</span><p>La app de WillyPost para esta red aún no está aprobada, así que de momento «Conectar» sin configurar nada no funciona. ' +
+        'Mientras tanto, conéctala con tu propia app siguiendo la <a href="#avanzada">opción avanzada</a> de esta guía, o usa el modo manual. En cuanto la red apruebe WillyPost, este aviso desaparece.</p>';
+      body.insertBefore(box, body.firstChild);
+    };
+    var done = false;
+    var timer = setTimeout(function () { if (!done) { done = true; warn(); } }, 5000);
+    fetch(C.brokerUrl + '/health', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { if (done) return; done = true; clearTimeout(timer); if (!j || !Array.isArray(j.networks) || j.networks.indexOf(family) < 0) warn(); })
+      .catch(function () { if (done) return; done = true; clearTimeout(timer); warn(); });
+  }
 })();

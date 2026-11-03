@@ -22,7 +22,7 @@ podido comprobar en pantalla.
 
 1. Entra en https://business.facebook.com con tu cuenta personal de Facebook (con la verificación en dos pasos activada).
 2. Si no tienes portfolio de **Diving With Us SL**, créalo: **Crear un portfolio de negocio** (*Create a business portfolio*) → nombre del negocio **exactamente como en la escritura**: `Diving With Us SL`; tu nombre y un email de trabajo.
-3. **Configuración** (*Settings*) → **Información del negocio** (*Business info*): rellena nombre legal, dirección (`[[DOMICILIO_DIVING]]`), teléfono, web y CIF (`[[CIF_DIVING]]`).
+3. **Configuración** (*Settings*) → **Información del negocio** (*Business info*): rellena nombre legal, dirección (`Calle Toscón 7, C.C. Montaña Tropical, local 6, 35510 Puerto del Carmen (Tías), Las Palmas`), teléfono, web y CIF (`B76160340`).
    - Web: puedes poner `https://willypost.com/` (su pie de página dice que las apps son de Diving With Us SL) o la web principal de la empresa si en ella aparece el nombre legal. Lo importante es que Meta vea el **nombre legal** en la web o en los documentos.
 4. **Centro de seguridad** (*Security Center*) → **Verificación del negocio** → **Iniciar verificación** (*Start verification*). ⚠️ En algunas cuentas está en *Configuración → Información del negocio → Verificación*.
 5. Meta te pedirá:
@@ -31,7 +31,7 @@ podido comprobar en pantalla.
 6. Envía y espera (de 2 días a 2 semanas). Te avisan por notificación y email.
 
 > Consejo: el nombre, la dirección y el CIF deben coincidir **letra por letra** en el portfolio, en los
-> documentos y en la web (sustituye `[[CIF_DIVING]]` y `[[DOMICILIO_DIVING]]` antes de enviar).
+> documentos y en la web (sustituye `B76160340` y `Calle Toscón 7, C.C. Montaña Tropical, local 6, 35510 Puerto del Carmen (Tías), Las Palmas` antes de enviar).
 
 ## 2. Cuenta de desarrollador y la app
 

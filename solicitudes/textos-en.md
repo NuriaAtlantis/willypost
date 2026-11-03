@@ -1,7 +1,7 @@
 # Textos en inglés, listos para pegar
 
 Cada bloque `text` se copia tal cual en el formulario indicado. Antes de usarlos, sustituye
-`[[CIF_DIVING]]` y `[[DOMICILIO_DIVING]]` por los datos reales de Diving With Us SL. Los textos de cada
+`B76160340` y `Calle Toscón 7, C.C. Montaña Tropical, local 6, 35510 Puerto del Carmen (Tías), Las Palmas` por los datos reales de Diving With Us SL. Los textos de cada
 permiso son distintos a propósito (Meta y Google rechazan textos repetidos).
 
 Nombres de pantalla de WillyPost que salen en los textos (la interfaz está en español):
@@ -107,7 +107,7 @@ Contact: nuria.olive@gmail.com
 
 **Responsable de los datos / entidad que responde**
 ```text
-Diving With Us SL (Spain), tax ID [[CIF_DIVING]], [[DOMICILIO_DIVING]]. Contact: nuria.olive@gmail.com.
+Diving With Us SL (Spain), tax ID B76160340, Calle Toscón 7, C.C. Montaña Tropical, local 6, 35510 Puerto del Carmen (Tías), Las Palmas. Contact: nuria.olive@gmail.com.
 ```
 
 **¿Hay encargados o proveedores con acceso a los datos de la plataforma? (*Data processors / service providers*)**
@@ -198,7 +198,7 @@ WillyPost lets local businesses publish "local posts" (updates with text, an opt
 
 ### 3.3 Formulario de acceso a la API de Business Profile
 ```text
-Company: Diving With Us SL ([[CIF_DIVING]]). Project number: [[NUMERO_PROYECTO_GOOGLE]].
+Company: Diving With Us SL (B76160340). Project number: [[NUMERO_PROYECTO_GOOGLE]].
 Use case: WillyPost (https://willypost.com/) is a free, non-profit desktop social media scheduler for small businesses and freelancers, students of the Willy SEO Academy. Business owners connect their own Google Business Profile with OAuth (scope business.manage) and schedule local posts (text, one photo, optional call-to-action button) that WillyPost publishes at the chosen time via accounts.locations.localPosts. We only list the user's accounts/locations so they can choose one, and create local posts. We do not modify business information or reviews, and we store no data on our servers: everything stays on the user's computer. Expected usage: a few posts per location per week.
 ```
 
