@@ -411,7 +411,7 @@ test('límite de peticiones por IP → 429', async () => {
   mockFetch(() => jsonRes({ access_token: 'A' }));
   const ip = '198.51.100.77';
   let last;
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 300; i++) {
     last = await run(tokenReq('tiktok', 'refresh', { refresh_token: 'RT' }, { ip }));
     assert.equal(last.status, 200, `petición ${i + 1}`);
   }
@@ -603,7 +603,7 @@ test('PHP: mismas expresiones de validación de medios y mismas llamadas oficial
   for (const grant of ['fb_exchange_token', 'ig_exchange_token', 'th_exchange_token', 'authorization_code', 'refresh_token']) {
     assert.ok(PHP_AUTH.includes(`'${grant}'`), grant);
   }
-  for (const line of ['const MAX_BODY_BYTES = 16 * 1024;', 'const MAX_FIELD_BYTES = 4 * 1024;', 'const RATE_LIMIT = 30;']) {
+  for (const line of ['const MAX_BODY_BYTES = 16 * 1024;', 'const MAX_FIELD_BYTES = 4 * 1024;', 'const RATE_LIMIT = 300;']) {
     assert.ok(PHP_AUTH.includes(line), `PHP: ${line}`);
     assert.ok(JS_SRC.includes(line), `JS: ${line}`);
   }

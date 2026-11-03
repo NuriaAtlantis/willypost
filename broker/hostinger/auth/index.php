@@ -22,7 +22,7 @@ const GRAPH_VERSION = 'v26.0';
 const MAX_BODY_BYTES = 16 * 1024;
 const MAX_FIELD_BYTES = 4 * 1024;
 const UPSTREAM_TIMEOUT_S = 20;
-const RATE_LIMIT = 30; // llamadas a /token por IP y minuto (aproximado)
+const RATE_LIMIT = 300; // llamadas a /token por IP y minuto (aproximado). Alto a propósito: tras la CDN de Hostinger muchos alumnos pueden compartir IP
 const RATE_WINDOW_S = 60;
 
 const DEFAULTS = [

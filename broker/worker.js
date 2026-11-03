@@ -28,7 +28,7 @@ const DEFAULTS = {
 const MAX_BODY_BYTES = 16 * 1024;
 const MAX_FIELD_BYTES = 4 * 1024;
 const UPSTREAM_TIMEOUT_MS = 20_000;
-const RATE_LIMIT = 30; // llamadas a /token por IP y minuto (aproximado: cada copia del Worker cuenta por su lado)
+const RATE_LIMIT = 300; // llamadas a /token por IP y minuto (aproximado). Alto a propósito: tras la CDN de Hostinger muchos alumnos pueden compartir IP
 const RATE_WINDOW_MS = 60_000;
 const TUNNEL_DOMAIN = 'trycloudflare.com';
 
