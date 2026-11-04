@@ -576,7 +576,8 @@ test('PHP: mismos códigos de error con el mismo estado HTTP', () => {
 
 test('PHP: mismos mensajes en español', () => {
   const js = spanishMessages(JS_SRC);
-  const php = spanishMessages(PHP_ALL);
+  // La página privada de claves (/admin/<código>) solo existe en PHP: no cuenta para la paridad.
+  const php = spanishMessages(PHP_ALL.replace(/página privada de claves[\s\S]*?fin página privada de claves/, ''));
   // Los dos de «falta_campo»/«campo_demasiado_largo» llevan el nombre del campo (plantilla en JS, comillas dobles en PHP)
   for (const f of ['Falta el campo «{$f}» o no es un texto.', 'El campo «{$f}» es demasiado largo.']) assert.ok(PHP_AUTH.includes(f), f);
   for (const f of ['Falta el campo «${f}» o no es un texto.', 'El campo «${f}» es demasiado largo.']) assert.ok(JS_SRC.includes(f), f);

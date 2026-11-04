@@ -45,11 +45,100 @@ function load_config(): array
     foreach ($candidates as $file) {
         if (is_file($file) && is_readable($file)) {
             $cfg = include $file;
-            return is_array($cfg) ? $cfg : [];
+            $cfg = is_array($cfg) ? $cfg : [];
+            // Claves guardadas desde la página privada /admin/<código> (mismo directorio, fuera de public_html).
+            $secretsFile = dirname($file) . '/willypost-secrets.json';
+            $cfg['__SECRETS_FILE'] = $secretsFile;
+            if (is_file($secretsFile) && is_readable($secretsFile)) {
+                $saved = json_decode((string) @file_get_contents($secretsFile), true);
+                if (is_array($saved)) {
+                    foreach (ADMIN_FIELDS as $k => $_) {
+                        if (isset($saved[$k]) && is_string($saved[$k]) && trim($saved[$k]) !== '') $cfg[$k] = trim($saved[$k]);
+                    }
+                }
+            }
+            return $cfg;
         }
     }
     return [];
 }
+
+/* ------------------------------------------------------------- página privada de claves ------------------------------------------------------------- */
+// https://auth.willypost.com/admin/<código>. El código solo se guarda como SHA-256 en willypost-config.php
+// (ADMIN_CODE_SHA256). Sin ese valor, la página no existe (404). Nunca muestra un secreto guardado.
+
+const ADMIN_FIELDS = [
+    'LINKEDIN_CLIENT_ID'     => ['LinkedIn', 'Client ID', false],
+    'LINKEDIN_CLIENT_SECRET' => ['LinkedIn', 'Primary Client Secret', true],
+    'META_APP_ID'            => ['Facebook (Meta)', 'Identificador de la app', false],
+    'META_APP_SECRET'        => ['Facebook (Meta)', 'Clave secreta de la app', true],
+    'META_CONFIG_ID'         => ['Facebook (Meta)', 'ID de configuración (opcional)', false],
+    'IG_APP_ID'              => ['Instagram', 'Identificador de la app de Instagram', false],
+    'IG_APP_SECRET'          => ['Instagram', 'Clave secreta de la app de Instagram', true],
+    'THREADS_APP_ID'         => ['Threads', 'Identificador de la app de Threads', false],
+    'THREADS_APP_SECRET'     => ['Threads', 'Clave secreta de la app de Threads', true],
+    'TIKTOK_CLIENT_KEY'      => ['TikTok', 'Client key', false],
+    'TIKTOK_CLIENT_SECRET'   => ['TikTok', 'Client secret', true],
+    'GOOGLE_CLIENT_ID'       => ['Google (YouTube y Business)', 'ID de cliente', false],
+    'GOOGLE_CLIENT_SECRET'   => ['Google (YouTube y Business)', 'Secreto de cliente', true],
+];
+
+function admin_page(array $cfg, string $code): void
+{
+    $hash = strtolower(v($cfg, 'ADMIN_CODE_SHA256'));
+    if (strlen($hash) !== 64 || strlen($code) < 32 || !hash_equals($hash, hash('sha256', $code))) {
+        fail(404, 'no_encontrado', 'Dirección no encontrada.');
+    }
+    $file = (string) ($cfg['__SECRETS_FILE'] ?? '');
+    $saved = [];
+    if ($file !== '' && is_file($file)) {
+        $tmp = json_decode((string) @file_get_contents($file), true);
+        if (is_array($tmp)) $saved = $tmp;
+    }
+    $msg = '';
+    if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+        $changed = 0;
+        foreach (ADMIN_FIELDS as $k => $_) {
+            $val = isset($_POST[$k]) && is_string($_POST[$k]) ? trim($_POST[$k]) : '';
+            if ($val !== '' && strlen($val) <= 512 && preg_match('/^[\x21-\x7e]+$/', $val)) { $saved[$k] = $val; $changed++; }
+        }
+        if ($changed > 0) {
+            $ok = $file !== '' && @file_put_contents($file, json_encode($saved, JSON_PRETTY_PRINT), LOCK_EX) !== false;
+            if ($ok) @chmod($file, 0600);
+            $msg = $ok ? 'Guardado. Ya está.' : 'No se ha podido guardar. Avisa a Claude.';
+        } else {
+            $msg = 'No había nada nuevo que guardar.';
+        }
+        foreach ($saved as $k => $val) if (is_string($val) && $val !== '') $cfg[$k] = $val;
+    }
+    header('Content-Type: text/html; charset=utf-8');
+    header('Cache-Control: no-store');
+    header('X-Robots-Tag: noindex, nofollow');
+    header("Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; form-action 'self'");
+    header('Referrer-Policy: no-referrer');
+    $e = fn (string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+    echo '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+        . '<title>Claves de WillyPost</title><style>body{font:16px system-ui,sans-serif;max-width:640px;margin:24px auto;padding:0 16px;color:#1d2433;background:#fff}'
+        . 'h1{font-size:22px}fieldset{border:1px solid #d7dce5;border-radius:10px;margin:0 0 14px;padding:10px 14px}legend{font-weight:700;padding:0 6px}'
+        . 'label{display:block;margin:8px 0 4px}input{width:100%;box-sizing:border-box;padding:9px;border:1px solid #b9c1cf;border-radius:8px;font:inherit}'
+        . '.ok{color:#137a3a;font-weight:600}.no{color:#8a94a6}.msg{background:#e8f6ee;border-radius:8px;padding:10px;margin:0 0 14px}'
+        . 'button{background:#3b4cca;color:#fff;border:0;border-radius:8px;padding:12px 20px;font:inherit;font-weight:700;cursor:pointer}</style></head><body>'
+        . '<h1>Claves de WillyPost</h1><p>Pega la clave en su recuadro y pulsa <b>Guardar</b>. Lo que ya está guardado no se muestra nunca; deja vacío lo que no quieras cambiar.</p>';
+    if ($msg !== '') echo '<p class="msg">' . $e($msg) . '</p>';
+    echo '<form method="post" autocomplete="off">';
+    $group = '';
+    foreach (ADMIN_FIELDS as $k => [$net, $label, $secret]) {
+        if ($net !== $group) { if ($group !== '') echo '</fieldset>'; echo '<fieldset><legend>' . $e($net) . '</legend>'; $group = $net; }
+        $has = v($cfg, $k) !== '';
+        $state = $has ? '<span class="ok">✓ guardado</span>' : '<span class="no">vacío</span>';
+        $shown = (!$secret && $has) ? ' · ' . $e(v($cfg, $k)) : '';
+        echo '<label for="' . $e($k) . '">' . $e($label) . ' — ' . $state . $shown . '</label>'
+            . '<input id="' . $e($k) . '" name="' . $e($k) . '" type="' . ($secret ? 'password' : 'text') . '" spellcheck="false">';
+    }
+    echo '</fieldset><button type="submit">Guardar</button></form></body></html>';
+    exit;
+}
+// fin página privada de claves (solo existe en la versión PHP)
 
 function v(array $cfg, string $name): string
 {
@@ -348,6 +437,10 @@ try {
 
     if (preg_match('#^/token/([^/]+)/([^/]+)$#', $path, $m)) {
         handle_token($cfg, $m[1], $m[2]);
+    }
+
+    if (preg_match('#^/admin/([A-Za-z0-9_-]{32,128})$#', $path, $m)) {
+        admin_page($cfg, $m[1]);
     }
 
     // Avisos de Meta (Instagram/Threads/Facebook) cuando alguien quita la app o pide borrar sus datos.
