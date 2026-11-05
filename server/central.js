@@ -9,7 +9,7 @@ import path from 'node:path';
 import { BROKER_URL, MEDIA_PROXY, RELAY_URL, DATA_DIR } from './config.js';
 import { ProviderError, httpError } from './providers/_http.js';
 
-export const CONFIG_TTL_MS = 60 * 60 * 1000; // 1 h
+export const CONFIG_TTL_MS = 15 * 60 * 1000; // 15 min (al arrancar se pregunta siempre: la copia en disco solo sirve sin conexión)
 const RETRY_AFTER_FAIL_MS = 60 * 1000; // sin conexión: no reintentar /config en cada clic
 const CONFIG_TIMEOUT_MS = 5000;
 const TOKEN_TIMEOUT_MS = 30000;
@@ -81,7 +81,8 @@ function readPersisted() {
   try {
     const j = JSON.parse(fs.readFileSync(cacheFile(), 'utf8'));
     const data = sanitizeConfig(j?.data);
-    return data ? { data, fetchedAt: Number(j.fetchedAt) || 0 } : null;
+    // fetchedAt 0: la copia en disco vale mientras no haya conexión, pero al arrancar se vuelve a preguntar.
+    return data ? { data, fetchedAt: 0 } : null;
   } catch {
     return null;
   }
