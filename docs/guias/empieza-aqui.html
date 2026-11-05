@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Empieza aquí: instala WillyPost y haz tu primera publicación · WillyPost</title>
+<meta name="description" content="La guía para empezar con WillyPost: cómo instalarlo en Windows o Mac, conectar tus redes con un solo «Conectar» y programar tu primera publicación. Paso a paso y con capturas.">
+<meta name="theme-color" content="#4A73AA">
+<meta property="og:title" content="Empieza aquí: instala WillyPost y haz tu primera publicación">
+<meta property="og:description" content="Instala WillyPost, conecta tus redes y programa tu primera publicación. Paso a paso y con capturas.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://willypost.com/assets/icon-512.png">
+<link rel="icon" href="../assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="apple-touch-icon" href="../assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+  /* Solo para esta guía: capturas, índice y fichas de cada red */
+  .cap { margin: 16px 0 22px; }
+  .cap a { display: block; width: fit-content; max-width: 100%; }
+  .cap img { width: auto; max-width: 100%; height: auto; border: 1px solid var(--linea); border-radius: 14px; box-shadow: 0 18px 40px -26px rgba(27,38,56,.45); }
+  .cap.estrecha img { max-width: min(440px, 100%); }
+  .cap figcaption { font-size: 14px; color: var(--tx-2); margin-top: 8px; }
+  ol.steps .cap { margin-bottom: 4px; }
+  .toc { columns: 2; column-gap: 32px; margin: 6px 0 0; padding-left: 20px; }
+  .toc li { margin-bottom: 4px; break-inside: avoid; }
+  @media (max-width: 640px) { .toc { columns: 1; } }
+  .red { border: 1px solid var(--linea); border-radius: var(--r-lg); padding: 20px 22px; margin: 0 0 16px; background: #fff; }
+  .red h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; }
+  .red h3 .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; flex: none; }
+  .red p { margin-bottom: .7em; }
+  .red > :last-child { margin-bottom: 0; }
+  .red .lbl { display: block; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--azul-btn); margin-top: 4px; }
+  .red ol { padding-left: 22px; margin: 0 0 .8em; }
+  .red ol li { margin-bottom: 4px; }
+  .guide-body .tabs { margin: 6px 0 22px; }
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div class="topbar">Software gratuito de la <a href="https://willyseo.net/" target="_blank" rel="noopener">Willy SEO Academy</a> para sus alumnos</div>
+<header class="site">
+  <div class="container hbar">
+    <a class="brand" href="../index.html" aria-label="WillyPost, inicio">
+      <img src="../assets/icon-192.png" alt="" width="38" height="38">
+      <span><b>WillyPost</b><small>by Willy SEO Academy</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
+    <nav class="main" id="menu" aria-label="Principal">
+      <a href="../index.html">Inicio</a><a href="../index.html#instalar">Cómo se instala</a><a href="index.html" aria-current="page">Guías</a><a href="claude.html">Claude</a><a href="../index.html#faq">Preguntas</a>
+      <a class="btn btn-sm" data-repo="download" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>
+    </nav>
+  </div>
+</header>
+<main id="contenido">
+<section class="guide-hero"><div class="container narrow">
+  <div class="crumbs"><a href="../index.html">Inicio</a> › <a href="index.html">Guías</a> › Empieza aquí</div>
+  <span class="eyebrow">Guía para empezar</span>
+  <h1>Empieza <span class="pill">aquí</span></h1>
+  <p class="lead">Todo lo que necesitas para arrancar con WillyPost, de principio a fin: instalarlo en tu ordenador, conectar tus redes y programar tu primera publicación. Sin crear apps de desarrollador ni copiar claves: cada red se conecta con un solo <strong>«Conectar»</strong>.</p>
+  <ul class="meta"><li><span>Tiempo:</span> unos 20 minutos</li><li><span>Dificultad:</span> Fácil</li><li><span>Coste:</span> gratis</li></ul>
+</div></section>
+<section class="guide-body"><div class="container narrow">
+
+<div class="callout ok"><span class="t">En esta guía</span>
+  <ol class="toc">
+    <li><a href="#instalar">Instala WillyPost</a></li>
+    <li><a href="#cuenta">Crea tu cuenta</a></li>
+    <li><a href="#redes">Conecta tus redes</a></li>
+    <li><a href="#revision">Redes en revisión y modo manual</a></li>
+    <li><a href="#publicar">Tu primera publicación</a></li>
+    <li><a href="#renovar">Renueva cada 30 días</a></li>
+    <li><a href="#problemas">Problemas frecuentes</a></li>
+  </ol>
+</div>
+
+<h2 id="instalar">1. Instala WillyPost</h2>
+<p>No hace falta saber de informática. El instalador no pide contraseña de administrador, tarda unos 2 minutos y necesita internet. Elige tu ordenador:</p>
+<div class="tabs" role="tablist" aria-label="Sistema operativo">
+  <button type="button" role="tab" data-tab="windows" aria-selected="true">Windows</button>
+  <button type="button" role="tab" data-tab="mac" aria-selected="false">Mac</button>
+</div>
+
+<div class="tabpanel" id="tab-windows" role="tabpanel">
+  <ol class="steps">
+    <li><strong>Descarga el instalador:</strong> <a data-repo="exe" href="../descargas/Instalar-WillyPost.exe">Instalar-WillyPost.exe</a> (un archivo pequeño, desde willypost.com). Si el navegador avisa de que el archivo «no se descarga habitualmente», elige <span class="btnlabel">Conservar</span>. En Edge: <span class="btnlabel">···</span> → <span class="btnlabel">Conservar</span> → <span class="btnlabel">Mostrar más</span> → <span class="btnlabel">Conservar de todas formas</span>.</li>
+    <li><strong>Haz doble clic en Instalar-WillyPost.exe</strong>. Lo tienes en la carpeta <strong>Descargas</strong>.</li>
+    <li><strong>Si sale el aviso azul «Windows protegió su PC»</strong> (es Windows SmartScreen), pulsa <span class="btnlabel">Más información</span> y después <span class="btnlabel">Ejecutar de todas formas</span>. Es normal: Windows avisa así de todos los programas que no vienen de su tienda.</li>
+    <li><strong>Espera un par de minutos.</strong> Se abre una ventana negra que va contando los pasos (del 1 al 6). Cuando pone <strong>LISTO</strong>, se abre WillyPost en tu navegador. Ya puedes cerrar la ventana negra pulsando cualquier tecla.</li>
+  </ol>
+  <p class="small muted">Te deja un icono <strong>WillyPost</strong> en el Escritorio y en el menú Inicio, y arranca solo al encender el ordenador, sin ventanas. ¿El .exe no te funciona? Mira la <a href="../index.html#instalar">descarga manual con ZIP</a>.</p>
+</div>
+
+<div class="tabpanel" id="tab-mac" role="tabpanel" hidden>
+  <ol class="steps">
+    <li><strong>Descarga el archivo ZIP:</strong> <a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar WillyPost (ZIP)</a>.</li>
+    <li><strong>Descomprímelo</strong> con doble clic (lo tienes en Descargas) y abre la carpeta que se crea.</li>
+    <li><strong>Haz doble clic en «Instalar WillyPost.command»</strong> (el que termina en <code>.command</code>).</li>
+    <li><strong>La primera vez, el Mac lo bloquea</strong> porque viene de internet. Es su aviso de seguridad y es normal:
+      <ul>
+        <li><strong>macOS 14 (Sonoma) o anterior:</strong> pulsa <span class="btnlabel">Cancelar</span>, haz clic derecho (o Control + clic) sobre el archivo → <span class="btnlabel">Abrir</span> → <span class="btnlabel">Abrir</span>.</li>
+        <li><strong>macOS 15 (Sequoia) o posterior:</strong> pulsa <span class="btnlabel">Listo</span>. Abre <strong>Ajustes del Sistema → Privacidad y seguridad</strong>, baja hasta el final, pulsa <span class="btnlabel">Abrir igualmente</span> junto al aviso, pon la contraseña de tu Mac (o Touch ID) y pulsa <span class="btnlabel">Abrir</span>.</li>
+      </ul>
+    </li>
+    <li><strong>Espera unos 2 minutos.</strong> La Terminal te cuenta los pasos. Cuando pone <strong>LISTO</strong>, se abre WillyPost en tu navegador. Si el Mac pregunta si la Terminal puede acceder a Descargas, pulsa <span class="btnlabel">Permitir</span>.</li>
+  </ol>
+  <details class="faq"><summary>Plan B si el Mac no te deja abrirlo (funciona siempre)</summary><div class="body"><p>Abre la app <strong>Terminal</strong> (⌘ + Espacio, escribe «Terminal» e Intro). Escribe <code>bash</code> seguido de un espacio, <strong>arrastra</strong> el archivo «Instalar WillyPost.command» dentro de la ventana y pulsa <strong>Intro</strong>.</p></div></details>
+  <p class="small muted">Después encontrarás la app <strong>WillyPost</strong> con ⌘ + Espacio, y arranca sola al encender el Mac. Si macOS avisa de un «elemento en segundo plano» (puede llamarse <em>node</em>), déjalo activado.</p>
+</div>
+
+<h2 id="cuenta">2. Crea tu cuenta (solo la primera vez)</h2>
+<p>La primera vez que se abre, WillyPost te pide crear tu cuenta. Es solo tuya y se guarda <strong>en tu ordenador</strong>: no te enviaremos ningún email.</p>
+<ol class="steps">
+  <li>Escribe <strong>Tu nombre</strong>, tu <strong>Email</strong> y una <strong>Contraseña</strong> (mínimo 8 caracteres) y pulsa <span class="btnlabel">Crear mi cuenta</span>.</li>
+  <li><strong>Guarda el código de recuperación</strong> que te enseña (con <span class="btnlabel">Descargar como .txt</span>, por ejemplo). Como todo está en tu ordenador, no hay «recuperar contraseña por email»: si la olvidas, este código es la única forma de volver a entrar.</li>
+</ol>
+<p class="small muted">WillyPost se abre en tu navegador, pero funciona en tu ordenador (en la dirección <code>localhost:4747</code>). Si algún día no lo encuentras, haz doble clic en su icono.</p>
+
+<h2 id="redes">3. Conecta tus redes</h2>
+<p>En el menú de la izquierda entra en <strong>Redes</strong>. Cada red tiene su tarjeta con su botón <strong>Conectar</strong>: lo pulsas, se abre la pantalla oficial de esa red, aceptas y vuelves solo a WillyPost. No tienes que crear ninguna app ni copiar claves.</p>
+<figure class="cap"><a href="img/redes-conecta-tus-redes.webp"><img src="img/redes-conecta-tus-redes.webp" alt="Página Redes de WillyPost: «Conecta tus redes», con el aviso de que cada conexión dura 30 días y las tarjetas de Instagram y Facebook" width="1015" height="407" loading="lazy" decoding="async"></a><figcaption>La página <strong>Redes</strong> de WillyPost. Empieza por la red que más uses; las demás, cuando quieras.</figcaption></figure>
+<p>Aquí tienes, red por red, qué cuenta necesitas y qué vas a ver. Si quieres más detalle, cada una tiene su guía completa.</p>
+
+<div class="red" id="red-instagram">
+  <h3><span class="dot" style="background:#E1306C"></span>Instagram</h3>
+  <span class="lbl">Qué necesitas</span>
+  <p>Una cuenta <strong>profesional</strong> (Empresa o Creador) <strong>unida a una Página de Facebook</strong> que administres. Instagram se conecta entrando con Facebook: es así para todas las apps nuevas, no es cosa tuya.</p>
+  <span class="lbl">Qué verás</span>
+  <ol>
+    <li>Pulsas <span class="btnlabel">Conectar Instagram</span> y se abre <strong>Facebook</strong>. Entra con el Facebook que administra tu Página.</li>
+    <li>Facebook te pregunta en varios pasos a qué Páginas, negocios y cuentas de Instagram quieres que acceda WillyPost. Puedes dejar la primera opción («Activar todos…») o elegir «Activar solo…» y marcar las tuyas. <strong>Lo importante: que estén tu cuenta de Instagram y también su Página.</strong> Pulsa <span class="btnlabel">Continuar</span> en cada paso.</li>
+    <li>Al final te enseña un resumen de los permisos: pulsa <span class="btnlabel">Guardar</span>.</li>
+    <li>Sale «… se conectó a WillyPost» y, abajo del todo, el botón <span class="btnlabel">De acuerdo</span>. <strong>Si no lo ves, baja dentro de la ventana.</strong> Púlsalo y vuelves a WillyPost.</li>
+  </ol>
+  <figure class="cap estrecha"><a href="img/instagram-elegir-cuentas.webp"><img src="img/instagram-elegir-cuentas.webp" alt="Ventana de Facebook: «Elige las cuentas de Instagram a las que quieres que acceda WillyPost», con las opciones Activar todos y Activar solo" width="562" height="305" loading="lazy" decoding="async"></a><figcaption>Uno de los pasos de Facebook: aquí eliges tu cuenta de Instagram.</figcaption></figure>
+  <figure class="cap estrecha"><a href="img/instagram-guardar.webp"><img src="img/instagram-guardar.webp" alt="Resumen de permisos de Facebook para WillyPost con el botón Guardar" width="562" height="512" loading="lazy" decoding="async"></a><figcaption>El resumen de permisos: pulsa <strong>Guardar</strong>.</figcaption></figure>
+  <figure class="cap estrecha"><a href="img/instagram-de-acuerdo.webp"><img src="img/instagram-de-acuerdo.webp" alt="Facebook confirma que la cuenta se ha conectado a WillyPost; abajo, el botón De acuerdo" width="562" height="221" loading="lazy" decoding="async"></a><figcaption>Último paso: <strong>De acuerdo</strong> (a veces hay que bajar para verlo).</figcaption></figure>
+  <p class="small"><a href="instagram.html">Guía completa de Instagram →</a> (incluye cómo pasar tu cuenta a profesional y unirla a tu Página).</p>
+</div>
+
+<div class="red" id="red-facebook">
+  <h3><span class="dot" style="background:#1877F2"></span>Facebook</h3>
+  <span class="lbl">Qué necesitas</span>
+  <p>Una <strong>Página de Facebook de la que seas administrador/a</strong>. WillyPost publica en Páginas, no en perfiles personales.</p>
+  <span class="lbl">Qué verás</span>
+  <p>Pulsas <span class="btnlabel">Conectar Facebook</span>, entras en Facebook y te pregunta a qué Páginas quieres que acceda WillyPost: <strong>marca tu Página</strong> (y, si te lo pregunta, el negocio donde está) y acepta. Igual que con Instagram, puede que tengas que bajar para ver el último botón. De vuelta en WillyPost, marca tu Página y pulsa <span class="btnlabel">Conectar</span>.</p>
+  <p class="small"><a href="facebook.html">Guía completa de Facebook →</a></p>
+</div>
+
+<div class="red" id="red-threads">
+  <h3><span class="dot" style="background:#222"></span>Threads</h3>
+  <span class="lbl">Qué necesitas</span>
+  <p>Tu perfil de Threads, que es tu cuenta de <strong>Instagram</strong>, y <strong>la contraseña de Instagram</strong>.</p>
+  <span class="lbl">Qué verás</span>
+  <p>Pulsas <span class="btnlabel">Conectar Threads</span> y se abre Threads. En el ordenador, Threads te pide entrar con tu usuario y <strong>contraseña de Instagram</strong>: aquí <strong>no vale entrar con Facebook</strong>. Después acepta que WillyPost vea tu perfil y publique en tu nombre.</p>
+  <div class="callout"><span class="t">¿No te acuerdas de la contraseña de Instagram?</span><p>Es muy normal si siempre entras desde el móvil. En la pantalla de Threads pulsa <span class="btnlabel">¿Has olvidado la contraseña?</span>: te llega un enlace por SMS para crear una nueva. Luego vuelve a pulsar Conectar en WillyPost.</p></div>
+  <p class="small"><a href="threads.html">Guía completa de Threads →</a></p>
+</div>
+
+<div class="red" id="red-tiktok">
+  <h3><span class="dot" style="background:#111"></span>TikTok</h3>
+  <span class="lbl">Qué necesitas</span>
+  <p>Tu cuenta de TikTok y la app de TikTok en el móvil.</p>
+  <span class="lbl">Qué verás</span>
+  <p>Pulsas <span class="btnlabel">Conectar TikTok</span>, entras en TikTok y pulsas <span class="btnlabel">Continuar</span>. <strong>Ojo:</strong> si en tu navegador ya tienes abierta otra cuenta de TikTok, se conectará esa. Antes de continuar, mira qué cuenta aparece y, si no es la buena, pulsa <span class="btnlabel">Cambiar de cuenta</span>.</p>
+  <p>Mientras TikTok no termine de auditar la app de WillyPost, tus vídeos <strong>llegan a tu bandeja de TikTok</strong>: te salta una notificación en la app del móvil y desde ahí lo publicas con un toque. WillyPost te lo recuerda al crear la publicación:</p>
+  <figure class="cap"><a href="img/tiktok-aviso-bandeja.webp"><img src="img/tiktok-aviso-bandeja.webp" alt="Crear publicación con TikTok marcado y el aviso: mientras TikTok termina de aprobar WillyPost, el vídeo llega a tu bandeja de TikTok y desde ahí lo publicas con un toque" width="1180" height="447" loading="lazy" decoding="async"></a><figcaption>El aviso que verás al marcar TikTok mientras dure la revisión.</figcaption></figure>
+  <p class="small"><a href="tiktok.html">Guía completa de TikTok →</a></p>
+</div>
+
+<div class="red" id="red-youtube">
+  <h3><span class="dot" style="background:#E11D1D"></span>YouTube Shorts</h3>
+  <span class="lbl">Qué necesitas</span>
+  <p>Un canal de YouTube y la cuenta de Google con la que lo gestionas.</p>
+  <span class="lbl">Qué verás</span>
+  <ol>
+    <li>Pulsas <span class="btnlabel">Conectar YouTube Shorts</span> y Google te pide elegir cuenta. <strong>Elige la del canal correcto</strong>: si tienes un canal de marca, aparece aparte, con el nombre del canal y la palabra «YouTube» debajo.</li>
+    <li>Mientras Google revisa la app, sale el aviso <strong>«Google no ha verificado esta aplicación»</strong>. Pulsa <span class="btnlabel">Configuración avanzada</span> y después <span class="btnlabel">Ir a WillyPost (no seguro)</span>. Asusta un poco, pero es el texto que Google pone a todas las apps mientras las revisa.</li>
+    <li>Google te enseña lo que WillyPost quiere hacer: <strong>marca todas las casillas</strong> (gestionar y subir tus vídeos de YouTube) y pulsa <span class="btnlabel">Continuar</span>.</li>
+  </ol>
+  <figure class="cap"><a href="img/youtube-elegir-cuenta.webp"><img src="img/youtube-elegir-cuenta.webp" alt="Google: «Elige tu cuenta o una cuenta de marca», con la cuenta de Google y el canal de YouTube debajo" width="880" height="430" loading="lazy" decoding="async"></a><figcaption>Elige la cuenta o el canal donde quieres subir tus Shorts.</figcaption></figure>
+  <figure class="cap"><a href="img/youtube-no-verificada.webp"><img src="img/youtube-no-verificada.webp" alt="Aviso de Google «Google no ha verificado esta aplicación» con la configuración avanzada abierta y el enlace Ir a WillyPost (no seguro)" width="660" height="430" loading="lazy" decoding="async"></a><figcaption>Con la configuración avanzada abierta aparece, abajo, «Ir a WillyPost (no seguro)».</figcaption></figure>
+  <figure class="cap"><a href="img/youtube-continuar.webp"><img src="img/youtube-continuar.webp" alt="Final de la pantalla de permisos de Google con los botones Cancelar y Continuar" width="864" height="364" loading="lazy" decoding="async"></a><figcaption>Al final, <strong>Continuar</strong>.</figcaption></figure>
+  <p class="small"><a href="youtube.html">Guía completa de YouTube Shorts →</a></p>
+</div>
+
+<div class="red" id="red-gbp">
+  <h3><span class="dot" style="background:#34A853"></span>Google Business Profile</h3>
+  <span class="lbl">Qué necesitas</span>
+  <p>Una <strong>ficha de Google verificada</strong> de la que seas propietario/a o administrador/a.</p>
+  <span class="lbl">Qué verás</span>
+  <p>Pulsas <span class="btnlabel">Conectar Google Business Profile</span>, eliges la cuenta de Google que gestiona tu ficha, aceptas y, de vuelta en WillyPost, marcas tu ficha. Google tiene que dar a WillyPost acceso a su API y ese trámite puede tardar: si te sale <strong>«Google todavía no te ha dado acceso a la API»</strong>, no es culpa tuya. Mientras tanto, usa el modo manual.</p>
+  <p class="small"><a href="gbp.html">Guía completa de Google Business Profile →</a></p>
+</div>
+
+<div class="red" id="red-linkedin">
+  <h3><span class="dot" style="background:#0A66C2"></span>LinkedIn</h3>
+  <span class="lbl">Qué necesitas</span>
+  <p>Tu <strong>perfil personal</strong> de LinkedIn (las Páginas de empresa no están incluidas).</p>
+  <span class="lbl">Qué verás</span>
+  <p>Pulsas <span class="btnlabel">Conectar LinkedIn</span>, entras si hace falta y pulsas <span class="btnlabel">Permitir</span>. Listo.</p>
+  <p class="small"><a href="linkedin.html">Guía completa de LinkedIn →</a></p>
+</div>
+
+<div class="red" id="red-bluesky">
+  <h3><span class="dot" style="background:#1185FE"></span>Bluesky</h3>
+  <span class="lbl">Qué necesitas</span>
+  <p>Tu cuenta de Bluesky y una <strong>contraseña de aplicación</strong>: una contraseña especial que puedes borrar cuando quieras. Tu contraseña de siempre no se la das a WillyPost.</p>
+  <span class="lbl">Qué verás</span>
+  <ol>
+    <li>En Bluesky: <strong>Ajustes → Privacidad y seguridad → Contraseñas de aplicación</strong> → <span class="btnlabel">Añadir contraseña de aplicación</span>. Ponle de nombre <strong>WillyPost</strong> y copia la contraseña (tiene la forma <code>xxxx-xxxx-xxxx-xxxx</code> y solo se ve una vez).</li>
+    <li>En WillyPost → Redes → Bluesky → <span class="btnlabel">Conectar con contraseña de aplicación</span>. Escribe tu usuario completo sin la @ (por ejemplo <code>tuusuario.bsky.social</code>), pega la contraseña de aplicación y pulsa <span class="btnlabel">Conectar</span>.</li>
+  </ol>
+  <p class="small"><a href="bluesky.html">Guía completa de Bluesky →</a></p>
+</div>
+
+<h2 id="revision">4. Redes en revisión y modo manual</h2>
+<p>Te lo contamos con sinceridad: para que cualquiera pueda pulsar «Conectar», cada red tiene que revisar y aprobar la app de WillyPost. Algunas (Meta, que es Facebook, Instagram y Threads; TikTok; Google) <strong>todavía están en ese trámite</strong>. No depende de ti ni de nosotros, sino de la propia red.</p>
+<ul class="plain">
+  <li>En el <a href="index.html">índice de guías</a>, cada red lleva una etiqueta que se actualiza sola: <strong>«Ya disponible»</strong>, <strong>«En revisión»</strong> o <strong>«Muy pronto»</strong>.</li>
+  <li>Y, si una red aún está en revisión, su guía te lo avisa arriba del todo.</li>
+</ul>
+<div class="callout ok"><span class="t">Mientras tanto, el modo manual: cualquier red, desde hoy</span><p>En la tarjeta de cada red, pulsa <span class="btnlabel">Añadir en modo manual</span> y ponle un nombre (por ejemplo, tu @usuario). Programas igual que siempre y, a su hora, WillyPost te avisa con una notificación. En <strong>Para publicar a mano</strong> tienes el texto y los archivos listos: copias, descargas, lo subes a la red y pulsas <span class="btnlabel">Ya lo he publicado</span>. Dos clics.</p></div>
+
+<h2 id="publicar">5. Tu primera publicación</h2>
+<p>Pulsa <span class="btnlabel">+ Crear publicación</span>, arriba a la derecha. Se abre una ventana con sus pasos numerados y, a la derecha, la vista previa de cómo quedará.</p>
+<ol class="steps">
+  <li><strong>¿Qué vas a publicar?</strong> Elige el tipo: <span class="btnlabel">Post</span> (texto con imagen), <span class="btnlabel">Carrusel</span> (varias imágenes), <span class="btnlabel">Reel / Vídeo</span> (vídeo vertical) o <span class="btnlabel">Story</span> (dura 24 horas).
+    <figure class="cap"><a href="img/crear-1-tipo.webp"><img src="img/crear-1-tipo.webp" alt="Ventana Crear publicación, paso 1: ¿Qué vas a publicar? con las opciones Post, Carrusel, Reel / Vídeo y Story" width="1180" height="487" loading="lazy" decoding="async"></a></figure>
+  </li>
+  <li><strong>¿Dónde?</strong> Toca cada red para marcarla o desmarcarla. Solo se publica en las que tienen el check. Si alguna va en modo manual o tiene algo que contarte, WillyPost te lo avisa justo debajo.
+    <figure class="cap"><a href="img/crear-2-redes.webp"><img src="img/crear-2-redes.webp" alt="Paso 2: ¿Dónde?, con Facebook e Instagram marcados y la vista previa de Instagram a la derecha" width="1180" height="503" loading="lazy" decoding="async"></a></figure>
+  </li>
+  <li><strong>Imágenes o vídeo.</strong> Arrastra tus archivos al recuadro o haz clic para elegirlos en tu ordenador. También puedes usar <span class="btnlabel">Elegir de la biblioteca</span> con lo que ya hayas subido.</li>
+  <li><strong>Texto.</strong> Escribe en <strong>Texto base</strong>: es el que se usa en todas las redes. Al lado tienes una pestaña por cada red marcada: si cambias el texto ahí, solo cambia en esa red (ideal para los hashtags o para acortar). El contador te avisa si te pasas de caracteres.
+    <figure class="cap"><a href="img/crear-4-texto.webp"><img src="img/crear-4-texto.webp" alt="Paso 4: Texto, con las pestañas Texto base, Instagram y Facebook y el contador de caracteres" width="1180" height="503" loading="lazy" decoding="async"></a></figure>
+  </li>
+  <li><strong>Ajustes de cada red</strong>, debajo del texto, solo si los necesita:
+    <ul>
+      <li><strong>TikTok:</strong> en <strong>«¿Quién puede verlo?»</strong> elige tú una opción (TikTok pide que la marques tú; no viene ninguna puesta) y qué pueden hacer los demás (comentarios, dúos, stitch).</li>
+      <li><strong>YouTube:</strong> escribe el <strong>Título del vídeo</strong> (obligatorio; hay un enlace para usar la primera línea del texto) y elige la privacidad: Público, No listado o Privado.</li>
+      <li><strong>Google Business Profile:</strong> si quieres, un botón (Reservar, Llamar ahora, Más información…) con su enlace.</li>
+    </ul>
+    <figure class="cap"><a href="img/crear-5-ajustes-tiktok.webp"><img src="img/crear-5-ajustes-tiktok.webp" alt="Ajustes de TikTok en Crear publicación: ¿Cómo quieres enviarlo? y ¿Quién puede verlo?, con el aviso de que TikTok pide que lo marques tú" width="1160" height="438" loading="lazy" decoding="async"></a><figcaption>Los ajustes de TikTok: hay que elegir quién puede verlo.</figcaption></figure>
+  </li>
+  <li><strong>¿Cuándo?</strong> Elige <strong>Elegir día y hora</strong> o <strong>Añadir a la cola</strong> (WillyPost busca el siguiente hueco libre en tus horas buenas). Y abajo:
+    <ul>
+      <li><span class="btnlabel">Programar</span> (o <span class="btnlabel">Añadir a la cola</span>): se publica sola a su hora.</li>
+      <li><span class="btnlabel">Publicar ahora</span>: te pregunta «¿Publicar ahora?» y confirmas con <span class="btnlabel">Sí, publicar ahora</span>.</li>
+      <li><span class="btnlabel">Guardar borrador</span>: para terminarla otro día.</li>
+    </ul>
+  </li>
+</ol>
+<div class="callout"><span class="t">Una cosa importante</span><p>WillyPost vive en tu ordenador: publica a su hora <strong>si el ordenador está encendido</strong>. Si estaba apagado, al arrancar te pregunta qué hacer con lo que se quedó atrás (publicar ahora, reprogramar u omitir).</p></div>
+
+<h2 id="renovar">6. Renueva tus conexiones cada 30 días</h2>
+<p>Por seguridad, cada conexión dura <strong>30 días</strong>. Desde el día 25, WillyPost te avisa y la renuevas en un momento: <strong>Redes → <span class="btnlabel">Reconectar</span></strong> y vuelves a aceptar. Si no lo haces, esa cuenta deja de publicar hasta que reconectes.</p>
+
+<h2 id="problemas">7. Problemas frecuentes</h2>
+<details class="faq"><summary>Chrome me rellena una contraseña antigua y no me deja entrar</summary><div class="body"><p>Chrome a veces pone solo una contraseña que tenía guardada, aunque ya no sea la buena (pasa mucho con Instagram y Threads). Borra lo que haya en el campo de la contraseña, escribe la actual a mano y entra. Si no la recuerdas, usa <strong>¿Has olvidado la contraseña?</strong>.</p></div></details>
+<details class="faq"><summary>La ventana de permisos se queda en blanco o no veo el botón para terminar</summary><div class="body"><p>Muchas veces el botón (<strong>De acuerdo</strong>, <strong>Guardar</strong> o <strong>Continuar</strong>) está más abajo: <strong>baja dentro de la ventana</strong> con la rueda del ratón. Si la ventana se queda en blanco, ciérrala, vuelve a WillyPost y pulsa <strong>Conectar</strong> otra vez.</p></div></details>
+<details class="faq"><summary>«La conexión ha caducado (pasaron más de 30 minutos)»</summary><div class="body"><p>La pantalla de permisos tiene un tiempo límite: si la dejas abierta mucho rato, caduca. No pasa nada: vuelve a WillyPost y pulsa <strong>Conectar</strong> otra vez.</p></div></details>
+<details class="faq"><summary>Al volver, el navegador dice «No se puede acceder a este sitio»</summary><div class="body"><p>WillyPost estaba cerrado. Ábrelo con su icono (en Mac, ⌘ + Espacio y escribe WillyPost) y recarga la pestaña con F5.</p></div></details>
+<details class="faq"><summary>La red me dice que la app no está disponible o que no tengo permiso</summary><div class="body"><p>Seguramente esa red todavía está revisando la app de WillyPost. Mira su etiqueta en el <a href="index.html">índice de guías</a> y, mientras tanto, añádela en <strong>modo manual</strong>.</p></div></details>
+<p class="small muted">¿Te has atascado en otra cosa? Pregunta en la comunidad de la Academia o escribe a <a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a> contando en qué paso estás.</p>
+
+<div class="guide-nav"><a class="btn btn-secondary btn-sm" href="index.html">← Todas las guías</a><a class="btn btn-secondary btn-sm" href="claude.html">Conecta con Claude →</a></div>
+</div></section>
+</main>
+<footer class="site">
+  <div class="container">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="../index.html"><img src="../assets/icon-192.png" alt="" width="38" height="38"><span><b>WillyPost</b><small>by Willy SEO Academy</small></span></a>
+        <p style="margin-top:16px;max-width:320px">Programa tus redes sociales desde tu propio ordenador. Gratis, sin ánimo de lucro y con tus datos en tus manos.</p>
+        <p class="small" style="max-width:320px;opacity:.85">Apps de conexión con las redes y servicio <code>auth.willypost.com</code>: Diving With Us SL.</p>
+      </div>
+      <div><h4>WillyPost</h4><ul>
+        <li><a data-repo="download" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a></li>
+        <li><a href="../index.html#instalar">Cómo se instala</a></li>
+        <li><a href="index.html">Guías de cada red</a></li>
+        <li><a href="claude.html">Conecta con Claude</a></li>
+      </ul></div>
+      <div><h4>Legal</h4><ul>
+        <li><a href="../privacidad.html">Política de privacidad</a></li>
+        <li><a href="../terminos.html">Términos del servicio</a></li>
+        <li><a href="../borrar-datos.html">Borrar mis datos</a></li>
+        <li><a href="../en.html" lang="en">English (for reviewers)</a></li>
+      </ul></div>
+      <div><h4>Ayuda</h4><ul>
+        <li><a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a></li>
+        <li><a data-repo="issues" href="https://github.com/NuriaAtlantis/willypost/issues">Avisar de un problema</a></li>
+        <li><a data-fill-href="academyUrl" href="https://willyseo.net/" target="_blank" rel="noopener">willyseo.net</a></li>
+      </ul></div>
+    </div>
+    <div class="fbottom"><span>Hecho con cariño por Nuria Olive Soler para la Willy SEO Academy.</span><span>Regalo gratuito y sin ánimo de lucro · © <span data-year>2026</span> Nuria Olive Soler</span></div>
+  </div>
+</footer>
+<script src="../config.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>

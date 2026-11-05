@@ -44,7 +44,7 @@
       <a class="btn" data-repo="download" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar WillyPost →</a>
       <a class="btn btn-secondary" href="#instalar">Cómo se instala</a>
     </div>
-    <p class="muted small" style="margin-top:12px">Windows: <a data-repo="exe" href="descargas/Instalar-WillyPost.exe">Instalar-WillyPost.exe</a> · Mac: <a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">archivo ZIP</a></p>
+    <p class="muted small" style="margin-top:12px">Windows: <a data-repo="exe" href="descargas/Instalar-WillyPost.exe">Instalar-WillyPost.exe</a> · Mac: <a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">archivo ZIP</a> · <a href="guias/empieza-aqui.html">Guía para empezar</a></p>
     <noscript><p class="nojs">Activa JavaScript para ver el enlace de descarga, o busca “willypost” en GitHub.</p></noscript>
     <ul class="checks">
       <li>Windows 10/11 y Mac</li><li>Gratis y sin ánimo de lucro</li><li>Tus datos se quedan en tu ordenador</li>
@@ -125,7 +125,7 @@
   <div class="tabpanel" id="tab-mac" role="tabpanel" hidden>
     <div class="install-steps">
       <div class="istep"><h3>Descarga y descomprime</h3><p>Pulsa <a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>: se baja un archivo ZIP. Haz doble clic sobre él para descomprimirlo y abre la carpeta que se crea.</p></div>
-      <div class="istep"><h3>Clic derecho → Abrir</h3><p>Haz <strong>clic derecho</strong> (o Control + clic) sobre <strong>“Instalar WillyPost”</strong> → <strong>Abrir</strong> → <strong>Abrir</strong>. Solo la primera vez: es el aviso de seguridad de macOS.</p></div>
+      <div class="istep"><h3>Abre «Instalar WillyPost»</h3><p>Doble clic en <strong>“Instalar WillyPost”</strong>. La primera vez macOS lo bloquea (es normal). En <strong>macOS 14 o anterior</strong>: <strong>clic derecho → Abrir → Abrir</strong>. En <strong>macOS 15 (Sequoia) o posterior</strong>: <strong>Ajustes del Sistema → Privacidad y seguridad</strong> → abajo del todo, <strong>Abrir igualmente</strong>.</p></div>
       <div class="istep"><h3>Espera un par de minutos</h3><p>La Terminal mostrará los pasos. Al acabar se abre <strong>WillyPost en tu navegador</strong>. Crea tu cuenta y guarda el código de recuperación.</p></div>
     </div>
     <p class="center muted small" style="margin-top:22px">Después lo encuentras como app “WillyPost” en Launchpad y Spotlight, y arranca solo al encender el Mac. Si macOS avisa de un “elemento en segundo plano”, pulsa Permitir.</p>
@@ -138,6 +138,7 @@
       <li><strong>Conecta una red.</strong> Ve a <em>Redes</em>, pulsa <strong>Conectar</strong> y acepta los permisos en la ventana de la red. Si tienes dudas, mira la <a href="guias/index.html">guía</a> de esa red.</li>
       <li><strong>Programa tu primera publicación.</strong> Pulsa “+ Crear publicación”, escribe, elige las redes y la fecha. ¡Ya está!</li>
     </ol>
+    <p class="small muted" style="margin:6px 0 0">¿Lo prefieres todo paso a paso y con capturas? Sigue la guía <a href="guias/empieza-aqui.html">Empieza aquí</a>.</p>
   </div>
 </div></section>
 
@@ -177,7 +178,7 @@
 <details class="faq"><summary>¿La Academia o alguien más ve mis publicaciones o mis contraseñas?</summary><div class="body"><p>No. Todo se guarda en tu ordenador. El servicio de conexión <code>auth.willypost.com</code> solo interviene en el momento de conectar (o renovar) una red, para añadir la clave secreta de la app de WillyPost; no guarda los códigos ni los tokens y no lleva registros con ellos. Los detalles están en la <a href="privacidad.html">política de privacidad</a>.</p></div></details>
 <details class="faq"><summary>¿Por qué hay que reconectar cada 30 días?</summary><div class="body"><p>Es una medida de seguridad de WillyPost. Desde el día 25 te avisa y con un clic en <strong>Redes → Reconectar</strong> lo renuevas. Si no lo haces, esa cuenta deja de publicar hasta que reconectes.</p></div></details>
 <details class="faq"><summary>¿Se instala algo raro en mi ordenador?</summary><div class="body"><p>No. El instalador descarga <a href="https://nodejs.org" target="_blank" rel="noopener">Node.js</a> (en una carpeta propia de WillyPost, sin tocar el resto del sistema) si no lo tienes, instala las piezas del programa, crea los iconos y el arranque automático. No pide permisos de administrador. Todo el código está abierto.</p></div></details>
-<details class="faq"><summary>Windows me avisa de que “protegió mi PC” / el Mac dice que no puede verificar el programa</summary><div class="body"><p>Es el aviso habitual de los programas que no pasan por una tienda. En Windows: <strong>Más información → Ejecutar de todas formas</strong>. En Mac: <strong>clic derecho → Abrir → Abrir</strong> (solo la primera vez).</p></div></details>
+<details class="faq"><summary>Windows me avisa de que “protegió mi PC” / el Mac dice que no puede verificar el programa</summary><div class="body"><p>Es el aviso habitual de los programas que no pasan por una tienda. En Windows: <strong>Más información → Ejecutar de todas formas</strong>. En Mac (solo la primera vez): <strong>clic derecho → Abrir → Abrir</strong>; en macOS 15 o posterior, <strong>Ajustes del Sistema → Privacidad y seguridad → Abrir igualmente</strong>.</p></div></details>
 <details class="faq"><summary>¿Cómo actualizo WillyPost?</summary><div class="body"><p>En Windows, vuelve a abrir <strong>Instalar-WillyPost.exe</strong> (o <a data-repo="exe" href="descargas/Instalar-WillyPost.exe">descárgalo otra vez</a>): siempre instala la última versión. En Mac, descarga el ZIP nuevo, descomprímelo y vuelve a hacer doble clic en <strong>Instalar WillyPost</strong>. Tus datos se conservan porque viven aparte, en <code>%APPDATA%\WillyPost</code> (Windows) o <code>~/Library/Application Support/WillyPost</code> (Mac).</p></div></details>
 <details class="faq"><summary>¿Cómo lo desinstalo?</summary><div class="body"><p>En Windows: menú Inicio → WillyPost → <strong>Desinstalar WillyPost</strong>. En Mac: doble clic en <strong>Desinstalar WillyPost</strong>, en la carpeta que descomprimiste. Te pregunta antes de borrar tus datos. Para quitar también los permisos en las redes, mira <a href="borrar-datos.html">cómo borrar tus datos</a>.</p></div></details>
 <details class="faq"><summary>¿Cómo publica en TikTok?</summary><div class="body"><p>Tienes dos opciones en cada publicación: <strong>publicar directamente</strong> o <strong>enviarla a tu bandeja de TikTok</strong> para terminarla en la app. TikTok exige una auditoría para publicar en abierto desde una app: mientras la app de WillyPost no la tenga, las publicaciones directas salen como privadas (“solo yo”). Más detalles en la <a href="guias/tiktok.html">guía de TikTok</a>.</p></div></details>
