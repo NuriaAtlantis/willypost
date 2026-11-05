@@ -28,7 +28,7 @@ en `docs/config.js` y en `broker/wrangler.toml`. Si se compra otro dominio, se c
 ## Servidor central (broker) — contrato
 
 Sin estado, sin base de datos, sin registros con tokens. Secretos como variables de entorno del Worker:
-`META_APP_ID, META_APP_SECRET, META_CONFIG_ID, IG_APP_ID, IG_APP_SECRET, THREADS_APP_ID,
+`META_APP_ID, META_APP_SECRET, META_CONFIG_ID, META_IG_CONFIG_ID, IG_APP_ID, IG_APP_SECRET, THREADS_APP_ID,
 THREADS_APP_SECRET, TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET, LINKEDIN_CLIENT_ID, LINKEDIN_CLIENT_SECRET,
 GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET` (el de Google es de tipo «App de escritorio»: Google lo
 considera público, por eso se puede entregar). Una red sin sus variables simplemente no aparece.
@@ -40,7 +40,7 @@ Datos públicos para que WillyPost sepa qué redes funcionan en modo central (ca
   "relay": "https://willypost.com/callback.html",
   "media": "https://media.willypost.com",
   "networks": {
-    "meta":      { "client_id": "…", "config_id": "…" },
+    "meta":      { "client_id": "…", "config_id": "…", "ig_config_id": "…" },
     "instagram": { "client_id": "…" },
     "threads":   { "client_id": "…" },
     "tiktok":    { "client_id": "…" },
@@ -48,6 +48,27 @@ Datos públicos para que WillyPost sepa qué redes funcionan en modo central (ca
     "google":    { "client_id": "…", "client_secret": "…" } } }
 ```
 `meta` sirve para la red `facebook`; `google` para `youtube` y `gbp`.
+`config_id` e `ig_config_id` son opcionales y solo aparecen si están puestos (`META_CONFIG_ID`, `META_IG_CONFIG_ID`).
+
+### Instagram «a través de Facebook» (`META_IG_CONFIG_ID`)
+Desde nov-2026 Meta **no deja que las apps nuevas** usen «Instagram API with Instagram Login»
+(`www.instagram.com/oauth/authorize`, `graph.instagram.com`): exige el inicio de sesión unificado, es decir,
+**Facebook Login for Business**. Por eso, en modo central:
+- Si `/config` trae la familia `instagram` (`IG_APP_ID` + `IG_APP_SECRET`), Instagram funciona como siempre.
+- Si no la trae pero `meta` trae `ig_config_id`, Instagram se conecta **a través de Facebook**: la app de Meta
+  (`client_id` de `meta`) con una **segunda configuración** de Facebook Login for Business solo para Instagram
+  (permisos `instagram_basic`, `instagram_content_publish`, `pages_show_list`, `pages_read_engagement`,
+  y `business_management` si las Páginas están en un portfolio). Diálogo
+  `https://www.facebook.com/v26.0/dialog/oauth?config_id=<ig_config_id>&override_default_response_type=true`;
+  canjes por `/token/meta/code` y `/token/meta/long_lived`; luego `GET /me/accounts` con
+  `instagram_business_account{…}`: cada Página con Instagram profesional vinculado da una cuenta cuyo
+  `external_id` es el id de Instagram y cuyo token es el **Page access token** (no caduca; no hay
+  `ig_refresh_token`; el aviso de reconectar cada 30 días sigue igual). Se publica con los mismos endpoints de
+  Content Publishing en `graph.facebook.com` (la cuenta lleva `meta.via = "facebook"`).
+- Valor de `META_IG_CONFIG_ID`: en la app de Meta → **Inicio de sesión con Facebook para empresas** →
+  **Configuraciones** → crear una configuración (tipo de token: **token de acceso de usuario**) con los permisos de
+  Instagram de arriba → su **ID de configuración** (solo números). No es secreto.
+- Quien usa su propio carné de Instagram sigue con el Inicio de sesión con Instagram, sin cambios.
 
 ### `POST /token/:family/:op`  (JSON de entrada, JSON de salida)
 El broker añade `client_id`/`client_secret` (o `client_key` en TikTok), llama al endpoint oficial y

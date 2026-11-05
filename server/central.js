@@ -63,6 +63,9 @@ export function sanitizeConfig(raw) {
     if (fam === 'meta') {
       const cfgId = cleanStr(n.config_id, 64);
       if (cfgId && /^\d{5,30}$/.test(cfgId)) entry.config_id = cfgId;
+      // Configuración de Facebook Login for Business SOLO para Instagram (Instagram "a través de Facebook").
+      const igCfgId = cleanStr(n.ig_config_id, 64);
+      if (igCfgId && /^\d{5,30}$/.test(igCfgId)) entry.ig_config_id = igCfgId;
     }
     networks[fam] = entry;
   }
@@ -140,10 +143,20 @@ export function _resetCentralCache() {
 /**
  * Credenciales PÚBLICAS de la app central de una familia, o null si esa red no está en modo central.
  * Nunca contiene secretos, salvo el de Google (cliente de escritorio, público por diseño).
+ *
+ * Instagram: Meta ya no deja que las apps NUEVAS usen "Instagram API with Instagram Login". Si /config no trae
+ * la familia 'instagram' pero 'meta' trae ig_config_id, Instagram funciona en modo central "a través de
+ * Facebook": app de Meta (client_id de meta) + la configuración de Facebook Login for Business propia de
+ * Instagram; los canjes de tokens van al broker con la familia 'meta' (via: 'facebook').
  */
 export function centralCredsFor(family) {
   const cfg = centralConfig();
   const n = cfg?.networks?.[family];
+  if (family === 'instagram' && !n?.client_id) {
+    const meta = cfg?.networks?.meta;
+    if (!meta?.client_id || !meta.ig_config_id) return null;
+    return { client_id: meta.client_id, extra: { config_id: meta.ig_config_id }, central: true, relay: cfg.relay, via: 'facebook' };
+  }
   if (!n?.client_id) return null;
   const out = { client_id: n.client_id, extra: {}, central: true, relay: cfg.relay };
   if (family === 'google') out.client_secret = n.client_secret;

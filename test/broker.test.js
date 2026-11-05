@@ -14,6 +14,7 @@ const FULL_ENV = {
   META_APP_ID: 'meta-id',
   META_APP_SECRET: 'meta-SECRET',
   META_CONFIG_ID: 'meta-config',
+  META_IG_CONFIG_ID: 'meta-ig-config',
   IG_APP_ID: 'ig-id',
   IG_APP_SECRET: 'ig-SECRET',
   THREADS_APP_ID: 'th-id',
@@ -100,16 +101,24 @@ test('/config solo lista las redes configuradas y no filtra secretos (salvo el d
   assert.ok(!text.includes('SECRET'));
 });
 
-test('/config con todo: config_id de Meta y ningún secreto salvo Google', async () => {
+test('/config con todo: config_id e ig_config_id de Meta y ningún secreto salvo Google', async () => {
   const res = await run(new Request(`${AUTH}/config`));
   const text = await res.text();
   const body = JSON.parse(text);
   assert.deepEqual(Object.keys(body.networks).sort(), ['google', 'instagram', 'linkedin', 'meta', 'threads', 'tiktok']);
-  assert.deepEqual(body.networks.meta, { client_id: 'meta-id', config_id: 'meta-config' });
+  assert.deepEqual(body.networks.meta, { client_id: 'meta-id', config_id: 'meta-config', ig_config_id: 'meta-ig-config' });
   assert.equal(body.networks.google.client_secret, 'g-desktop-secret');
   for (const [k, val] of Object.entries(FULL_ENV)) {
     if (k.endsWith('SECRET') && !k.startsWith('GOOGLE')) assert.ok(!text.includes(val), `${k} se ha filtrado`);
   }
+});
+
+test('/config: META_IG_CONFIG_ID solo aparece dentro de meta, y sin meta configurada no aparece', async () => {
+  const solo = { META_APP_ID: 'meta-id', META_APP_SECRET: 'meta-SECRET', META_IG_CONFIG_ID: ' 777 ' };
+  let body = await (await run(new Request(`${AUTH}/config`), solo)).json();
+  assert.deepEqual(body.networks, { meta: { client_id: 'meta-id', ig_config_id: '777' } });
+  body = await (await run(new Request(`${AUTH}/config`), { META_IG_CONFIG_ID: '777' })).json();
+  assert.deepEqual(body.networks, {});
 });
 
 test('/config respeta RELAY y MEDIA del entorno', async () => {
@@ -565,6 +574,16 @@ const spanishMessages = (src) =>
 
 test('PHP: misma versión de Graph API', () => {
   assert.match(PHP_AUTH, new RegExp(`const GRAPH_VERSION = '${GRAPH_VERSION.replace('.', '\.')}';`));
+});
+
+test('PHP: entrega ig_config_id igual que el Worker y lo ofrece en la página de claves justo después de META_CONFIG_ID', () => {
+  assert.ok(JS_SRC.includes("ig_config_id: v(env, 'META_IG_CONFIG_ID')"));
+  assert.ok(PHP_AUTH.includes("$out['ig_config_id'] = v($cfg, 'META_IG_CONFIG_ID');"));
+  const fields = [...PHP_AUTH.match(/const ADMIN_FIELDS = \[([\s\S]*?)\];/)[1].matchAll(/'([A-Z_]+)'\s*=>\s*\[([^\]]*)\]/g)];
+  const keys = fields.map((m) => m[1]);
+  assert.equal(keys[keys.indexOf('META_CONFIG_ID') + 1], 'META_IG_CONFIG_ID');
+  const ig = fields.find((m) => m[1] === 'META_IG_CONFIG_ID')[2];
+  assert.match(ig, /'ID de configuración de Instagram \(opcional\)', false$/);
 });
 
 test('PHP: mismos códigos de error con el mismo estado HTTP', () => {

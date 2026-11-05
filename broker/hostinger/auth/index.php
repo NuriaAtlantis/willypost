@@ -73,6 +73,7 @@ const ADMIN_FIELDS = [
     'META_APP_ID'            => ['Facebook (Meta)', 'Identificador de la app', false],
     'META_APP_SECRET'        => ['Facebook (Meta)', 'Clave secreta de la app', true],
     'META_CONFIG_ID'         => ['Facebook (Meta)', 'ID de configuración (opcional)', false],
+    'META_IG_CONFIG_ID'      => ['Facebook (Meta)', 'ID de configuración de Instagram (opcional)', false],
     'IG_APP_ID'              => ['Instagram', 'Identificador de la app de Instagram', false],
     'IG_APP_SECRET'          => ['Instagram', 'Clave secreta de la app de Instagram', true],
     'THREADS_APP_ID'         => ['Threads', 'Identificador de la app de Threads', false],
@@ -170,6 +171,8 @@ function family_public(array $cfg, string $family): array
     $f = FAMILIES[$family];
     $out = ['client_id' => v($cfg, $f['id'])];
     if ($family === 'meta' && v($cfg, 'META_CONFIG_ID') !== '') $out['config_id'] = v($cfg, 'META_CONFIG_ID');
+    // Instagram a través de Facebook Login (apps nuevas de Meta): configuración propia de Instagram, opcional.
+    if ($family === 'meta' && v($cfg, 'META_IG_CONFIG_ID') !== '') $out['ig_config_id'] = v($cfg, 'META_IG_CONFIG_ID');
     if ($family === 'google') $out['client_secret'] = v($cfg, 'GOOGLE_CLIENT_SECRET');
     return $out;
 }

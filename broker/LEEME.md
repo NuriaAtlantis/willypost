@@ -157,6 +157,7 @@ Cada red aprueba su app en un momento distinto. Cuando una te dé su ID y su sec
 | Red | Líneas que rellenar | Dónde está el dato |
 |---|---|---|
 | Facebook (meta) | `META_APP_ID`, `META_APP_SECRET`, y `META_CONFIG_ID` si lo hay | developers.facebook.com → tu app → Configuración de la app → Básica |
+| Instagram a través de Facebook (apps nuevas de Meta) | `META_IG_CONFIG_ID` (opcional; usa el ID y el secreto de Meta) | misma app de Meta → Inicio de sesión con Facebook para empresas → Configuraciones → la configuración creada para Instagram → «ID de configuración» |
 | Instagram | `IG_APP_ID`, `IG_APP_SECRET` | misma app de Meta → Instagram → «ID de la app de Instagram» y su clave secreta |
 | Threads | `THREADS_APP_ID`, `THREADS_APP_SECRET` | misma app de Meta → Threads → ID y clave secreta de Threads |
 | TikTok | `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET` | developers.tiktok.com → tu app → Client key y Client secret |

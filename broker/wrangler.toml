@@ -28,6 +28,8 @@ MEDIA = "https://media.willypost.com"
 #   npx wrangler secret put META_APP_ID
 #   npx wrangler secret put META_APP_SECRET
 #   npx wrangler secret put META_CONFIG_ID          (opcional: configuración de «Facebook Login for Business»)
+#   npx wrangler secret put META_IG_CONFIG_ID       (opcional: configuración de «Facebook Login for Business» SOLO para Instagram;
+#                                                    con ella Instagram se conecta a través de Facebook, sin IG_APP_ID/IG_APP_SECRET)
 #   npx wrangler secret put IG_APP_ID
 #   npx wrangler secret put IG_APP_SECRET
 #   npx wrangler secret put THREADS_APP_ID

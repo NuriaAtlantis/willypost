@@ -76,7 +76,7 @@ async function main() {
   for (const n of names) {
     const net = nets[n] || {};
     check(typeof net.client_id === 'string' && net.client_id.length > 0, `${n}: tiene client_id`);
-    const extra = Object.keys(net).filter((k) => !['client_id', 'config_id', ...(n === 'google' ? ['client_secret'] : [])].includes(k));
+    const extra = Object.keys(net).filter((k) => !['client_id', ...(n === 'meta' ? ['config_id', 'ig_config_id'] : []), ...(n === 'google' ? ['client_secret'] : [])].includes(k));
     check(extra.length === 0, `${n}: no entrega nada más (ni secretos)`, extra.join(', '));
   }
   if (!MEDIA && typeof cfg.media === 'string') MEDIA = cfg.media.replace(/\/+$/, '');

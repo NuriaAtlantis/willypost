@@ -21,6 +21,9 @@ return [
     'META_APP_ID'     => '',
     'META_APP_SECRET' => '',
     'META_CONFIG_ID'  => '', // opcional: configuración de «Facebook Login for Business»
+    'META_IG_CONFIG_ID' => '', // opcional: otra configuración de «Facebook Login for Business» SOLO para Instagram.
+                               // Las apps nuevas de Meta ya no admiten «Inicio de sesión con Instagram»: con este valor,
+                               // Instagram se conecta a través de Facebook y no hacen falta IG_APP_ID / IG_APP_SECRET.
 
     // Instagram (Inicio de sesión con Instagram: su propio ID y secreto, no los de Facebook)
     'IG_APP_ID'     => '',

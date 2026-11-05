@@ -11,7 +11,7 @@
 //
 // Variables (Settings → Variables and Secrets del Worker):
 //   SITE, RELAY, MEDIA (texto normal; tienen valores por defecto)
-//   META_APP_ID, META_APP_SECRET, META_CONFIG_ID, IG_APP_ID, IG_APP_SECRET, THREADS_APP_ID,
+//   META_APP_ID, META_APP_SECRET, META_CONFIG_ID, META_IG_CONFIG_ID, IG_APP_ID, IG_APP_SECRET, THREADS_APP_ID,
 //   THREADS_APP_SECRET, TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET, LINKEDIN_CLIENT_ID,
 //   LINKEDIN_CLIENT_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET (secretos)
 // Una red sin sus variables simplemente no aparece.
@@ -39,7 +39,14 @@ const FAMILIES = {
   meta: {
     id: 'META_APP_ID',
     secret: 'META_APP_SECRET',
-    public: (env) => ({ client_id: v(env, 'META_APP_ID'), ...(v(env, 'META_CONFIG_ID') ? { config_id: v(env, 'META_CONFIG_ID') } : {}) }),
+    // META_IG_CONFIG_ID (opcional): configuración de «Facebook Login for Business» SOLO para Instagram. Las apps nuevas
+    // de Meta ya no pueden usar «Instagram API with Instagram Login»: Instagram se conecta entonces a través de
+    // Facebook Login (esta misma app de Meta) y publica con la Graph API de Facebook.
+    public: (env) => ({
+      client_id: v(env, 'META_APP_ID'),
+      ...(v(env, 'META_CONFIG_ID') ? { config_id: v(env, 'META_CONFIG_ID') } : {}),
+      ...(v(env, 'META_IG_CONFIG_ID') ? { ig_config_id: v(env, 'META_IG_CONFIG_ID') } : {}),
+    }),
   },
   instagram: { id: 'IG_APP_ID', secret: 'IG_APP_SECRET', public: (env) => ({ client_id: v(env, 'IG_APP_ID') }) },
   threads: { id: 'THREADS_APP_ID', secret: 'THREADS_APP_SECRET', public: (env) => ({ client_id: v(env, 'THREADS_APP_ID') }) },
