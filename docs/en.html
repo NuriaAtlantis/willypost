@@ -29,12 +29,12 @@
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
     <nav class="main" id="menu" aria-label="Main">
       <a href="#what">What it does</a><a href="#permissions">Permissions</a><a href="#privacy">Privacy</a><a href="#deletion">Data deletion</a><a href="index.html" lang="es">Español</a>
-      <a class="btn btn-sm" data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Download</a>
+      <a class="btn btn-sm" data-repo="download" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Download</a>
     </nav>
   </div>
 </header>
 <main id="contenido">
-<section class="guide-hero"><div class="container narrow"><span class="eyebrow">English · for platform reviewers</span><h1>WillyPost in <span class="pill">English</span></h1><p class="lead">WillyPost is a free, non-profit social media scheduler that runs on the user's own computer. This page summarises, in English, what the app does, who it is for, how it connects to each platform and how user data is handled. The Spanish pages are the authoritative versions.</p><p class="updated muted small">Last updated: 2 November 2026 · <a href="index.html" lang="es">Versión en español</a></p></div></section>
+<section class="guide-hero"><div class="container narrow"><span class="eyebrow">English · for platform reviewers</span><h1>WillyPost in <span class="pill">English</span></h1><p class="lead">WillyPost is a free, non-profit social media scheduler that runs on the user's own computer. This page summarises, in English, what the app does, who it is for, how it connects to each platform and how user data is handled. The Spanish pages are the authoritative versions.</p><p class="updated muted small">Last updated: 5 November 2026 · <a href="index.html" lang="es">Versión en español</a></p></div></section>
 <section class="guide-body"><div class="container narrow prose">
 
 <h2 id="what">1. What WillyPost does</h2>
@@ -58,14 +58,14 @@
 <li>The user creates a <strong>local</strong> WillyPost account (stored only on their computer; there is no online sign-up).</li>
 <li>In <em>Redes</em> (Networks), the user clicks <em>Conectar</em> (Connect). The official authorization screen of the platform opens in the browser and the user approves the requested permissions.</li>
 <li>The platform redirects to <code>https://willypost.com/callback.html</code>, a static page that immediately forwards the authorization code to the user's own computer (<code>localhost</code>). For Google (YouTube, Business Profile) the redirect goes directly to <code>localhost</code> (desktop OAuth client with PKCE).</li>
-<li>To exchange the code for a token, WillyPost sends the code to <code>auth.willypost.com</code>, which adds the app secret, calls the platform's official token endpoint and returns the response unchanged. <strong>It stores nothing and keeps no logs of codes or tokens.</strong></li>
+<li>To exchange the code for a token, WillyPost sends the code to <code>auth.willypost.com</code>, which adds the app secret, calls the platform's official token endpoint and returns the response unchanged. <strong>It never stores user codes or tokens and keeps no logs of them;</strong> the only thing it stores is the configuration of the WillyPost apps (app IDs and app secrets). Google is not exchanged through it.</li>
 <li>Tokens are stored on the user's computer. All publishing API calls go directly from the user's computer to the platform.</li>
 </ol>
 
 <h2 id="permissions">4. Permissions requested and why</h2>
 <table class="simple"><thead><tr><th>Platform</th><th>Permissions / scopes</th><th>Use</th></tr></thead><tbody>
-<tr><td>Facebook (Pages)</td><td><code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>pages_manage_posts</code>, <code>publish_video</code>, <code>business_management</code></td><td>List the Pages the user manages so they can choose one, read the Page name and Page access token, and publish the posts, photos, videos and Reels the user schedules. <code>business_management</code> is needed so Pages owned by a business portfolio appear in the list.</td></tr>
-<tr><td>Instagram</td><td><code>instagram_business_basic</code>, <code>instagram_business_content_publish</code></td><td>Identify the professional account (username, profile picture) and publish feed posts, carousels, Reels and stories.</td></tr>
+<tr><td>Facebook (Pages)</td><td><code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>pages_manage_posts</code>, <code>business_management</code></td><td>List the Pages the user manages so they can choose one, read the Page name and Page access token, and publish the posts, photos, videos and Reels the user schedules. <code>business_management</code> is needed so Pages owned by a business portfolio appear in the list.</td></tr>
+<tr><td>Instagram<br><small>(connected through Facebook Login)</small></td><td><code>instagram_basic</code>, <code>instagram_content_publish</code>, <code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>business_management</code></td><td>Find the Instagram professional account linked to a Facebook Page the user manages (the user selects both the Instagram account and the Page in the Facebook dialog), identify it (username, profile picture) and publish the feed posts, carousels, Reels and stories the user schedules.</td></tr>
 <tr><td>Threads</td><td><code>threads_basic</code>, <code>threads_content_publish</code></td><td>Identify the profile and publish text, image, video and carousel posts.</td></tr>
 <tr><td>TikTok</td><td><code>user.info.basic</code>, <code>video.upload</code>, <code>video.publish</code></td><td>Show which account will receive the post (display name, avatar), send videos to the user's TikTok inbox to finish in the app, or post directly with the privacy and interaction settings the user selects.</td></tr>
 <tr><td>YouTube</td><td><code>youtube.upload</code>, <code>youtube.readonly</code></td><td>Identify the user's channel (name, ID) and upload the videos the user schedules.</td></tr>
@@ -76,7 +76,7 @@
 <h2 id="privacy">5. Data handling (privacy summary)</h2>
 <ul>
 <li>All user data — the local account, access tokens, connected account names and pictures, scheduled posts, images and videos — is stored <strong>only on the user's computer</strong> (<code>%APPDATA%\WillyPost</code> on Windows, <code>~/Library/Application Support/WillyPost</code> on macOS).</li>
-<li><code>auth.willypost.com</code> (hosted by Diving With Us SL at Hostinger) only receives authorization codes and tokens <strong>in transit</strong> to add the app secret; it has no database and keeps no logs of codes, tokens or request bodies. Google tokens never pass through it.</li>
+<li><code>auth.willypost.com</code> (hosted by Diving With Us SL at Hostinger) only receives authorization codes and tokens <strong>in transit</strong> to add the app secret; it has no user database and keeps no logs of codes, tokens or request bodies. It only stores the WillyPost apps' own IDs and secrets. Google tokens never pass through it.</li>
 <li><code>media.willypost.com</code> passes photos to TikTok <strong>in transit</strong> (TikTok requires a verified domain for photo URLs); nothing is stored.</li>
 <li>Media files are served to the platforms through a temporary Cloudflare Quick Tunnel from the user's computer, with links that expire after 2 hours.</li>
 <li>No analytics, no advertising, no sale or sharing of data, no use of platform data to train AI models. Neither the author nor Diving With Us SL nor the Academy can see users' data.</li>
@@ -88,15 +88,15 @@
 <p>WillyPost uses YouTube API Services. By connecting YouTube, users agree to the <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">YouTube Terms of Service</a>; the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a> also applies. Users can revoke WillyPost's access at any time via the <a href="https://security.google.com/settings/security/permissions" target="_blank" rel="noopener">Google security settings page</a>.</p>
 
 <h2 id="deletion">6. Data deletion</h2>
-<p>Because all data lives on the user's computer, users delete it themselves: disconnect each account in WillyPost (deletes its tokens), revoke WillyPost in each platform's settings, and uninstall WillyPost choosing to delete its data folder. The connection service holds no user data, so there is nothing to delete server-side; users can still email <a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a> for written confirmation. Step-by-step instructions for every platform (Spanish): <a href="borrar-datos.html">willypost.com/borrar-datos.html</a>.</p>
+<p>Because all data lives on the user's computer, users delete it themselves: disconnect each account in WillyPost (deletes its tokens), revoke WillyPost in each platform's settings, and uninstall WillyPost choosing to delete its data folder. The connection service holds no user data, so there is nothing to delete server-side. Meta's <strong>Deauthorize callback</strong> (<code>https://auth.willypost.com/meta/deauthorize</code>) and <strong>Data deletion request callback</strong> (<code>https://auth.willypost.com/meta/delete</code>) are implemented: they acknowledge the request and return this site's deletion page with a confirmation code; users can still email <a data-fill-href="contactEmail" data-fill-text href="mailto:nuria.olive@gmail.com">nuria.olive@gmail.com</a> for written confirmation. Step-by-step instructions for every platform (Spanish): <a href="borrar-datos.html">willypost.com/borrar-datos.html</a>.</p>
 
 <h2 id="terms">7. Terms summary</h2>
 <p>WillyPost is provided free of charge, "as is", without warranties. Users are responsible for the content they publish and must comply with each platform's terms (including the YouTube Terms of Service and TikTok's Music Usage Confirmation and Branded Content Policy). The central apps and the connection service may only be used with WillyPost. Spanish law applies. Full terms (Spanish): <a href="terminos.html">willypost.com/terminos.html</a>.</p>
 
 <h2 id="install">8. Installing WillyPost (for reviewers)</h2>
 <ol class="steps">
-<li>Download the ZIP: <a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">github.com/NuriaAtlantis/willypost → main.zip</a>, right-click → <em>Extract All</em>.</li>
-<li>Double-click <strong>Instalar WillyPost</strong> (“Install WillyPost”). If Windows SmartScreen appears, click <em>More info → Run anyway</em>. Installation takes a few minutes and needs no administrator rights.</li>
+<li>On Windows, download the single-file installer <a data-repo="exe" href="descargas/Instalar-WillyPost.exe">Instalar-WillyPost.exe</a> and double-click it. (Alternative, and on macOS: download the <a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">ZIP</a>, extract it and double-click <strong>Instalar WillyPost</strong>.)</li>
+<li>If Windows SmartScreen appears, click <em>More info → Run anyway</em>. Installation takes a few minutes and needs no administrator rights.</li>
 <li>WillyPost opens in the browser at <code>http://localhost:4747</code>. Create a local account (any email and password; it never leaves the computer).</li>
 <li>Go to <strong>Redes</strong> (Networks) → click <strong>Conectar</strong> (Connect) next to the platform → approve the permissions.</li>
 <li>Click <strong>+ Crear publicación</strong> (Create post), write a text, attach a file, choose the account and <strong>Publicar ahora</strong> (Publish now) or pick a date.</li>
@@ -112,7 +112,7 @@
         <p class="small" style="max-width:320px;opacity:.85">Platform apps and the <code>auth.willypost.com</code> connection service: Diving With Us SL.</p>
       </div>
       <div><h4>WillyPost</h4><ul>
-        <li><a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Download</a></li>
+        <li><a data-repo="download" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Download</a></li>
         <li><a href="index.html#instalar">How to install (ES)</a></li>
         <li><a href="guias/index.html">Guides per network (ES)</a></li>
         <li><a href="guias/claude.html">Connect Claude (ES)</a></li>

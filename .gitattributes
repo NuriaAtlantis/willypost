@@ -12,6 +12,7 @@
 *.cmd     text eol=crlf
 *.vbs     text eol=crlf
 *.ps1     text eol=crlf
+*.sed     text eol=crlf
 *.command text eol=lf
 *.sh      text eol=lf
 *.mjs     text eol=lf
@@ -28,6 +29,7 @@
 *.jpeg binary
 *.webp binary
 *.woff2 binary
+*.exe  binary
 
 # La interfaz compilada va en el repo (el alumno no compila): que no ensucie los diffs
 web/dist/** -diff linguist-generated=true

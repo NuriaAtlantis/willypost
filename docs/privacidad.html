@@ -29,17 +29,17 @@
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
     <nav class="main" id="menu" aria-label="Principal">
       <a href="index.html">Inicio</a><a href="index.html#instalar">Cómo se instala</a><a href="guias/index.html">Guías</a><a href="guias/claude.html">Claude</a><a href="index.html#faq">Preguntas</a>
-      <a class="btn btn-sm" data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>
+      <a class="btn btn-sm" data-repo="download" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>
     </nav>
   </div>
 </header>
 <main id="contenido">
-<section class="guide-hero"><div class="container narrow"><span class="eyebrow">Legal</span><h1>Política de <span class="pill">privacidad</span></h1><p class="lead">WillyPost funciona en tu ordenador. Aquí te contamos, sin letra pequeña, qué datos maneja, quién interviene y con quién habla.</p><p class="updated muted small">Última actualización: 2 de noviembre de 2026 · <a href="en.html#privacy" lang="en">English summary</a></p></div></section>
+<section class="guide-hero"><div class="container narrow"><span class="eyebrow">Legal</span><h1>Política de <span class="pill">privacidad</span></h1><p class="lead">WillyPost funciona en tu ordenador. Aquí te contamos, sin letra pequeña, qué datos maneja, quién interviene y con quién habla.</p><p class="updated muted small">Última actualización: 5 de noviembre de 2026 · <a href="en.html#privacy" lang="en">English summary</a></p></div></section>
 <section class="guide-body"><div class="container narrow prose">
 
 <div class="callout ok"><span class="t">Resumen en 30 segundos</span><ul class="plain">
 <li>WillyPost se instala y funciona <strong>en tu propio ordenador</strong>. Tu cuenta de WillyPost, tus publicaciones, tus archivos y los tokens de tus redes se guardan <strong>solo ahí</strong>.</li>
-<li>Para que puedas conectar tus redes pulsando «Conectar», <strong>Diving With Us SL</strong> es titular de las apps de WillyPost registradas en Meta, TikTok, Google y LinkedIn, y opera un pequeño <strong>servicio de conexión</strong> (<code>auth.willypost.com</code>) que solo ve los códigos y tokens <strong>de paso</strong>, sin guardarlos ni registrarlos.</li>
+<li>Para que puedas conectar tus redes pulsando «Conectar», <strong>Diving With Us SL</strong> es titular de las apps de WillyPost registradas en Meta, TikTok, Google y LinkedIn, y opera un pequeño <strong>servicio de conexión</strong> (<code>auth.willypost.com</code>) que solo ve los códigos y tokens <strong>de paso</strong>, sin guardarlos ni registrarlos. Lo único que guarda es la configuración de esas apps (su identificador y su clave secreta), nunca datos tuyos.</li>
 <li>Ni la autora, ni Diving With Us SL, ni la Willy SEO Academy tienen una base de datos con tus publicaciones, tus cuentas o tus claves.</li>
 <li>Sin analítica, sin publicidad, sin venta de datos y sin usar tus datos para entrenar inteligencia artificial.</li>
 <li>Puedes <a href="borrar-datos.html">borrarlo todo y quitar los permisos</a> cuando quieras.</li>
@@ -88,11 +88,12 @@
 <h3>c) El servicio de conexión <code>auth.willypost.com</code> (Diving With Us SL)</h3>
 <p>Las redes solo entregan el acceso a una app si esta presenta su <strong>clave secreta</strong>, y esa clave no puede ir dentro de un programa que se descarga. Por eso, cuando conectas o renuevas Facebook, Instagram, Threads, TikTok o LinkedIn con las apps de WillyPost, tu WillyPost envía a este servicio el código temporal (o el token que hay que renovar). El servicio le añade la clave secreta de la app, se lo pasa a la red oficial y te devuelve su respuesta tal cual.</p>
 <ul>
-<li><strong>Solo de paso:</strong> recibe los códigos y tokens únicamente en tránsito, para añadir la clave secreta. <strong>No guarda nada</strong>: no tiene base de datos y <strong>no lleva registros</strong> con códigos, tokens ni contenido de las peticiones.</li>
+<li><strong>Solo de paso:</strong> recibe los códigos y tokens únicamente en tránsito, para añadir la clave secreta. <strong>No guarda nada tuyo</strong>: no tiene base de datos de usuarios y <strong>no lleva registros</strong> con códigos, tokens ni contenido de las peticiones. Lo único que tiene guardado es la configuración de las apps de WillyPost (su identificador y su clave secreta).</li>
 <li>No recibe tus publicaciones, tus archivos, tu contraseña de WillyPost ni tus contraseñas de las redes.</li>
 <li>Está alojado en el hosting de Diving With Us SL en <strong>Hostinger</strong>. Como cualquier servidor web, el proveedor puede registrar datos técnicos de la conexión (por ejemplo, la dirección IP y la hora), nunca el contenido de las peticiones.</li>
 <li>Google (YouTube y Google Business Profile) <strong>no pasa por este servicio</strong>: el canje se hace directamente entre tu ordenador y Google.</li>
 <li>Si usas tu propia app (opción avanzada), este servicio no interviene.</li>
+<li>Si quitas WillyPost desde Facebook, Instagram o Threads, o pides allí que se borren tus datos, Meta avisa a <code>auth.willypost.com/meta/deauthorize</code> y <code>auth.willypost.com/meta/delete</code>. Como el servicio no guarda nada tuyo, solo confirma el aviso y te remite a <a href="borrar-datos.html">Borrar mis datos</a> para limpiar lo que está en tu ordenador.</li>
 </ul>
 
 <h3>d) El proxy de fotos <code>media.willypost.com</code> (Diving With Us SL)</h3>
@@ -102,7 +103,7 @@
 <p>Instagram, Threads, TikTok y Google Business Profile necesitan descargar tus imágenes o vídeos desde internet. Para eso, WillyPost abre un <strong>túnel temporal de Cloudflare</strong> (<em>Quick Tunnel</em>) con una dirección aleatoria y sirve <strong>únicamente</strong> los archivos de la publicación en curso, con enlaces que caducan en 2 horas. El túnel se cierra tras unos minutos sin uso. Cloudflare transporta ese tráfico según su <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">política de privacidad</a>. La primera vez, WillyPost descarga la herramienta <code>cloudflared</code> desde los repositorios oficiales de Cloudflare en GitHub.</p>
 
 <h3>f) Descargas durante la instalación</h3>
-<p>El instalador puede descargar Node.js desde nodejs.org y las dependencias del programa desde el registro de paquetes npm. Esas webs ven la dirección IP desde la que descargas, como cualquier descarga.</p>
+<p>El instalador descarga el programa desde GitHub (github.com) y, si hace falta, Node.js desde nodejs.org y las dependencias del programa desde el registro de paquetes npm. Esas webs ven la dirección IP desde la que descargas, como cualquier descarga.</p>
 
 <h3>g) Claude (opcional)</h3>
 <p>Si conectas Claude (de Anthropic) a WillyPost, lo que le pidas y la información que WillyPost le devuelva (tu calendario, tus redes conectadas, los textos y las imágenes que subas a través de él) pasan por Claude y se rigen por las condiciones y la política de privacidad de Anthropic. WillyPost <strong>no entrega a Claude los tokens de tus redes sociales</strong>. Si no conectas Claude, nada de esto ocurre. Puedes desconectarlo cuando quieras.</p>
@@ -110,8 +111,8 @@
 <h2>5. Datos obtenidos de las APIs de las redes</h2>
 <p>Esta sección está pensada también para las revisiones de las plataformas (Meta, TikTok, Google y LinkedIn).</p>
 <table class="simple"><thead><tr><th>Plataforma</th><th>Permisos que se piden</th><th>Uso</th></tr></thead><tbody>
-<tr><td>Meta — Facebook</td><td><code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>pages_manage_posts</code>, <code>publish_video</code>, <code>business_management</code></td><td>Listar las Páginas que administras para que elijas cuál conectar, leer su nombre y su token de Página, y publicar en ellas los posts, fotos, vídeos y Reels que programas.</td></tr>
-<tr><td>Meta — Instagram</td><td><code>instagram_business_basic</code>, <code>instagram_business_content_publish</code></td><td>Identificar tu cuenta profesional (usuario y foto) y publicar posts, carruseles, Reels y stories.</td></tr>
+<tr><td>Meta — Facebook</td><td><code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>pages_manage_posts</code>, <code>business_management</code></td><td>Listar las Páginas que administras para que elijas cuál conectar, leer su nombre y su token de Página, y publicar en ellas los posts, fotos, vídeos y Reels que programas.</td></tr>
+<tr><td>Meta — Instagram<br><small>(se conecta a través del inicio de sesión de Facebook)</small></td><td><code>instagram_basic</code>, <code>instagram_content_publish</code>, <code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>business_management</code></td><td>Encontrar la cuenta profesional de Instagram vinculada a tu Página de Facebook, identificarla (usuario y foto) y publicar en ella los posts, carruseles, Reels y stories que programas.</td></tr>
 <tr><td>Meta — Threads</td><td><code>threads_basic</code>, <code>threads_content_publish</code></td><td>Identificar tu perfil y publicar texto, fotos, vídeos y carruseles.</td></tr>
 <tr><td>TikTok</td><td><code>user.info.basic</code>, <code>video.upload</code>, <code>video.publish</code></td><td>Identificar tu cuenta (nombre y foto), enviar tus vídeos a tu bandeja de TikTok o publicarlos directamente con la privacidad que tú eliges.</td></tr>
 <tr><td>Google — YouTube</td><td><code>youtube.upload</code>, <code>youtube.readonly</code></td><td>Identificar tu canal (nombre e identificador) y subir los vídeos que programas.</td></tr>
@@ -158,7 +159,7 @@
         <p class="small" style="max-width:320px;opacity:.85">Apps de conexión con las redes y servicio <code>auth.willypost.com</code>: Diving With Us SL.</p>
       </div>
       <div><h4>WillyPost</h4><ul>
-        <li><a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a></li>
+        <li><a data-repo="download" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a></li>
         <li><a href="index.html#instalar">Cómo se instala</a></li>
         <li><a href="guias/index.html">Guías de cada red</a></li>
         <li><a href="guias/claude.html">Conecta con Claude</a></li>

@@ -21,46 +21,52 @@ WillyPost es un programador de redes sociales **gratuito** que se instala en tu 
 
 No hace falta saber de informática. El instalador **no pide contraseña de administrador** y tarda unos 2 minutos. Necesitas conexión a internet.
 
-### Paso 1. Descarga el ZIP
-
-Pulsa aquí para descargarlo: **[Descargar WillyPost (ZIP)](https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip)**.
-(Otra opción: en la [página principal del proyecto](https://github.com/NuriaAtlantis/willypost), botón verde **Code** → **Download ZIP**.)
-
 ### Windows 10 u 11
 
-1. **Descomprime el ZIP**: clic derecho sobre el archivo → **Extraer todo…** → **Extraer**.
-   - **Importante:** no hagas doble clic dentro del ZIP sin descomprimirlo. Si lo haces, el instalador dirá “No encuentro los archivos”: cierra la ventana y descomprime primero.
-   - Se abre una carpeta nueva. Si dentro ves solo otra carpeta con el mismo nombre, entra en ella hasta ver los archivos **Instalar WillyPost** y **README**.
-2. Haz **doble clic en `Instalar WillyPost`** (el que tiene el icono de engranajes y **no** termina en `.command`).
+1. **Descarga el instalador:** **[Instalar-WillyPost.exe](https://willypost.com/descargas/Instalar-WillyPost.exe)** (es muy pequeño, unos 140 KB).
+   - Si el navegador avisa de que el archivo *“no se descarga habitualmente”*, elige **Conservar** (en Edge: pulsa **···** → **Conservar** → **Mostrar más** → **Conservar de todas formas**).
+2. Haz **doble clic en `Instalar-WillyPost.exe`** (lo tienes en la carpeta **Descargas**).
    - Si Windows muestra *“Windows protegió su PC”*: pulsa **Más información** y luego **Ejecutar de todas formas**.
-   - Si muestra *“Advertencia de seguridad de Abrir archivo”*: pulsa **Ejecutar**.
    - Es normal: Windows avisa de todos los programas que no vienen de su tienda.
    - Si tu antivirus lo bloquea, permite el archivo (WillyPost solo copia archivos a tu usuario y descarga Node.js de nodejs.org).
-3. **Espera** a ver una ventana negra con los pasos (del 1 al 6). Al terminar dice **LISTO** y se abre **WillyPost en tu navegador** (<http://localhost:4747>). Cierra la ventana negra pulsando una tecla.
+3. **Espera** a ver una ventana negra con los pasos: primero descarga la última versión de WillyPost y después la instala (pasos del 1 al 6). Al terminar dice **LISTO** y se abre **WillyPost en tu navegador** (<http://localhost:4747>). Cierra la ventana negra pulsando una tecla.
 
-Te deja un icono **WillyPost** en el Escritorio y en el menú Inicio, y arranca solo al iniciar sesión (en segundo plano, sin ventanas).
+Te deja un icono **WillyPost** en el Escritorio y en el menú Inicio, y arranca solo al iniciar sesión (en segundo plano, sin ventanas). Cuando termine, puedes borrar `Instalar-WillyPost.exe` (o guardarlo para actualizar).
+
+<details>
+<summary><b>Descarga manual (ZIP)</b>: si el .exe no te funciona</summary>
+
+1. Descarga el ZIP: **[Descargar WillyPost (ZIP)](https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip)**.
+2. **Descomprime el ZIP**: clic derecho sobre el archivo → **Extraer todo…** → **Extraer**.
+   - **Importante:** no hagas doble clic dentro del ZIP sin descomprimirlo. Si lo haces, el instalador dirá “No encuentro los archivos”: cierra la ventana y descomprime primero.
+   - Se abre una carpeta nueva. Si dentro ves solo otra carpeta con el mismo nombre, entra en ella hasta ver los archivos **Instalar WillyPost** y **README**.
+3. Haz **doble clic en `Instalar WillyPost`** (el que tiene el icono de engranajes y **no** termina en `.command`). Si Windows avisa, igual que arriba: **Más información** → **Ejecutar de todas formas** (o, si muestra *“Advertencia de seguridad de Abrir archivo”*, **Ejecutar**).
+
+</details>
 
 ### Mac (macOS 11 o superior)
 
-1. **Descomprime el ZIP**: doble clic sobre el archivo (en Descargas). Se crea una carpeta nueva; ábrela.
-2. Haz **doble clic en `Instalar WillyPost.command`** (el que termina en `.command`).
-3. **La primera vez, macOS bloqueará el archivo** porque viene de internet (es el aviso de seguridad *Gatekeeper*; es normal). Verás una ventana que dice que “no se puede abrir” o que “Apple no ha podido comprobar que no contenga software malicioso”. Según tu macOS:
+1. **Descarga el ZIP:** **[Descargar WillyPost (ZIP)](https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip)**. (Otra opción: en la [página principal del proyecto](https://github.com/NuriaAtlantis/willypost), botón verde **Code** → **Download ZIP**.)
+2. **Descomprime el ZIP**: doble clic sobre el archivo (en Descargas). Se crea una carpeta nueva; ábrela.
+3. Haz **doble clic en `Instalar WillyPost.command`** (el que termina en `.command`).
+4. **La primera vez, macOS bloqueará el archivo** porque viene de internet (es el aviso de seguridad *Gatekeeper*; es normal). Verás una ventana que dice que “no se puede abrir” o que “Apple no ha podido comprobar que no contenga software malicioso”. Según tu macOS:
    - **macOS 14 (Sonoma) o anterior:** pulsa **Cancelar**, haz **clic derecho** (o Control + clic) sobre el archivo → **Abrir** → **Abrir**.
    - **macOS 15 (Sequoia) o posterior:** pulsa **Listo**. Abre **Ajustes del Sistema → Privacidad y seguridad**, baja hasta el final, pulsa **Abrir igualmente** junto al aviso de `Instalar WillyPost.command`, escribe la contraseña de tu Mac (o usa Touch ID) y pulsa **Abrir**.
    - **Plan B (funciona siempre, en cualquier macOS):** abre la app **Terminal** (⌘ + Espacio, escribe “Terminal” e Intro), escribe `bash` seguido de **un espacio**, **arrastra** el archivo `Instalar WillyPost.command` dentro de la ventana de la Terminal y pulsa **Intro**.
    - Si macOS pregunta si la Terminal puede acceder a la carpeta **Descargas**, pulsa **Permitir** (si dijiste que no, actívalo en Ajustes del Sistema → Privacidad y seguridad → Archivos y carpetas → Terminal).
-4. **Espera** unos 2 minutos: la Terminal te va contando los pasos. Al terminar dice **LISTO** y se abre **WillyPost en tu navegador** (<http://localhost:4747>).
+5. **Espera** unos 2 minutos: la Terminal te va contando los pasos. Al terminar dice **LISTO** y se abre **WillyPost en tu navegador** (<http://localhost:4747>).
 
 Te crea la app **WillyPost** (búscala en Launchpad o con ⌘ + Espacio) y arranca sola al encender el Mac. Si macOS avisa de un “elemento en segundo plano”, pulsa **Permitir**.
 
 Si al abrir el instalador dice *“permiso denegado”*, usa el **Plan B** de arriba (es lo más fácil).
 
-> El instalador copia WillyPost a una carpeta propia (`%LOCALAPPDATA%\WillyPost\app` en Windows, `~/Library/Application Support/WillyPost/app` en Mac), así que **cuando termine puedes borrar la carpeta que descomprimiste y el ZIP**.
+> El instalador copia WillyPost a una carpeta propia (`%LOCALAPPDATA%\WillyPost\app` en Windows, `~/Library/Application Support/WillyPost/app` en Mac), así que **cuando termine puedes borrar la carpeta que descomprimiste y el ZIP** (o `Instalar-WillyPost.exe`).
 
 ### Si algo falla
 
 | Qué ves | Qué hacer |
 |---|---|
+| “No he podido descargar WillyPost” (con `Instalar-WillyPost.exe`) | Es la conexión a internet. Vuelve a abrir `Instalar-WillyPost.exe`. Si sigue igual, usa la **Descarga manual (ZIP)**. |
 | “No encuentro los archivos de instalación” | No has descomprimido el ZIP. Clic derecho → Extraer todo, y abre el instalador desde la carpeta nueva. |
 | Falla la descarga de Node o de las piezas | Es la conexión a internet. Comprueba que navegas bien y vuelve a hacer doble clic en **Instalar WillyPost**: continúa donde se quedó. En una red de empresa o colegio, prueba con otra red (p. ej. el móvil como punto de acceso). |
 | “Otro programa está usando el puerto 4747” | Reinicia el ordenador y vuelve a ejecutar el instalador. |
@@ -100,8 +106,8 @@ Por defecto, lo que crea Claude llega como **borrador “Propuesto por Claude”
 
 ## Actualizar
 
-1. Descarga el **ZIP nuevo** y descomprímelo.
-2. Vuelve a hacer doble clic en **Instalar WillyPost** (en Mac, igual que la primera vez; si macOS vuelve a avisar, repite el Plan B).
+- **Windows:** vuelve a abrir **`Instalar-WillyPost.exe`** (si ya no lo tienes, [descárgalo otra vez](https://willypost.com/descargas/Instalar-WillyPost.exe)). Siempre instala la última versión.
+- **Mac** (o si instalaste con el ZIP): descarga el **ZIP nuevo**, descomprímelo y vuelve a hacer doble clic en **Instalar WillyPost** (en Mac, igual que la primera vez; si macOS vuelve a avisar, repite el Plan B).
 
 Es seguro: **tus datos se conservan** porque viven aparte, en `%APPDATA%\WillyPost` (Windows) o `~/Library/Application Support/WillyPost` (Mac). Ejecutar el instalador otra vez también sirve para **reparar** una instalación que no arranca.
 
@@ -147,9 +153,10 @@ npm run mcp       # servidor MCP (stdio) para Claude
 - Node.js ≥ 22.13 (usa `node:sqlite`). Ejecuta siempre con `node --disable-warning=ExperimentalWarning server/index.js`.
 - Estructura y contrato entre módulos: [`SPEC.md`](SPEC.md).
 - `scripts/`: instaladores (`windows/*.ps1`, `mac/*.sh`) y `make-icons.mjs` (regenera los iconos con `sharp`).
+- `scripts/windows/exe/`: fabrica `docs/descargas/Instalar-WillyPost.exe` con **IExpress** (viene con Windows, no hay que instalar nada): `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\windows\exe\build-exe.ps1`. El .exe solo lleva un lanzador que descarga el ZIP de `main` y ejecuta `scripts/windows/instalar.ps1`, así que **no hay que reconstruirlo en cada versión** (solo si cambias algo de esa carpeta). No está firmado: por eso Windows muestra el aviso de SmartScreen.
 - `docs/`: web de documentación para **GitHub Pages** con dominio propio `willypost.com` (Settings → Pages → *Deploy from a branch* → `main` / `/docs`; `docs/CNAME`). El dominio, la URL del repositorio y el email de contacto se cambian **solo en `docs/config.js`** (y en `server/config.js` y el broker si cambia el dominio). Modo central (apps aprobadas por cada red): ver [`CENTRAL.md`](CENTRAL.md).
 - `solicitudes/`: kit para pedir la aprobación de las apps centrales en Meta, TikTok, Google y LinkedIn (empieza por `solicitudes/LEEME.md`).
-- Variables de los instaladores (para pruebas): `DRYRUN=1` (solo muestra lo que haría), `WILLYPOST_APP_DIR`, `WILLYPOST_FORCE=1`, `WILLYPOST_NO_OPEN=1`.
+- Variables de los instaladores (para pruebas): `DRYRUN=1` (solo muestra lo que haría), `WILLYPOST_APP_DIR`, `WILLYPOST_DATA`, `WILLYPOST_PORT`, `WILLYPOST_FORCE=1`, `WILLYPOST_NO_OPEN=1`, `WILLYPOST_SKIP_SHORTCUTS=1`. Solo para el .exe: `WILLYPOST_ZIP_URL` (otro ZIP: URL o ruta local) y `WILLYPOST_NO_PAUSE=1` (no espera una tecla al final).
 - **Antes de publicar** el repositorio (y cada vez que cambies los scripts), haz `git add` de los archivos modificados y da permiso de ejecución a los scripts de Mac (git no lo guarda por `.gitattributes`):
 
   ```bash

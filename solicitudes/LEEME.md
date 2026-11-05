@@ -14,7 +14,7 @@ con 👤.
 | Archivo | Para qué |
 |---|---|
 | `LEEME.md` | Este archivo: orden, plazos, qué haces tú y lista de comprobación. |
-| `meta.md` | Paso a paso de Meta (Facebook, Instagram, Threads) y la verificación del negocio. |
+| `meta.md` | Meta (Facebook, Instagram, Threads): datos de la app ya creada y lista ordenada de lo que falta. |
 | `tiktok.md` | Paso a paso de TikTok (app, verificación del dominio, revisión y auditoría de publicación directa). |
 | `google.md` | Paso a paso de Google (YouTube y Google Business Profile): proyecto, verificación, cuota, acceso a GBP. |
 | `linkedin.md` | Paso a paso de LinkedIn (sin revisión, solo productos de autoservicio). |
@@ -63,9 +63,9 @@ pedir cambios y volver a revisar.
 7. Comprueba que `https://willypost.com/`, `/privacidad.html`, `/terminos.html`, `/borrar-datos.html`, `/en.html` y `/callback.html` se abren con candado.
 
 ### Fase 1 — Crear las cuentas y las apps (días 1–3; arranca ya lo que tarda)
-- 👤 **Meta: verificación del negocio Diving With Us SL** (lo que más tarda: de 2 días a 2 semanas). Ver `meta.md` §1.
+- ✅ **Meta: portfolio AtlantisLZT (Diving With Us SL) verificado** y app **WillyPost** (`1642727863583670`) creada el 5-nov-2026 con sus tres casos de uso. Lo que falta, en orden: `meta.md`.
 - 👤 **Google Business Profile: solicitud de acceso a la API** (1–2 semanas). Ver `google.md` §6. Necesita una ficha verificada y activa desde hace más de 60 días.
-- 👤 Crear las apps: `meta.md` §2–5, `tiktok.md` §1–4, `google.md` §1–5, `linkedin.md` (LinkedIn queda funcionando el mismo día).
+- 👤 Crear las apps: `tiktok.md` §1–4, `google.md` §1–5, `linkedin.md` (LinkedIn queda funcionando el mismo día).
 
 ### Fase 2 — Probar con tus cuentas y grabar los vídeos (días 3–7)
 - Cuando el código del modo central esté en la versión que descargan los alumnos, conecta **tus propias cuentas** con la app central de cada red (como administradora de la app ya tienes todos los permisos, aunque no estén aprobados) y haz **al menos una publicación de prueba en cada red**. Meta exige que cada permiso haya tenido al menos una llamada correcta en los últimos 30 días antes de pedir la revisión.
@@ -74,7 +74,7 @@ pedir cambios y volver a revisar.
 ### Fase 3 — Enviar a revisión (día 7 en adelante)
 | Plataforma | Qué se envía | Plazo habitual |
 |---|---|---|
-| Meta | App Review de los 9 permisos (+ `business_management`) | 1–3 semanas; a veces piden cambios |
+| Meta | App Review de 8 permisos (Páginas 4, Instagram 2, Threads 2; ver `meta.md`) | 1–3 semanas; a veces piden cambios |
 | TikTok | Revisión de la app; después, auditoría de publicación directa | días a varias semanas cada una |
 | Google | Verificación de marca + de permisos sensibles; formulario de cuota de YouTube | 1–6 semanas |
 | LinkedIn | Nada (autoservicio) | inmediato |
@@ -105,8 +105,9 @@ pedir cambios y volver a revisar.
 | Variable | De dónde sale |
 |---|---|
 | `META_APP_ID`, `META_APP_SECRET` | Meta → tu app → Configuración de la app → Básica |
-| `META_CONFIG_ID` | Meta → Facebook Login para empresas → Configuraciones (ver `meta.md` §3) |
-| `IG_APP_ID`, `IG_APP_SECRET` | Meta → caso de uso de Instagram → Configuración de la API con inicio de sesión de Instagram |
+| `META_CONFIG_ID` | `1739698170463858` (configuración «WillyPost» de Facebook Login for Business) |
+| `META_IG_CONFIG_ID` | `1266976112293099` (configuración «WillyPost Instagram») |
+| `IG_APP_ID`, `IG_APP_SECRET` | **Vacíos** en la app central: Instagram se conecta a través de Facebook (ver `meta.md` §3) |
 | `THREADS_APP_ID`, `THREADS_APP_SECRET` | Meta → caso de uso de Threads → Configuración |
 | `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET` | TikTok → Manage apps → tu app → App details / Credentials |
 | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` | LinkedIn → tu app → pestaña Auth |
@@ -126,12 +127,14 @@ propia app), así que puedes ir activando redes una a una según te las aprueben
 - [ ] Servidor de conexión funcionando: `https://auth.willypost.com/health` responde `{"ok":true,…}`
 - [ ] Las 6 páginas públicas abren con candado
 
-**Meta**
-- [ ] Portfolio de negocio «Diving With Us SL» creado y **verificado**
-- [ ] App «WillyPost» creada en ese portfolio, con Facebook, Instagram y Threads configurados
-- [ ] Icono, privacidad, términos, borrado de datos, categoría y email en Configuración básica
+**Meta** (detalle en `meta.md`)
+- [x] Portfolio de negocio «AtlantisLZT» (Diving With Us SL) **verificado**
+- [x] App «WillyPost» creada con Facebook, Instagram (a través de Facebook) y Threads configurados
+- [x] Privacidad, términos, borrado de datos, categoría y plataforma web en Configuración básica
+- [ ] Icono subido · [ ] Dominios de la app = `willypost.com` (no se guardó)
+- [ ] IDs y clave de Meta y Threads en el `config.php` (sin `IG_APP_ID`/`IG_APP_SECRET`)
 - [ ] Una publicación de prueba correcta en Facebook, Instagram y Threads (últimos 30 días)
-- [ ] Un vídeo por permiso y textos pegados
+- [ ] 8 vídeos (uno por permiso) y textos pegados
 - [ ] Enviado a revisión · [ ] Aprobado · [ ] App publicada (Live)
 
 **TikTok**

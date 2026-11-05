@@ -20,54 +20,66 @@ de texto) que explican qué pasa. Los rótulos van entre comillas en cada plano:
 
 ---
 
-## 1. Meta — un vídeo por permiso (9 vídeos)
+## 1. Meta — 8 vídeos, uno por permiso, sacados de 3 grabaciones
 
-Graba **tres sesiones largas** (Facebook, Instagram, Threads) y sácales los cortes de cada permiso; o graba
-cada permiso por separado. Cada vídeo debe enseñar: inicio de sesión → pantalla de permisos (con el
-nombre **WillyPost**) → el uso concreto de ese permiso.
+Graba **tres sesiones largas** (Facebook, Instagram, Threads) a 1080p y sácales los cortes de cada permiso
+con Clipchamp. Cada vídeo debe enseñar: inicio de sesión con la barra de direcciones visible → pantalla de
+Facebook/Threads con el nombre **WillyPost** → el uso concreto de ese permiso → el resultado en la red.
+Estas grabaciones sirven también para las llamadas de prueba de `meta.md` §5.
 
-### Sesión Facebook (base de los vídeos 1.1 a 1.5)
+**Antes de grabar**
+- Facebook, Instagram y Threads **en inglés**. WillyPost actualizado y con el servidor de conexión ya configurado (`meta.md` §3).
+- En Facebook vas a marcar **dos Páginas**, una de ellas del portfolio **AtlantisLZT**: con dos, WillyPost enseña su lista de Páginas (con una sola la conecta directamente y no se ve).
+- Una cuenta de Instagram **profesional** vinculada a una de esas Páginas.
+- Una foto, tres fotos para el carrusel y un vídeo vertical de 5–15 s, de contenido neutro. Lo de Instagram y Threads es público: bórralo a mano al acabar.
+
+### Sesión Facebook (caso de uso «Administrar todos los aspectos de tu página»)
 | # | Qué se ve | Rótulo |
 |---|---|---|
 | F1 | Plano 0 | (ver arriba) |
-| F2 | **Redes** → tarjeta Facebook → clic en **Conectar Facebook** | "User clicks 'Conectar Facebook' (Connect Facebook)." |
-| F3 | Facebook en inglés: *Continue as …*; pantalla con el nombre **WillyPost** y los permisos | "Facebook Login for Business: the user reviews WillyPost's permissions." |
-| F4 | Elegir la Página de prueba (y el portfolio si aparece) → *Save/Continue* | "The user chooses which Page(s) WillyPost can access." |
-| F5 | Página «Volviendo a WillyPost…» en `willypost.com/callback.html` (1 s) | "Redirect page on willypost.com forwards the code to the local app." |
-| F6 | Diálogo **¿Qué quieres conectar de Facebook?** con la lista de Páginas → marcar → **Conectar** | "pages_show_list: WillyPost lists the user's Pages so they can pick one." |
-| F7 | La Página conectada en Redes (nombre y foto) | "pages_read_engagement: Page name and picture shown as connected account." |
-| F8 | **Crear publicación** → **Post** → ¿Dónde?: la Página → foto → texto → **Publicar ahora** | "pages_manage_posts: the user creates a post and publishes it to the Page." |
-| F9 | **Lista** → la publicación → **Ver publicación** → se abre en Facebook | "The post is live on the Facebook Page (permalink read with pages_read_engagement)." |
-| F10 | **Crear publicación** → **Reel / Vídeo** → vídeo vertical → la Página → **Programar** para dentro de 2 min → esperar → ver el Reel en Facebook | "publish_video: the user schedules a Reel; WillyPost uploads it to the Page at that time." |
-| F11 | (Para business_management) Repetir F2–F6 con una Página que esté **dentro de un portfolio de negocio**; en F3 se ve la elección del portfolio | "business_management: Pages owned by a business portfolio appear in the list only with this permission." |
+| F2 | **Redes** → tarjeta Facebook → **Conectar Facebook** | "The user clicks 'Conectar Facebook' (Connect Facebook)." |
+| F3 | `facebook.com` (barra visible): *Continue as …* → pantalla con el nombre **WillyPost** | "Facebook Login for Business: WillyPost asks for access to the user's Pages." |
+| F4 | Elegir el portfolio **AtlantisLZT** si aparece → marcar las dos Páginas → revisar los permisos → *Save* / *Continue* | "The user chooses the Pages WillyPost can use, including a Page owned by a business portfolio." |
+| F5 | «Volviendo a WillyPost…» en `willypost.com/callback.html` (1 s) | "willypost.com/callback.html forwards the authorization code to the app on this computer." |
+| F6 | Diálogo **¿Qué quieres conectar de Facebook?** con las dos Páginas → marcar una → **Conectar** | "pages_show_list: WillyPost lists the Pages returned by /me/accounts so the user can pick one." |
+| F7 | La Página conectada en **Redes**, con su nombre y su foto | "pages_read_engagement: the Page name, picture and Page access token are read to set up publishing." |
+| F8 | **Crear publicación** → **Post** → ¿Dónde?: la Página → una foto → texto → **Publicar ahora** → estado publicado | "pages_manage_posts: the user publishes a photo post to the Page." |
+| F9 | **Crear publicación** → **Reel / Vídeo** → vídeo vertical → la Página → ¿Cuándo?: dentro de 2 min → **Programar** → se ve en el **Calendario** → pasa a publicado | "pages_manage_posts: the user schedules a Reel; WillyPost publishes it at the chosen time." |
+| F10 | **Lista** → la publicación → **Ver publicación** → se abre en Facebook | "pages_read_engagement: WillyPost reads the permalink so the user can open the live post." |
 
-**Cortes:**
-- 1.1 `pages_show_list` = F1–F6 · 1.2 `pages_read_engagement` = F1–F7 + F9 · 1.3 `pages_manage_posts` = F1–F9 · 1.4 `publish_video` = F1–F6 + F10 · 1.5 `business_management` = F1 + F11 + F7.
+**Cortes**
+- `pages_show_list` = F1–F7.
+- `pages_read_engagement` = F1–F7 + F10.
+- `pages_manage_posts` = F1–F5 + F8–F10.
+- `business_management` = F1–F7, con F4 más lento y este rótulo en lugar del suyo: "business_management: this Page belongs to the business portfolio 'AtlantisLZT'. Without this permission it would not be listed." y en F6: "The business-owned Page appears in WillyPost and can be connected."
 
-### Sesión Instagram (vídeos 1.6 y 1.7)
+### Sesión Instagram (caso de uso «Administrar mensajes y contenido en Instagram»)
 | # | Qué se ve | Rótulo |
 |---|---|---|
 | I1 | Plano 0 | |
-| I2 | Redes → **Conectar Instagram** | "User clicks 'Conectar Instagram' (Connect Instagram)." |
-| I3 | `instagram.com` en inglés: login con la cuenta profesional de prueba → pantalla de **WillyPost** con permisos → **Allow** | "Instagram Login: the user grants WillyPost basic profile and content publishing access." |
-| I4 | Vuelta por `willypost.com/callback.html` → cuenta conectada con usuario y foto | "instagram_business_basic: username and profile picture identify the connected account." |
-| I5 | **Crear publicación** → **Carrusel** → 3 fotos → Instagram → texto → **Publicar ahora** | "instagram_business_content_publish: the user publishes a carousel." |
-| I6 | **Reel / Vídeo** → vídeo vertical → Instagram → **Programar** (2 min) → ver el Reel | "Scheduled Reel published at the chosen time." |
-| I7 | Abrir el perfil de Instagram con las publicaciones | "Content is live on the user's Instagram account." |
+| I2 | **Redes** → tarjeta Instagram → **Conectar Instagram** | "The user clicks 'Conectar Instagram' (Connect Instagram). Instagram is connected through Facebook Login for Business." |
+| I3 | `facebook.com` (barra visible): *Continue as …* → **WillyPost** → marcar la cuenta de **Instagram** → marcar su **Página** (y el portfolio si aparece) → revisar permisos → *Save* | "The user selects their Instagram professional account and the Facebook Page it is linked to." |
+| I4 | Vuelta por `willypost.com/callback.html` → en **Redes**, la cuenta de Instagram conectada con su @usuario y su foto | "instagram_basic: WillyPost finds the Instagram account linked to the Page and shows its username and picture." |
+| I5 | **Crear publicación** → **Carrusel** → 3 fotos → ¿Dónde?: Instagram → texto → **Publicar ahora** → publicado | "instagram_content_publish: the user publishes a carousel to Instagram." |
+| I6 | **Reel / Vídeo** → vídeo vertical → Instagram → dentro de 2 min → **Programar** → pasa a publicado | "instagram_content_publish: the scheduled Reel is published at the chosen time." |
+| I7 | **Lista** → **Ver publicación** → se abre en `instagram.com`; después el perfil con las dos publicaciones | "The content is live on the user's Instagram account." |
 
-**Cortes:** 1.6 `instagram_business_basic` = I1–I4 · 1.7 `instagram_business_content_publish` = I1–I7.
+**Cortes**
+- `instagram_basic` = I1–I4 + I7.
+- `instagram_content_publish` = I1–I7.
+- Solo si el formulario vuelve a pedir `pages_show_list`, `pages_read_engagement` o `business_management` dentro del caso de uso de Instagram: I1–I4, cambiando el rótulo de I4 por "pages_show_list / pages_read_engagement / business_management: /me/accounts returns the granted Page, its Page access token and its linked Instagram account."
 
-### Sesión Threads (vídeos 1.8 y 1.9)
+### Sesión Threads (caso de uso «Acceder a la API de Threads»)
 | # | Qué se ve | Rótulo |
 |---|---|---|
 | T1 | Plano 0 | |
-| T2 | Redes → **Conectar Threads** | "User clicks 'Conectar Threads' (Connect Threads)." |
-| T3 | `threads.com` en inglés: login → pantalla de **WillyPost** → **Allow** | "Threads authorization: the user grants WillyPost access." |
-| T4 | Vuelta → perfil conectado con usuario y foto | "threads_basic: profile username and picture shown in WillyPost." |
-| T5 | **Crear publicación** → **Post** → Threads → texto (y una foto) → **Publicar ahora** | "threads_content_publish: the user publishes a post to Threads." |
-| T6 | **Ver publicación** → el post en Threads | "The post is live on Threads." |
+| T2 | **Redes** → tarjeta Threads → **Conectar Threads** | "The user clicks 'Conectar Threads' (Connect Threads)." |
+| T3 | `threads.com` (barra visible): login → pantalla de **WillyPost** con los permisos → **Allow** | "Threads authorization: the user grants WillyPost access to their profile and to publish." |
+| T4 | Vuelta por `willypost.com/callback.html` → perfil conectado con @usuario y foto | "threads_basic: profile username and picture shown as the connected account." |
+| T5 | **Crear publicación** → **Post** → ¿Dónde?: Threads → texto y una foto → **Publicar ahora** → publicado | "threads_content_publish: the user publishes a post with a photo to Threads." |
+| T6 | **Lista** → **Ver publicación** → el post en Threads | "The post is live on Threads." |
 
-**Cortes:** 1.8 `threads_basic` = T1–T4 · 1.9 `threads_content_publish` = T1–T6.
+**Cortes:** `threads_basic` = T1–T4 + T6 · `threads_content_publish` = T1–T6.
 
 ---
 

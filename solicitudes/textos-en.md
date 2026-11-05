@@ -27,78 +27,104 @@ WillyPost is a free, non-profit social media scheduler for the students of the W
 
 ## 1. Meta
 
-### 1.1 Datos de la app
+App **WillyPost** (`1642727863583670`). Se piden **8 permisos**; no se pide `publish_video` (ya no existe) ni
+`instagram_business_basic` / `instagram_business_content_publish` (WillyPost no los usa). Instagram se conecta
+con Facebook Login for Business (configuración *WillyPost Instagram*), por eso sus textos hablan de la Página vinculada.
+
+### 1.1 Datos de la app (ya puestos; solo para comprobar)
 - **Display name:** `WillyPost`
-- **Category:** Business and Pages
+- **App domains:** `willypost.com`
+- **Category:** Business and pages (*Negocios y páginas*)
 - **Privacy Policy URL:** `https://willypost.com/privacidad.html` (English summary: `https://willypost.com/en.html#privacy`)
 - **Terms of Service URL:** `https://willypost.com/terminos.html`
 - **Data deletion instructions URL:** `https://willypost.com/borrar-datos.html`
 
 ### 1.2 Uso de cada permiso (*Tell us how you're using this permission*)
 
+#### Caso de uso «Administrar todos los aspectos de tu página»
+
 **pages_show_list**
 ```text
-WillyPost is a desktop scheduler that publishes posts to Facebook Pages the user manages. After the user clicks "Conectar Facebook" (Connect Facebook) in the Networks screen and approves Facebook Login for Business, WillyPost calls /me/accounts to list the Pages the user granted. The list is shown in a dialog ("¿Qué quieres conectar de Facebook?" — "What do you want to connect?") so the user can tick the Page(s) to schedule posts for. Without this permission the user cannot choose a Page and the app cannot work. We only read the Page id, name and picture, and store them on the user's own computer to label the connected account. The screencast shows the login, the Page list and the Page appearing as connected.
+WillyPost is a free desktop app that schedules and publishes posts to the Facebook Pages a user manages. In the "Redes" (Networks) screen the user clicks "Conectar Facebook" (Connect Facebook) and completes Facebook Login for Business, where they choose which Pages WillyPost may use. WillyPost then calls GET /me/accounts to list those Pages. When more than one Page is returned, WillyPost shows the dialog "¿Qué quieres conectar de Facebook?" (What do you want to connect from Facebook?) and the user ticks the Page(s) they want to schedule posts for. Without pages_show_list WillyPost cannot list the user's Pages, so the user cannot choose where to publish. We read only each Page's id, name, username and picture, and store them only on the user's own computer to label the connected account. The screencast shows the login, the Page list in WillyPost and the Page appearing as connected.
 ```
 
 **pages_read_engagement**
 ```text
-WillyPost needs pages_read_engagement to read basic data of the Page the user connects: the Page name, picture and the Page access token returned with /me/accounts, which is required to publish as the Page. After publishing, WillyPost also reads the permalink of the created post so the user can open it from the post detail ("Ver publicación" — "View post"). We do not read comments, insights or followers. The data is stored only on the user's computer. The screencast shows the connected Page with its name and picture and the "View post" link opening the published post on Facebook.
+WillyPost uses pages_read_engagement to read the Page data it needs to publish on the user's behalf: the Page access token, name and picture returned by /me/accounts (the Page access token is required to publish as the Page), and, after a post is published, the post's permalink_url, so the user can open it from the post detail in WillyPost with "Ver publicación" (View post). We do not read comments, reactions, insights or followers. This data is stored only on the user's computer. The screencast shows the connected Page with its name and picture in the Networks screen, and the "View post" link opening the published post on Facebook.
 ```
 
 **pages_manage_posts**
 ```text
-This is the core feature of WillyPost: publishing the posts the user scheduled to their Facebook Page. In "Crear publicación" (Create post) the user writes the text, attaches photos (single photo or multi-photo post), selects their Facebook Page under "¿Dónde?" (Where?) and either clicks "Publicar ahora" (Publish now) or schedules a date and time. At that time WillyPost calls the Page feed/photos endpoints with the Page access token to create the post. WillyPost only publishes content the user created and approved; it never posts automatically on its own. The screencast shows a post being created in WillyPost and then visible on the Facebook Page.
-```
-
-**publish_video**
-```text
-WillyPost lets users schedule videos and Reels for their Facebook Page. When the user attaches a vertical video in "Crear publicación", chooses "Reel / Vídeo" as the post type under "¿Qué vas a publicar?" (What are you posting?) and their Page as destination, WillyPost uploads the video with the Page video/Reels publishing endpoints (video_reels upload and finish) at the scheduled time. publish_video is required to upload video content to the Page. The screencast shows the user scheduling a Reel in WillyPost and the Reel published on the Facebook Page.
+Publishing to the user's Facebook Page is WillyPost's core feature. In "Crear publicación" (Create post) the user picks the type under "¿Qué vas a publicar?" (What are you posting?): a post (text, one or several photos, or a video) or a Reel. They attach the media under "Imágenes o vídeo" (Images or video), write the text, tick their Page under "¿Dónde?" (Where?) and click "Publicar ahora" (Publish now), or pick a date and time under "¿Cuándo?" (When?) and click "Programar" (Schedule). At that time WillyPost publishes with the Page access token through /{page-id}/feed, /{page-id}/photos, /{page-id}/videos or /{page-id}/video_reels (videos and Reels are published with this permission). WillyPost only publishes content the user created and explicitly scheduled; it never posts on its own. The screencast shows a photo post published immediately and a Reel scheduled and then live on the Page.
 ```
 
 **business_management**
 ```text
-Many of our users (small businesses and marketing freelancers) keep their Facebook Pages inside a Meta business portfolio. Without business_management, /me/accounts does not return those Pages, so the user cannot select them in WillyPost. We only use this permission so that business-owned Pages are listed during connection; we do not read or manage any other business asset (ad accounts, catalogs, people, etc.). The screencast shows a Page owned by a business portfolio appearing in WillyPost's Page selection list after login and being connected.
+Our users are small businesses and marketing freelancers, and their Facebook Pages usually belong to a Meta business portfolio. In Facebook Login for Business the user can grant access to Pages owned by a business portfolio, but without business_management /me/accounts does not return those Pages, so the user could not select them in WillyPost. We use this permission only so that business-owned Pages are listed when the user connects Facebook (and, in the Instagram connection, the business-owned Page linked to their Instagram account). We do not read or manage any other business asset: no ad accounts, catalogs, people or business settings. The screencast shows a Page owned by a business portfolio being selected in the Facebook dialog and then appearing as connected in WillyPost.
 ```
 
-**instagram_business_basic**
+#### Caso de uso «Administrar mensajes y contenido en Instagram»
+
+**instagram_basic**
 ```text
-WillyPost uses Instagram API with Instagram Login so users can schedule posts to their Instagram professional account without a Facebook Page. After the user clicks "Conectar Instagram" (Connect Instagram) and approves the Instagram authorization window, WillyPost reads the account id, username, account type and profile picture (GET /me) to show which account is connected and to know the publishing target. The data is stored only on the user's computer. The screencast shows the Instagram login, the consent screen and the connected account with its username and picture in WillyPost.
+WillyPost lets users schedule posts to their Instagram professional account, which is linked to a Facebook Page they manage. In the "Redes" (Networks) screen the user clicks "Conectar Instagram" (Connect Instagram); Facebook Login for Business opens and the user selects their Instagram account and its Page. WillyPost then calls GET /me/accounts with the field instagram_business_account{id,username,name,profile_picture_url} to find the Instagram account linked to each granted Page. instagram_basic is required to read that id, username and profile picture: WillyPost shows them as the connected account and uses the id as the publishing target. After publishing, it reads the media permalink so the user can open the post with "Ver publicación" (View post). Data is stored only on the user's computer. The screencast shows the login and the connected Instagram account with its username and picture.
 ```
 
-**instagram_business_content_publish**
+**instagram_content_publish**
 ```text
-WillyPost publishes the photos, carousels, Reels and stories that the user schedules to their own Instagram professional account. In "Crear publicación" the user picks the post type, attaches the media, writes the caption, selects their Instagram account and clicks "Publicar ahora" or schedules it. At the scheduled time WillyPost creates the media container(s) with the user's media URL and calls media_publish, then shows the permalink in WillyPost. Only content created and approved by the user is published. The screencast shows a carousel and a Reel being scheduled in WillyPost and appearing on Instagram.
+WillyPost publishes the photos, carousels, Reels and stories that the user schedules to their own Instagram professional account. In "Crear publicación" (Create post) the user picks the type under "¿Qué vas a publicar?" (What are you posting?), attaches the media, writes the caption, ticks their Instagram account under "¿Dónde?" (Where?) and clicks "Publicar ahora" (Publish now) or schedules a date and time with "Programar" (Schedule). At that time WillyPost calls POST /{ig-user-id}/media on graph.facebook.com with the linked Page's access token to create the media container(s), waits until status_code is FINISHED and calls /{ig-user-id}/media_publish. Only content the user created and approved is published. The screencast shows a carousel published immediately and a Reel scheduled and then live on Instagram.
 ```
+
+Solo si el formulario vuelve a pedir estos tres permisos dentro del caso de uso de Instagram (son de la configuración *WillyPost Instagram*), usa estas versiones, distintas de las de Páginas:
+
+**pages_show_list (versión Instagram)**
+```text
+In WillyPost, Instagram professional accounts are connected through Facebook Login for Business, because we use the Instagram API through the Facebook Page linked to the account. When the user clicks "Conectar Instagram" (Connect Instagram) and selects their Instagram account and its Page, WillyPost calls GET /me/accounts to get the Pages the user granted and, for each one, its linked instagram_business_account. pages_show_list is required for this call; without it WillyPost cannot find the Instagram account to publish to. In the Instagram connection the Pages are not shown or used for anything else.
+```
+
+**pages_read_engagement (versión Instagram)**
+```text
+To publish to Instagram through the Facebook Page linked to the user's Instagram professional account, WillyPost needs that Page's access token, which /me/accounts returns only with pages_read_engagement. WillyPost stores this token only on the user's computer and uses it exclusively for the Instagram content publishing calls (media and media_publish) of the account the user connected with "Conectar Instagram" (Connect Instagram). We do not read the Page's posts, comments or insights.
+```
+
+**business_management (versión Instagram)**
+```text
+Many users' Instagram professional accounts are linked to a Facebook Page that belongs to a Meta business portfolio. Without business_management, /me/accounts does not return those business-owned Pages, so their linked Instagram account cannot be found when the user clicks "Conectar Instagram" (Connect Instagram). We use this permission only to list those Pages and their Instagram account during the connection; we do not access ad accounts, catalogs, people or any other business asset.
+```
+
+#### Caso de uso «Acceder a la API de Threads»
 
 **threads_basic**
 ```text
-WillyPost lets users schedule posts to their own Threads profile. After the user clicks "Conectar Threads" (Connect Threads) and approves the Threads authorization window, WillyPost reads the profile id, username and profile picture (GET /me) to display the connected profile and to know where to publish. It is also required by all Threads endpoints we call. The data is stored only on the user's computer. The screencast shows the Threads login and consent, and the connected profile in WillyPost.
+WillyPost lets users schedule posts to their own Threads profile. In the "Redes" (Networks) screen the user clicks "Conectar Threads" (Connect Threads) and approves the Threads authorization window. WillyPost then calls GET /me to read the profile id, username and profile picture, which it shows as the connected profile and uses as the publishing target; threads_basic is also required by every other Threads endpoint we call. After publishing, WillyPost reads the post permalink so the user can open it with "Ver publicación" (View post). Data is stored only on the user's computer. The screencast shows the Threads authorization and the connected profile in WillyPost.
 ```
 
 **threads_content_publish**
 ```text
-WillyPost publishes the text, image, video and carousel posts the user schedules to their Threads profile. In "Crear publicación" the user writes the text (up to 500 characters), optionally attaches media, selects their Threads profile and clicks "Publicar ahora" or schedules it. At that time WillyPost creates the Threads media container, waits until it is ready and calls threads_publish, then shows the permalink. Only user-created content is published. The screencast shows a Threads post being scheduled in WillyPost and visible on Threads.
+WillyPost publishes the text, image, video and carousel posts the user schedules to their Threads profile. In "Crear publicación" (Create post) the user writes the text (up to 500 characters), optionally attaches images or a video, ticks their Threads profile under "¿Dónde?" (Where?) and clicks "Publicar ahora" (Publish now) or schedules it with "Programar" (Schedule). At that time WillyPost creates the Threads media container (POST /{threads-user-id}/threads), waits until it is ready and calls /{threads-user-id}/threads_publish. Only content the user created and approved is published. The screencast shows a Threads post with a photo published from WillyPost and then visible on Threads.
 ```
 
 ### 1.3 Instrucciones para el revisor (*Reviewer instructions / App verification details*)
 ```text
-WillyPost is a desktop app (Windows/macOS) that runs locally and opens its interface in the browser at http://localhost:4747. There is no server-side account: the reviewer creates a local account during installation, so no test credentials are needed for WillyPost itself. The interface is in Spanish; the screencasts have English captions and an English overview is at https://willypost.com/en.html.
+WillyPost is a free, non-profit desktop app (Windows 10/11 and macOS) that lets small businesses schedule posts to their own social media accounts. It runs on the user's computer and opens its interface in the browser at http://localhost:4747. The interface is in Spanish; the screencasts have English captions, and an English overview is at https://willypost.com/en.html.
 
-The complete flow for every permission is shown in the screencasts, in case installing a desktop app is not possible in your test environment.
+Test credentials: the login details of a Facebook account that manages a test Page with a linked Instagram professional account, and of its Threads profile, are provided in the test credentials fields of this submission form. WillyPost itself needs no credentials: the account is created locally during setup.
 
-To test it yourself on Windows 10/11:
-1. Download https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip and extract it (right-click > Extract All).
-2. Double-click "Instalar WillyPost" (Install WillyPost). If SmartScreen appears, click "More info" > "Run anyway". It installs in 2-3 minutes without admin rights and opens http://localhost:4747.
-3. Create a local account ("Crear mi cuenta"): any name, email and password (they never leave the computer).
-4. Go to "Redes" (Networks) in the left menu.
-5. Facebook: click "Conectar Facebook" > log in with your Meta test user that manages a test Page > choose the Page > accept. Back in WillyPost, tick the Page and click "Conectar".
-   Instagram: click "Conectar Instagram" > log in with an Instagram professional (business/creator) test account > "Allow".
-   Threads: click "Conectar Threads" > log in > "Allow".
-6. Click "+ Crear publicación" (top right). Under "¿Dónde?" tick the connected account, add an image or video under "Imágenes o vídeo", write a text under "Texto" and click "Publicar ahora" (Publish now). Or pick a date/time under "¿Cuándo?" and click "Programar" (Schedule).
-7. Open the post in "Lista" (List) and click "Ver publicación" (View post) to open it on Facebook/Instagram/Threads.
+How to install and test on Windows:
+1. Open https://willypost.com/ and click "Descargar" (Download). A ZIP file (willypost-main.zip) is downloaded.
+2. Right-click the ZIP > "Extract All..." > "Extract", and open the extracted folder.
+3. Double-click "Instalar WillyPost" (Install WillyPost). If Windows shows "Windows protected your PC", click "More info" > "Run anyway". The installer needs no admin rights, takes 2-3 minutes and opens WillyPost in the browser at http://localhost:4747.
+4. Create a local account with "Crear mi cuenta" (Create my account): any name, email and password. They never leave the computer.
+5. In the left menu, click "Redes" (Networks).
+6. Facebook: click "Conectar Facebook" (Connect Facebook) and log in with the test Facebook account. In the Facebook Login for Business window, select the test Page and continue. Back in WillyPost, if the dialog "¿Qué quieres conectar de Facebook?" (What do you want to connect?) appears, tick the Page and click "Conectar" (Connect).
+7. Instagram: click "Conectar Instagram" (Connect Instagram). A Facebook Login for Business window opens, because Instagram is connected through the Facebook Page linked to the Instagram professional account. Select the Instagram account and its Page and continue.
+8. Threads: click "Conectar Threads" (Connect Threads), log in with the Threads profile and click "Allow".
+9. Click "+ Crear publicación" (Create post). Under "¿Qué vas a publicar?" (What are you posting?) choose "Post", "Carrusel" (Carousel) or "Reel / Vídeo"; under "¿Dónde?" (Where?) tick one or more connected accounts; add an image or video under "Imágenes o vídeo" (Images or video); write the text; then click "Publicar ahora" (Publish now), or pick a date and time under "¿Cuándo?" (When?) and click "Programar" (Schedule). WillyPost publishes in the background at that time while the computer is on.
+10. Open "Lista" (List), open the post and click "Ver publicación" (View post) to see it on Facebook, Instagram or Threads.
 
-The browser returns from Meta to https://willypost.com/callback.html, a static page that forwards the authorization code to http://localhost:4747 on the same computer. The code is exchanged through our connection service auth.willypost.com, which only adds the app secret and stores nothing.
+If installing a desktop app is not possible in your test environment, the screencasts show the complete flow for every permission.
+
+How login works: Meta redirects to https://willypost.com/callback.html, a static page that forwards the authorization code to WillyPost on the same computer (http://localhost:4747). The code is exchanged for a token through our connection service https://auth.willypost.com, which only adds the app secret and stores nothing. Tokens and posts are stored only on the user's computer.
 
 Contact: nuria.olive@gmail.com
 ```
@@ -112,7 +138,7 @@ Diving With Us SL (Spain), tax ID B76160340, Calle Toscón 7, C.C. Montaña Trop
 
 **¿Hay encargados o proveedores con acceso a los datos de la plataforma? (*Data processors / service providers*)**
 ```text
-Platform Data is stored only on each user's own computer, never on our servers. Two providers are involved in transit only: (1) Hostinger, which hosts our stateless connection service auth.willypost.com; it receives OAuth authorization codes and tokens only during the code-for-token exchange to add the app secret, with no database and no logging of codes, tokens or request bodies; (2) GitHub Pages, which hosts the static website and the redirect page willypost.com/callback.html (the authorization code is in the URL for an instant, the page forwards it to localhost and stores nothing). Media files are served to Meta directly from the user's computer through a temporary Cloudflare Quick Tunnel; this carries the user's own images/videos, not Platform Data.
+Platform Data is stored only on each user's own computer, never on our servers. Two providers are involved in transit only: (1) Hostinger, which hosts our stateless connection service auth.willypost.com; it receives OAuth authorization codes and tokens only during the code-for-token exchange to add the app secret, with no database and no logging of codes, tokens or request bodies; (2) GitHub Pages, which hosts the static website and the redirect page willypost.com/callback.html (the authorization code is in the URL for an instant; the page forwards it to localhost and stores nothing). Media files are served to Meta directly from the user's computer through a temporary Cloudflare Quick Tunnel; this carries the user's own images and videos, not Platform Data.
 ```
 (Si el formulario pide el nombre legal de Hostinger, cópialo de la factura de Hostinger de Diving With Us SL.)
 
@@ -128,7 +154,7 @@ We hold no Platform Data on our servers, so we have nothing to disclose. If we e
 
 **Verificación de acceso / proveedor de tecnología (si la piden)**
 ```text
-Diving With Us SL owns and operates the WillyPost apps on behalf of the users of WillyPost, a free non-profit desktop social media scheduler for the students of the Willy SEO Academy (small businesses and freelancers). Users connect their own Facebook Pages, Instagram professional accounts and Threads profiles to schedule and publish their own content. We do not access any data beyond what is needed to list the user's Pages/accounts and publish the posts they schedule, and we store no Platform Data on our servers: all data stays on the user's computer.
+Diving With Us SL (business portfolio "AtlantisLZT", already business-verified) owns and operates the WillyPost app on behalf of the users of WillyPost, a free, non-profit desktop social media scheduler for small businesses and freelancers, mainly students of the Willy SEO Academy. Users connect their own Facebook Pages, Instagram professional accounts linked to those Pages, and Threads profiles to schedule and publish their own content. We access no data beyond what is needed to list the user's Pages and accounts and to publish the posts they schedule, and we store no Platform Data on our servers: all data stays on the user's computer.
 ```
 
 ---

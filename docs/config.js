@@ -33,6 +33,8 @@ window.WILLYPOST_CONFIG = {
   C.termsUrl = C.termsUrl || base + 'terminos.html';
   C.dataDeletionUrl = C.dataDeletionUrl || base + 'borrar-datos.html';
   C.englishUrl = C.englishUrl || base + 'en.html';
+  // Instalador de Windows (se fabrica con scripts/windows/exe/build-exe.ps1 y vive en docs/descargas)
+  C.windowsExeUrl = C.windowsExeUrl || base + 'descargas/Instalar-WillyPost.exe';
   // Servicio de conexión (broker) y proxy de fotos para TikTok
   C.brokerUrl = C.brokerUrl || 'https://auth.' + C.domain;
   C.mediaUrl = C.mediaUrl || 'https://media.' + C.domain;

@@ -29,7 +29,7 @@
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
     <nav class="main" id="menu" aria-label="Principal">
       <a href="index.html" aria-current="page">Inicio</a><a href="index.html#instalar">Cómo se instala</a><a href="guias/index.html">Guías</a><a href="guias/claude.html">Claude</a><a href="index.html#faq">Preguntas</a>
-      <a class="btn btn-sm" data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>
+      <a class="btn btn-sm" data-repo="download" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>
     </nav>
   </div>
 </header>
@@ -41,9 +41,10 @@
     <h1>Programa tus redes en <span class="pill">un rato</span>, no en toda la semana</h1>
     <p class="lead">WillyPost es un <strong>programador de redes sociales</strong> que se instala en tu propio ordenador: preparas tus publicaciones en un calendario y WillyPost las publica a su hora en tus cuentas de Facebook, Instagram, Threads, TikTok, YouTube, Google Business Profile, LinkedIn y Bluesky. Pensado para los <strong>alumnos de la Willy SEO Academy</strong> (pymes, autónomos y profesionales del marketing local), con <strong>Claude</strong> para montar campañas enteras. Gratis, sin cuotas y con tus datos solo para ti.</p>
     <div class="btn-row">
-      <a class="btn" data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar WillyPost →</a>
+      <a class="btn" data-repo="download" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar WillyPost →</a>
       <a class="btn btn-secondary" href="#instalar">Cómo se instala</a>
     </div>
+    <p class="muted small" style="margin-top:12px">Windows: <a data-repo="exe" href="descargas/Instalar-WillyPost.exe">Instalar-WillyPost.exe</a> · Mac: <a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">archivo ZIP</a></p>
     <noscript><p class="nojs">Activa JavaScript para ver el enlace de descarga, o busca “willypost” en GitHub.</p></noscript>
     <ul class="checks">
       <li>Windows 10/11 y Mac</li><li>Gratis y sin ánimo de lucro</li><li>Tus datos se quedan en tu ordenador</li>
@@ -113,11 +114,12 @@
 
   <div class="tabpanel" id="tab-windows" role="tabpanel">
     <div class="install-steps">
-      <div class="istep"><h3>Descarga y descomprime</h3><p>Pulsa <a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a>: se baja un archivo ZIP (se llamará algo como <em>willypost-main.zip</em>). Clic derecho sobre el archivo → <strong>Extraer todo…</strong> → <strong>Extraer</strong>. Abre la carpeta que se crea.</p></div>
-      <div class="istep"><h3>Doble clic en “Instalar WillyPost”</h3><p>Si Windows dice <em>“Windows protegió su PC”</em>, pulsa <strong>Más información → Ejecutar de todas formas</strong>. Es normal en programas que no vienen de la tienda.</p></div>
-      <div class="istep"><h3>Espera un par de minutos</h3><p>Verás los pasos en una ventana negra. Al acabar se abre <strong>WillyPost en tu navegador</strong>. Crea tu cuenta (es solo tuya, en tu ordenador) y guarda el código de recuperación.</p></div>
+      <div class="istep"><h3>Descarga el instalador</h3><p>Pulsa <a data-repo="exe" href="descargas/Instalar-WillyPost.exe">Descargar para Windows</a>: se baja un archivo pequeño llamado <em>Instalar-WillyPost.exe</em>. Si el navegador avisa de que «no se descarga habitualmente», elige <strong>Conservar</strong>.</p></div>
+      <div class="istep"><h3>Doble clic en “Instalar-WillyPost”</h3><p>Lo tienes en la carpeta <strong>Descargas</strong>. Si Windows dice <em>“Windows protegió su PC”</em>, pulsa <strong>Más información → Ejecutar de todas formas</strong>. Es normal en programas que no vienen de la tienda.</p></div>
+      <div class="istep"><h3>Espera un par de minutos</h3><p>Verás los pasos en una ventana negra: descarga la última versión de WillyPost y la instala. Al acabar se abre <strong>WillyPost en tu navegador</strong>. Crea tu cuenta (es solo tuya, en tu ordenador) y guarda el código de recuperación.</p></div>
     </div>
     <p class="center muted small" style="margin-top:22px">Te deja un icono “WillyPost” en el Escritorio y arranca solo al encender el ordenador, sin ventanas.</p>
+    <p class="center muted small" style="margin-top:8px">¿El .exe no te funciona? <a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descarga manual (ZIP)</a>: clic derecho sobre el ZIP → <strong>Extraer todo…</strong>, abre la carpeta que se crea y haz doble clic en <strong>“Instalar WillyPost”</strong>.</p>
   </div>
 
   <div class="tabpanel" id="tab-mac" role="tabpanel" hidden>
@@ -176,8 +178,8 @@
 <details class="faq"><summary>¿Por qué hay que reconectar cada 30 días?</summary><div class="body"><p>Es una medida de seguridad de WillyPost. Desde el día 25 te avisa y con un clic en <strong>Redes → Reconectar</strong> lo renuevas. Si no lo haces, esa cuenta deja de publicar hasta que reconectes.</p></div></details>
 <details class="faq"><summary>¿Se instala algo raro en mi ordenador?</summary><div class="body"><p>No. El instalador descarga <a href="https://nodejs.org" target="_blank" rel="noopener">Node.js</a> (en una carpeta propia de WillyPost, sin tocar el resto del sistema) si no lo tienes, instala las piezas del programa, crea los iconos y el arranque automático. No pide permisos de administrador. Todo el código está abierto.</p></div></details>
 <details class="faq"><summary>Windows me avisa de que “protegió mi PC” / el Mac dice que no puede verificar el programa</summary><div class="body"><p>Es el aviso habitual de los programas que no pasan por una tienda. En Windows: <strong>Más información → Ejecutar de todas formas</strong>. En Mac: <strong>clic derecho → Abrir → Abrir</strong> (solo la primera vez).</p></div></details>
-<details class="faq"><summary>¿Cómo actualizo WillyPost?</summary><div class="body"><p>Descarga el ZIP nuevo, descomprímelo y vuelve a hacer doble clic en <strong>Instalar WillyPost</strong>. Tus datos se conservan porque viven aparte, en <code>%APPDATA%\WillyPost</code> (Windows) o <code>~/Library/Application Support/WillyPost</code> (Mac).</p></div></details>
-<details class="faq"><summary>¿Cómo lo desinstalo?</summary><div class="body"><p>Haz doble clic en <strong>Desinstalar WillyPost</strong> (viene en la carpeta; en Windows también está en el menú Inicio). Te pregunta antes de borrar tus datos. Para quitar también los permisos en las redes, mira <a href="borrar-datos.html">cómo borrar tus datos</a>.</p></div></details>
+<details class="faq"><summary>¿Cómo actualizo WillyPost?</summary><div class="body"><p>En Windows, vuelve a abrir <strong>Instalar-WillyPost.exe</strong> (o <a data-repo="exe" href="descargas/Instalar-WillyPost.exe">descárgalo otra vez</a>): siempre instala la última versión. En Mac, descarga el ZIP nuevo, descomprímelo y vuelve a hacer doble clic en <strong>Instalar WillyPost</strong>. Tus datos se conservan porque viven aparte, en <code>%APPDATA%\WillyPost</code> (Windows) o <code>~/Library/Application Support/WillyPost</code> (Mac).</p></div></details>
+<details class="faq"><summary>¿Cómo lo desinstalo?</summary><div class="body"><p>En Windows: menú Inicio → WillyPost → <strong>Desinstalar WillyPost</strong>. En Mac: doble clic en <strong>Desinstalar WillyPost</strong>, en la carpeta que descomprimiste. Te pregunta antes de borrar tus datos. Para quitar también los permisos en las redes, mira <a href="borrar-datos.html">cómo borrar tus datos</a>.</p></div></details>
 <details class="faq"><summary>¿Cómo publica en TikTok?</summary><div class="body"><p>Tienes dos opciones en cada publicación: <strong>publicar directamente</strong> o <strong>enviarla a tu bandeja de TikTok</strong> para terminarla en la app. TikTok exige una auditoría para publicar en abierto desde una app: mientras la app de WillyPost no la tenga, las publicaciones directas salen como privadas (“solo yo”). Más detalles en la <a href="guias/tiktok.html">guía de TikTok</a>.</p></div></details>
 <details class="faq"><summary>¿Funciona sin internet?</summary><div class="body"><p>WillyPost se abre y puedes preparar publicaciones, pero para publicar (y para conectar redes) necesita internet.</p></div></details>
 <details class="faq"><summary>¿Y en Linux?</summary><div class="body"><p>No hay instalador oficial. Si sabes usar la terminal, instala Node 22.13 o superior y ejecuta <code>npm ci --omit=dev</code> y <code>npm start</code> dentro de la carpeta.</p></div></details>
@@ -187,7 +189,7 @@
 <section class="alt"><div class="container center">
   <h2>¿Empezamos? Te llevará <span class="pill">10 minutos</span></h2>
   <p class="lead">Descarga WillyPost, instálalo y conecta tu primera red. El resto, un rato a la semana.</p>
-  <div class="btn-row"><a class="btn" data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar WillyPost →</a><a class="btn btn-secondary" href="guias/index.html">Ver las guías</a></div>
+  <div class="btn-row"><a class="btn" data-repo="download" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar WillyPost →</a><a class="btn btn-secondary" href="guias/index.html">Ver las guías</a></div>
 </div></section>
 </main>
 <footer class="site">
@@ -199,7 +201,7 @@
         <p class="small" style="max-width:320px;opacity:.85">Apps de conexión con las redes y servicio <code>auth.willypost.com</code>: Diving With Us SL.</p>
       </div>
       <div><h4>WillyPost</h4><ul>
-        <li><a data-repo="zip" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a></li>
+        <li><a data-repo="download" href="https://github.com/NuriaAtlantis/willypost/archive/refs/heads/main.zip">Descargar</a></li>
         <li><a href="index.html#instalar">Cómo se instala</a></li>
         <li><a href="guias/index.html">Guías de cada red</a></li>
         <li><a href="guias/claude.html">Conecta con Claude</a></li>

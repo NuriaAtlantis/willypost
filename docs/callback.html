@@ -54,14 +54,23 @@
     Si sigue sin ir, vuelve a WillyPost → Redes y pulsa <b>Conectar</b> otra vez.
   </div>
   <p class="small">Esta página solo reenvía a <b>localhost</b> (tu ordenador). No guarda nada ni lo envía a ningún sitio. <a href="privacidad.html" style="color:#4A73AA">Privacidad</a></p>
-  <noscript><p>Necesitas activar JavaScript para que te lleve de vuelta automáticamente. También puedes pulsar el botón “Abrir WillyPost” después de copiar la dirección completa de esta página y pegarla cambiando <b>https://…/callback.html</b> por <b>http://localhost:4747/oauth/callback</b>.</p></noscript>
+  <noscript><p>Tu navegador tiene JavaScript desactivado, así que no puedo llevarte de vuelta solo. Copia la dirección de esta página, pégala en la barra de direcciones y cambia el principio, <b>https://willypost.com/callback.html</b>, por <b>http://localhost:4747/oauth/callback</b> (todo lo que va desde el «?» se queda igual). Pulsa Intro.</p></noscript>
 </main>
 <script>
 (function () {
   var TARGET = 'http://localhost:4747/oauth/callback';   // fijo
+  // Todo lo que manda la red va tal cual: code, state, error, error_description, error_reason, error_code, error_message…
+  // Meta añade "#_=_" al final: es un fragmento (#), no forma parte de location.search y no se reenvía.
+  var KEYS = ['code', 'state', 'error', 'error_description', 'error_reason', 'error_code', 'error_message'];
   var search = location.search || '';
   var params = new URLSearchParams(search);
-  var hasData = params.has('code') || params.has('error') || params.has('state');
+  var hasAny = function (p) { return KEYS.some(function (k) { return p.has(k); }); };
+  // Por si alguna red devolviera los datos en el fragmento (#code=…) en vez de en la consulta (?code=…)
+  if (!hasAny(params) && location.hash.length > 1 && location.hash !== '#_=_') {
+    var fromHash = new URLSearchParams(location.hash.slice(1));
+    if (hasAny(fromHash)) { params = fromHash; search = '?' + fromHash.toString(); }
+  }
+  var hasData = hasAny(params);
   var $ = function (id) { return document.getElementById(id); };
 
   if (!hasData) {
@@ -75,7 +84,7 @@
   var dest = TARGET + search;
   $('manual').setAttribute('href', dest);
 
-  var err = params.get('error_description') || params.get('error');
+  var err = params.get('error_description') || params.get('error_message') || params.get('error') || params.get('error_code');
   if (err) {
     var box = $('err');
     box.textContent = 'La red ha avisado de un problema: ' + String(err).slice(0, 240);   // textContent: nunca HTML
