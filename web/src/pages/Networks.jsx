@@ -30,8 +30,10 @@ export default function Networks({ query }) {
   // Resultado de OAuth: ?ok= ?error= ?pick=
   useEffect(() => {
     if (query.ok) {
+      // La lista de redes puede no haber llegado aún: nombre de respaldo bien escrito.
       const n = app.netById(query.ok);
-      toast.success(`${n ? n.label : query.ok} conectada. Por seguridad, te pediré renovar la conexión cada 30 días (te aviso antes).`);
+      const fallback = { tiktok: 'TikTok', youtube: 'YouTube', linkedin: 'LinkedIn', instagram: 'Instagram', facebook: 'Facebook', threads: 'Threads', gbp: 'Google Business', bluesky: 'Bluesky' };
+      toast.success(`${n ? n.label : (fallback[query.ok] || query.ok)} conectada. Por seguridad, te pediré renovar la conexión cada 30 días (te aviso antes).`);
       app.refreshAccounts();
       replaceRoute('/redes');
     } else if (query.error) {
