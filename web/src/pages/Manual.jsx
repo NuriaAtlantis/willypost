@@ -128,12 +128,12 @@ export default function Manual() {
       {upcoming.length > 0 && (
         <div className="card mt-lg">
           <h3 className="sec-title">Próximas en modo manual</h3>
-          <p className="muted">A su hora te avisaré con una notificación de escritorio (mantén WillyPost abierto).</p>
+          <p className="muted">A su hora te avisaré con una notificación de escritorio (con el ordenador encendido y WillyPost en marcha).</p>
           <div className="rows compact">
             {upcoming.map(({ post, target: t }) => (
               <div className="row static" key={`${post.id}-${t.id}`} onClick={() => app.openPost(post.id)} role="button" tabIndex={0}>
                 <NetIcon id={t.network} size={28} color={netColor(t.network, app.networks)} />
-                <div className="row-main"><b>{netLabel(t.network, app.networks)} · {t.account_name}</b><span className="row-meta">{(post.caption || '').slice(0, 90)}</span></div>
+                <div className="row-main"><b>{netLabel(t.network, app.networks)} · {t.account_name}</b><span className="row-meta">{(post.caption || '').slice(0, 90) || TYPE_LABEL[post.type] || ''}</span></div>
                 <div className="row-date">{fmtDateTime(post.scheduled_at)}</div>
               </div>
             ))}

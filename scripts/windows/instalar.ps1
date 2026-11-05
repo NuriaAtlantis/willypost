@@ -17,11 +17,54 @@ $NodeDir = Join-Path $Install 'runtime\node'
 $NodeExe = $null
 $Force   = ($env:WILLYPOST_FORCE -eq '1')
 $script:Hint = ''     # consejo que se muestra si el paso actual falla
+$script:StoppedServer = $false   # true si este instalador ha parado un WillyPost que estaba funcionando
+
+# Si la instalación falla DESPUÉS de haber parado WillyPost, intentamos volver a arrancarlo: mientras está
+# parado no se publica nada de lo programado.
+function Restore-Server {
+    if (-not $script:StoppedServer -or $global:DryRun) { return }
+    try {
+        if (Test-WillyPostHealth) { return }
+        $vbsR = Join-Path $Install 'scripts\windows\iniciar-oculto.vbs'
+        if (-not (Test-Path -LiteralPath $vbsR)) { return }
+        Start-Process -FilePath (Join-Path $env:WINDIR 'System32\wscript.exe') -ArgumentList "//nologo `"$vbsR`"" -WorkingDirectory $Install -WindowStyle Hidden
+        if (Wait-WillyPost 40) { Write-Warn2 'He vuelto a arrancar WillyPost tal y como estaba, para que siga publicando lo programado.' }
+        else { Write-Warn2 'WillyPost está parado: hasta que repitas la instalación no se publicará lo programado.' }
+    } catch {}
+}
+
+# ¿Hay conexión con ese servidor? (cualquier respuesta HTTP, aunque sea un error, cuenta como "hay internet")
+function Test-Internet([string]$Url) {
+    try {
+        $req = [Net.HttpWebRequest]::Create($Url)
+        $req.Method = 'HEAD'; $req.UserAgent = 'WillyPost-Installer'
+        $req.Timeout = 15000; $req.ReadWriteTimeout = 15000
+        $req.Proxy = [Net.WebRequest]::GetSystemWebProxy()
+        $req.Proxy.Credentials = [Net.CredentialCache]::DefaultCredentials
+        $resp = $req.GetResponse(); $resp.Close(); return $true
+    } catch [Net.WebException] {
+        return ($null -ne $_.Exception.Response)
+    } catch { return $false }
+}
+
+# Cuántas publicaciones está subiendo WillyPost ahora mismo (0 si no responde o es una versión antigua).
+function Get-PublishingCount {
+    try {
+        $req = [Net.HttpWebRequest]::Create("http://127.0.0.1:$($global:WpPort)/api/health")
+        $req.Proxy = $null; $req.Timeout = 2000; $req.ReadWriteTimeout = 2000
+        $resp = $req.GetResponse()
+        try { $txt = (New-Object IO.StreamReader($resp.GetResponseStream())).ReadToEnd() } finally { $resp.Close() }
+        $m = [regex]::Match($txt, '"publishing"\s*:\s*(\d+)')
+        if ($m.Success) { return [int]$m.Groups[1].Value }
+    } catch {}
+    return 0
+}
 
 function Stop-WithError([string]$Msg, [string]$Hint = '') {
     Write-Host ''
     Write-Fail $Msg
     if ($Hint) { Write-Host "      $Hint" -ForegroundColor Yellow }
+    Restore-Server
     Write-Host ''
     Write-Host '      Si no consigues arreglarlo, escribe a nuria.olive@gmail.com contando en qué paso se ha parado.' -ForegroundColor Gray
     exit 1
@@ -55,6 +98,23 @@ try {
     }
     Write-Info "WillyPost se instalará en: $Install"
     Write-Info "Tus datos (publicaciones, cuentas...) viven aparte, en: $DataDir"
+    # Antes de tocar nada: si hay que descargar Node o las piezas y no hay internet, paramos AQUÍ, con WillyPost
+    # todavía funcionando. (Si no, se quedaría parado y a medias, y no se publicaría lo programado.)
+    $srcLock = Join-Path $Source 'package-lock.json'
+    $srcHashFile = if (Test-Path -LiteralPath $srcLock) { $srcLock } else { Join-Path $Source 'package.json' }
+    $preStamp = Join-Path $Install 'runtime\npm-stamp.txt'
+    $willNeedNpm = $Force -or -not (Test-Path -LiteralPath (Join-Path $Install 'node_modules')) -or -not (Test-Path -LiteralPath $preStamp)
+    if (-not $willNeedNpm) {
+        try { $willNeedNpm = ((Get-Content -LiteralPath $preStamp -Raw).Trim() -ne (Get-FileHash -LiteralPath $srcHashFile -Algorithm SHA256).Hash) } catch { $willNeedNpm = $true }
+    }
+    $willNeedNode = -not (Test-NodeExe (Join-Path $NodeDir 'node.exe')) -and -not (Find-SystemNode)
+    if (-not $global:DryRun -and ($willNeedNpm -or $willNeedNode)) {
+        $probe = if ($willNeedNode) { 'https://nodejs.org/dist/index.json' } else { 'https://registry.npmjs.org/' }
+        if (-not (Test-Internet $probe)) {
+            Stop-WithError 'No hay conexión a internet y esta instalación necesita descargar piezas de WillyPost.' 'No he cambiado nada: si WillyPost ya funcionaba, sigue funcionando igual. Conéctate a internet y vuelve a hacer doble clic en "Instalar WillyPost".'
+        }
+        Write-Ok 'Conexión a internet comprobada.'
+    }
     Invoke-Action 'Desbloquear los archivos descargados (quitar la marca de "descargado de internet")' {
         Get-ChildItem -LiteralPath $Source -Recurse -File -Force -ErrorAction SilentlyContinue |
             Where-Object { $_.FullName -notmatch '\\(node_modules|runtime|\.git)\\' } |
@@ -65,8 +125,18 @@ try {
     Write-Step 2 $Total 'Copiando WillyPost a su carpeta...'
     $script:Hint = 'Cierra WillyPost y cualquier ventana que tengas abierta dentro de la carpeta de instalación. Si tienes antivirus, es posible que esté revisando los archivos: espera un minuto y repite.'
     $wasRunning = Test-WillyPostHealth
+    if ($wasRunning -and -not $global:DryRun) {
+        # Si justo ahora está subiendo una publicación, esperamos a que acabe (como mucho 10 minutos): pararlo
+        # a mitad la dejaría "interrumpida" y habría que comprobar a mano si salió.
+        $until = (Get-Date).AddMinutes(10); $said = $false
+        while ((Get-PublishingCount) -gt 0 -and (Get-Date) -lt $until) {
+            if (-not $said) { Write-Info 'WillyPost está publicando algo ahora mismo: espero a que termine (como mucho 10 minutos)...'; $said = $true }
+            Start-Sleep -Seconds 3
+        }
+    }
     if ($wasRunning) { Write-Info 'WillyPost estaba abierto: lo paro un momento para actualizarlo.' }
-    Invoke-Action 'Parar WillyPost si está en marcha' { [void](Stop-WillyPostServer $Install) }
+    Invoke-Action 'Parar WillyPost si está en marcha' { if (Stop-WillyPostServer $Install) { $script:StoppedServer = $true } }
+    if ($wasRunning) { $script:StoppedServer = $true }
     if (-not $global:DryRun) {
         if (Test-WillyPostHealth) {
             Stop-WithError "WillyPost sigue abierto y no he conseguido pararlo (¿lo tiene abierto otro usuario de este ordenador?)." 'Reinicia el ordenador y vuelve a ejecutar el instalador.'
@@ -256,6 +326,7 @@ try {
     # ------------------------------------------------------------------ 6. Arrancar
     Write-Step 6 $Total 'Arrancando WillyPost...'
     $script:Hint = ''
+    $script:StoppedServer = $false   # a partir de aquí lo arrancamos nosotros: no hace falta restaurarlo
     Invoke-Action "Arrancar el servidor oculto: wscript iniciar-oculto.vbs  ->  $NodeExe --disable-warning=ExperimentalWarning server\index.js" {
         Start-Process -FilePath $wscript -ArgumentList $argsAuto -WorkingDirectory $Install -WindowStyle Hidden
     }
@@ -285,8 +356,13 @@ try {
     Write-Host '   LISTO. WillyPost ya está instalado.' -ForegroundColor Green
     Write-Host "   - Se ha abierto en tu navegador: $($global:WpUrl)" -ForegroundColor Gray
     Write-Host '   - La próxima vez, usa el icono "WillyPost" del Escritorio.' -ForegroundColor Gray
-    Write-Host '   - Para actualizar: descarga el ZIP nuevo y vuelve a ejecutar "Instalar WillyPost".' -ForegroundColor Gray
-    Write-Host '   - Puedes borrar la carpeta que descomprimiste: ya no hace falta.' -ForegroundColor Gray
+    if ($env:WILLYPOST_DESDE_EXE -eq '1') {
+        # Lanzado por Instalar-WillyPost.exe (scripts\windows\exe): siempre instala la última versión
+        Write-Host '   - Para actualizar: vuelve a abrir "Instalar-WillyPost.exe" (instala siempre la última versión).' -ForegroundColor Gray
+    } else {
+        Write-Host '   - Para actualizar: descarga el ZIP nuevo y vuelve a ejecutar "Instalar WillyPost".' -ForegroundColor Gray
+        Write-Host '   - Puedes borrar la carpeta que descomprimiste: ya no hace falta.' -ForegroundColor Gray
+    }
     Write-Host '  ==================================================' -ForegroundColor Green
     Write-Host ''
     exit 0
@@ -295,6 +371,7 @@ catch {
     Write-Host ''
     Write-Fail ("Algo no ha ido bien: " + $_.Exception.Message)
     if ($script:Hint) { Write-Host "      $($script:Hint)" -ForegroundColor Yellow }
+    Restore-Server
     Write-Host '      Vuelve a hacer doble clic en "Instalar WillyPost": repite solo lo que faltaba.' -ForegroundColor Yellow
     Write-Host '      Si sigue fallando, escribe a nuria.olive@gmail.com y pega este mensaje.' -ForegroundColor Gray
     exit 1

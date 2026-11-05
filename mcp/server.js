@@ -219,7 +219,35 @@ async function normalizeScheduledAt(value) {
   if (d.getTime() < Date.now() - 60000) {
     throw new UserError(`scheduled_at ya ha pasado ("${s}"). Ahora son las ${localIso(new Date(), tz)}. Elige una fecha futura (llama a willypost_status para ver la hora actual).`);
   }
+  // Un desfase numérico que no es el de la zona del alumno casi siempre es un error (p. ej. "+01:00" para
+  // Canarias en invierno, que es +00:00): la publicación saldría una hora antes o después. UTC explícito
+  // ("Z" o "+00:00") vale siempre: es una hora absoluta sin ambigüedad.
+  const off = /([+-])(\d{2}):?(\d{2})?$/.exec(s);
+  if (off && !/z$/i.test(s)) {
+    const given = (off[1] === '-' ? -1 : 1) * (Number(off[2]) * 60 + Number(off[3] || 0));
+    const expected = Math.round(tzOffsetMs(d, tz) / 60000);
+    if (given !== 0 && given !== expected) {
+      const wall = s.slice(0, s.length - off[0].length);
+      const intended = wallTimeToDate(wall, tz);
+      const hhmm = (wall.split('T')[1] || '').slice(0, 5);
+      throw new UserError(
+        `El desfase ${off[0]} de "${s}" no corresponde a la zona horaria del alumno (${tz}): ese día allí es UTC${offsetString(d, tz)}. ` +
+        `${intended ? `Si quieres las ${hhmm} hora local del alumno, envía ${localIso(intended, tz)}. ` : ''}` +
+        'Usa siempre el desfase que da willypost_status para esa fecha (en Canarias es +00:00 en invierno y +01:00 en verano).',
+      );
+    }
+  }
   return d.toISOString();
+}
+
+/** "2026-11-03T09:30:00" (hora de reloj en la zona tz) → Date, o null si no se entiende. */
+function wallTimeToDate(wall, tz) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?/.exec(wall);
+  if (!m) return null;
+  const guess = Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +(m[6] || 0));
+  const off1 = tzOffsetMs(new Date(guess), tz);
+  const off2 = tzOffsetMs(new Date(guess - off1), tz);
+  return new Date(guess - off2);
 }
 
 /** Comprueba que cada cuenta tiene hueco ese día (los borradores no cuentan en el servidor, pero no se podrían aprobar luego). */
@@ -286,7 +314,7 @@ const postItemShape = {
   captions_by_network: z.record(z.string(), z.string()).optional().describe('Texto propio por red, p. ej. {"linkedin":"…","instagram":"…"}. Sustituye al texto base en esa red. Respeta los límites de cada red (get_network_specs).'),
   options_by_network: z.record(z.string(), z.record(z.string(), z.any())).optional().describe('Opciones específicas por red, p. ej. {"youtube":{"title":"…","privacy":"public"},"gbp":{"cta":{"actionType":"LEARN_MORE","url":"https://…"}},"tiktok":{"tiktok_mode":"direct"}}. En TikTok NO se puede poner la privacidad, comentarios/dúos/stitch ni el contenido comercial: los elige el alumno al aprobar.'),
   media_ids: z.array(z.number().int()).optional().describe('IDs de archivos ya subidos con upload_media, en orden (el primero es la portada del carrusel). Los medios se suben ANTES de crear la pieza.'),
-  scheduled_at: z.string().optional().describe('Fecha y hora de publicación en la HORA LOCAL del usuario, en ISO 8601 CON desfase, p. ej. 2026-11-03T09:30:00+01:00. Si no la pones, se guarda como borrador sin fecha.'),
+  scheduled_at: z.string().optional().describe('Fecha y hora de publicación en la HORA LOCAL del usuario, en ISO 8601 CON desfase, p. ej. 2026-11-03T09:30:00+01:00. El desfase debe ser el de la zona del alumno en esa fecha (lo da willypost_status; en Canarias, +00:00 en invierno). Si no la pones, se guarda como borrador sin fecha.'),
   notes: z.string().optional().describe('Nota interna para el alumno (idea, objetivo de la pieza, qué grabar…). No se publica.'),
 };
 

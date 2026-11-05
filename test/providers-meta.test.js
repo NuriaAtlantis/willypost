@@ -95,7 +95,9 @@ test('facebook: URL de autorización', () => {
   assert.equal(u.searchParams.get('state'), 'st1');
   assert.equal(u.searchParams.get('response_type'), 'code');
   const scopes = u.searchParams.get('scope').split(',');
-  for (const s of ['pages_show_list', 'pages_read_engagement', 'pages_manage_posts', 'publish_video']) assert.ok(scopes.includes(s), s);
+  for (const s of ['pages_show_list', 'pages_read_engagement', 'pages_manage_posts', 'business_management']) assert.ok(scopes.includes(s), s);
+  // publish_video ya no existe en el caso de uso de Páginas (daría «Invalid Scopes») y no hace falta para vídeos ni Reels.
+  assert.ok(!scopes.includes('publish_video'));
 });
 
 test('facebook: config_id opcional (Facebook Login for Business) sustituye a scope', () => {

@@ -425,6 +425,10 @@ export default {
   /** Access 24 h, refresh 365 d. TikTok puede rotar el refresh_token: se devuelve el nuevo. */
   async refresh({ account, creds }) {
     if (!account?.refresh_token) return null;
+    if (!creds?.central && !creds?.client_id) {
+      // Conectada con el carné propio y el carné ya no está guardado: sin él no se puede renovar.
+      throw new ProviderError('Has borrado el carné de TikTok con el que conectaste esta cuenta. Vuelve a configurarlo (o quita la cuenta y conéctala de nuevo) en Redes.', { auth: true });
+    }
     const tok = creds?.central
       // Cuenta conectada sin carné: se renueva con la app central (el secreto lo pone el broker).
       ? await centralCall('refresh', { refresh_token: account.refresh_token })

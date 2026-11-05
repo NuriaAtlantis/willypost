@@ -5,6 +5,7 @@ import { getProvider, apiSupports } from './providers/index.js';
 import { checkLimits, nextQueueSlot } from './limits.js';
 import { reconnectDueAt } from './accounts.js';
 import { MISSED_GRACE_MIN } from './config.js';
+import { notify } from './notify.js';
 import {
   normalizeOptions, protectHumanChoices, withoutHumanChoices, complianceErrors, knownCreatorInfo,
 } from './compliance.js';
@@ -311,6 +312,15 @@ export function savePost(user, body, existingId = null) {
   const post = serializePost(get('SELECT * FROM posts WHERE id = ?', id));
   if (fromClaude && action !== 'draft' && status === 'draft') {
     warnings.push({ message: 'Guardado como borrador "Propuesto por Claude": apruébalo en WillyPost para programarlo.' });
+  }
+  // Claude ha tocado una publicación que el alumno ya había programado y ha vuelto a borrador: si nadie la
+  // vuelve a aprobar NO saldrá. Se avisa en WillyPost (no basta con que Claude lo diga en el chat).
+  if (fromClaude && existing?.status === 'scheduled' && status === 'draft') {
+    notify(user.id, {
+      kind: 'info', postId: id, open: '/#/',
+      title: 'Claude ha cambiado una publicación programada',
+      body: `Ha vuelto a borrador${scheduledAt ? ` (era para el ${fmtWhen(scheduledAt)})` : ''}. Revísala y apruébala para que se publique.`,
+    });
   }
   return { post, warnings };
 }

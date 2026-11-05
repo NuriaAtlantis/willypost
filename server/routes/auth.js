@@ -89,7 +89,8 @@ authRouter.put('/api/me', requireSession, (req, res) => {
   if (name) run('UPDATE users SET name = ? WHERE id = ?', name, req.user.id);
   if (req.body?.newPassword) {
     if (!verifyPassword(String(req.body.currentPassword || ''), req.user.password_hash)) {
-      throw new HttpError(401, 'La contraseña actual no es correcta.');
+      // 400 y no 401: un 401 hace que la interfaz cierre la sesión (parece que te ha echado).
+      throw new HttpError(400, 'La contraseña actual no es correcta.');
     }
     checkPassword(req.body.newPassword);
     run('UPDATE users SET password_hash = ? WHERE id = ?', hashPassword(req.body.newPassword), req.user.id);

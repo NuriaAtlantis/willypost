@@ -23,11 +23,14 @@ fi
 
 if ! wp_healthy; then
   say ""; say "  Arrancando WillyPost..."
-  if [ ! -f "$WP_PLIST" ]; then
+  if [ -f "$WP_PLIST" ]; then
+    if agent_loaded; then launchctl kickstart "gui/$(id -u)/$WP_LABEL" >/dev/null 2>&1 || true; else agent_load || start_direct || true; fi
+  elif [ -f "$WP_APP_DIR/runtime/node-path.txt" ]; then
+    start_direct || true     # instalado sin arranque automatico (no se pudo crear el LaunchAgent)
+  else
     alert "WillyPost todavía no está instalado. Haz doble clic en \"Instalar WillyPost\"."
     exit 1
   fi
-  if agent_loaded; then launchctl kickstart "gui/$(id -u)/$WP_LABEL" >/dev/null 2>&1 || true; else agent_load || start_direct || true; fi
   if ! wait_healthy 40; then
     if port_busy; then
       alert "WillyPost no ha podido arrancar porque otro programa está usando el puerto $WP_PORT. Reinicia el Mac y vuelve a probar."

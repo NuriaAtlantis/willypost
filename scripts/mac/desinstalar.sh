@@ -6,9 +6,11 @@ set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib.sh
 source "$HERE/lib.sh"
+trap on_exit_pause EXIT
 
 SRC="$(cd "$HERE/../.." && pwd -P)"   # carpeta desde la que se ejecuta (antes de borrar nada)
 banner "Desinstalador para macOS"
+[ "$DRY" = "1" ] || refuse_root
 echo "  Voy a quitar WillyPost de este Mac:"
 echo "${C_GRAY}    - el arranque automático (LaunchAgent)${C_RESET}"
 echo "${C_GRAY}    - la app WillyPost de ~/Applications${C_RESET}"
@@ -17,7 +19,7 @@ echo "${C_GRAY}  Tus publicaciones y cuentas conectadas NO se tocan, salvo que l
 echo ""
 if [ "${WILLYPOST_YES:-}" != "1" ] && [ "$DRY" != "1" ]; then
   read -r -p "  ¿Quieres desinstalar WillyPost? (escribe S para continuar) " A || A=""
-  case "$A" in s|S|si|SI|Si|sI|sí|SÍ|Sí|sÍ|y|Y|yes|YES|Yes) ;; *) echo "${C_GREEN}  Vale, no he cambiado nada.${C_RESET}"; pause_end; exit 0 ;; esac
+  case "$A" in s|S|si|SI|Si|sI|sí|SÍ|Sí|sÍ|y|Y|yes|YES|Yes) ;; *) echo "${C_GREEN}  Vale, no he cambiado nada.${C_RESET}"; WP_PAUSED=1; pause_end; exit 0 ;; esac
 fi
 
 step 1 4 "Parando WillyPost..."
@@ -47,6 +49,7 @@ else
 fi
 
 step 4 4 "Quitando la aplicación..."
+cd "$HOME" 2>/dev/null || cd /    # por si este script se ejecuta desde la carpeta que vamos a borrar
 # Seguridad: solo borramos rutas que terminen exactamente como esperamos
 case "$WP_APP_DIR" in
   */WillyPost/app) act "Borrar la carpeta de la aplicación $WP_APP_DIR" rm -rf "$WP_APP_DIR"; [ "$DRY" = "1" ] || ok "Aplicación eliminada." ;;
@@ -70,4 +73,4 @@ echo "${C_GREEN}   WillyPost se ha desinstalado. ¡Gracias por probarlo!${C_RESE
 echo "${C_GRAY}   Recuerda quitar también el permiso en cada red social si lo conectaste:${C_RESET}"
 echo "${C_GRAY}   https://nuriaatlantis.github.io/willypost/borrar-datos.html${C_RESET}"
 echo "${C_GREEN}  ==================================================${C_RESET}"
-pause_end
+WP_PAUSED=1; pause_end

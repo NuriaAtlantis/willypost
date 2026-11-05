@@ -56,7 +56,7 @@ Te deja un icono **WillyPost** en el Escritorio y en el menú Inicio, y arranca 
    - Si macOS pregunta si la Terminal puede acceder a la carpeta **Descargas**, pulsa **Permitir** (si dijiste que no, actívalo en Ajustes del Sistema → Privacidad y seguridad → Archivos y carpetas → Terminal).
 5. **Espera** unos 2 minutos: la Terminal te va contando los pasos. Al terminar dice **LISTO** y se abre **WillyPost en tu navegador** (<http://localhost:4747>).
 
-Te crea la app **WillyPost** (búscala en Launchpad o con ⌘ + Espacio) y arranca sola al encender el Mac. Si macOS avisa de un “elemento en segundo plano”, pulsa **Permitir**.
+Te crea la app **WillyPost** (búscala con ⌘ + Espacio, escribiendo “WillyPost”) y arranca sola al encender el Mac. Si macOS avisa de un “elemento en segundo plano” (puede aparecer como **node**), déjalo **activado**. Si lo desactivaste: Ajustes del Sistema → General → Ítems de inicio → activa *node* en “Permitir en segundo plano” y vuelve a ejecutar el instalador.
 
 Si al abrir el instalador dice *“permiso denegado”*, usa el **Plan B** de arriba (es lo más fácil).
 
@@ -71,7 +71,7 @@ Si al abrir el instalador dice *“permiso denegado”*, usa el **Plan B** de ar
 | Falla la descarga de Node o de las piezas | Es la conexión a internet. Comprueba que navegas bien y vuelve a hacer doble clic en **Instalar WillyPost**: continúa donde se quedó. En una red de empresa o colegio, prueba con otra red (p. ej. el móvil como punto de acceso). |
 | “Otro programa está usando el puerto 4747” | Reinicia el ordenador y vuelve a ejecutar el instalador. |
 | El texto rojo habla de “scripts” o “directivas” (Windows) | Tu ordenador (de empresa o colegio) bloquea instaladores. Prueba en otro ordenador o escribe a nuria.olive@gmail.com. |
-| El navegador dice “No se puede acceder” | Abre el icono **WillyPost** del Escritorio (Windows) o de Launchpad (Mac). Si sigue igual, vuelve a ejecutar el instalador (repara la instalación). |
+| El navegador dice “No se puede acceder” | Abre el icono **WillyPost** del Escritorio (Windows) o desde Spotlight: ⌘ + Espacio y escribe WillyPost (Mac). Si sigue igual, vuelve a ejecutar el instalador (repara la instalación). |
 
 Cualquier error deja un registro en `%APPDATA%\WillyPost\logs\servidor.log` (Windows) o `~/Library/Application Support/WillyPost/logs/servidor.log` (Mac). Si te atascas, escribe a nuria.olive@gmail.com y adjunta lo que pone la ventana.
 
@@ -130,7 +130,7 @@ Quita los iconos, el arranque automático y la aplicación. **Antes de borrar tu
 
 **¿Se abre en el navegador? ¿Es una web?** Se abre en tu navegador, pero funciona **en tu ordenador** (`http://localhost:4747`); no hay ninguna web de WillyPost con tus datos.
 
-**No se abre / el navegador dice “No se puede acceder”.** Haz doble clic en el icono **WillyPost** del Escritorio (o en Launchpad, en Mac). Si sigue igual, vuelve a ejecutar **Instalar WillyPost**: repara la instalación. Los registros están en `%APPDATA%\WillyPost\logs` (Windows) o `~/Library/Application Support/WillyPost/logs` (Mac).
+**No se abre / el navegador dice “No se puede acceder”.** Haz doble clic en el icono **WillyPost** del Escritorio (o, en Mac, búscalo con ⌘ + Espacio). Si sigue igual, vuelve a ejecutar **Instalar WillyPost**: repara la instalación. Los registros están en `%APPDATA%\WillyPost\logs` (Windows) o `~/Library/Application Support/WillyPost/logs` (Mac).
 
 **¿Cómo lo paro?** Casi nunca hace falta: está pensado para estar siempre encendido, en segundo plano. Si quieres pararlo: en Windows, menú Inicio → WillyPost → **Detener WillyPost**; en Mac, abre la Terminal y escribe `bash ~/Library/Application\ Support/WillyPost/app/scripts/mac/detener.sh`. Al abrir el icono de WillyPost se vuelve a arrancar.
 

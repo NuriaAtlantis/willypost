@@ -226,9 +226,10 @@ test('oauth: conexión correcta guarda la cuenta, usa code_verifier y NO se pued
 test('oauth: un fallo interno (no de la red social) no enseña el error técnico en inglés al alumno', async () => {
   const { authUrl } = await oauth.startOAuth({ id: userId }, 'tiktok');
   const st = new URL(authUrl).searchParams.get('state');
-  run("DELETE FROM credentials WHERE family = 'tiktok'"); // provoca un TypeError dentro del proveedor
+  run("DELETE FROM credentials WHERE family = 'tiktok'"); // antes provocaba un TypeError dentro del proveedor
   const r = decodeURIComponent((await oauth.handleCallback({ code: 'C', state: st })).split('error=')[1]);
-  assert.match(r, /No hemos podido completar la conexión con TikTok/);
+  // Ahora se detecta antes de llamar al proveedor y se explica qué pasa (el carné ya no está).
+  assert.match(r, /No encontramos el carné de TikTok/);
   assert.doesNotMatch(r, /Cannot read|undefined|TypeError/);
   run("INSERT INTO credentials (user_id, family, client_id, client_secret, extra, updated_at) VALUES (?, 'tiktok', 'CK', 'CS', '{}', ?)", userId, new Date().toISOString());
 });
@@ -246,7 +247,7 @@ test('oauth: friendlyOAuthError traduce los casos típicos de los asistentes', (
 const relayHtml = fs.readFileSync(path.join(ROOT, 'docs', 'callback.html'), 'utf8');
 const relayScript = /<script>([\s\S]*?)<\/script>/.exec(relayHtml)[1];
 
-function runRelay(search) {
+function runRelay(search, hash = '') {
   const els = {};
   const mk = (id) => (els[id] ||= {
     id, style: {}, _attrs: {}, textContent: '',
@@ -259,7 +260,7 @@ function runRelay(search) {
     String,
     setTimeout: () => 0,
     document: { getElementById: mk },
-    location: { search, replace: (u) => replaced.push(u), set href(u) { replaced.push(u); } },
+    location: { search, hash, replace: (u) => replaced.push(u), set href(u) { replaced.push(u); } },
   };
   vm.runInNewContext(relayScript, ctx);
   return { replaced, els };
@@ -294,6 +295,19 @@ test('relé: pasa code y state intactos; el texto de error se muestra con textCo
 
 test('relé: sin parámetros no redirige a ningún sitio', () => {
   assert.equal(runRelay('').replaced.length, 0);
+  assert.equal(runRelay('', '#_=_').replaced.length, 0, 'el #_=_ de Meta solo no es una vuelta');
+});
+
+test('relé: si la red devuelve los datos en el fragmento (#code=…), los reenvía como consulta al MISMO destino fijo', () => {
+  const { replaced } = runRelay('', '#code=A%2Fb&state=S1&next=https://evil.example');
+  assert.equal(replaced.length, 1);
+  const u = new URL(replaced[0]);
+  assert.equal(u.origin + u.pathname, 'http://localhost:4747/oauth/callback');
+  assert.equal(u.searchParams.get('code'), 'A/b');
+  assert.equal(u.searchParams.get('state'), 'S1');
+  // Con ?code=… en la consulta, el fragmento se ignora.
+  const q = new URL(runRelay('?code=Q&state=S', '#code=H').replaced[0]);
+  assert.equal(q.searchParams.get('code'), 'Q');
 });
 
 test('relé: sin recursos externos ni analítica, con CSP y sin referrer', () => {

@@ -3,7 +3,7 @@ import { Bot, Monitor, Terminal, MessageSquareText, KeyRound, Check, Copy, Shiel
 import { api } from '../lib/api.js';
 import { useApp } from '../lib/store.jsx';
 import { useToast } from '../lib/toast.jsx';
-import { Button, PageHeader, IconBox, CopyButton, Switch, Badge, Spinner } from '../components/ui.jsx';
+import { Button, PageHeader, IconBox, CopyButton, Switch, Badge, Spinner, useConfirm } from '../components/ui.jsx';
 
 const EXAMPLES = [
   'Hazme una campaña de Black Friday de 2 semanas para Instagram y TikTok.',
@@ -21,6 +21,7 @@ export default function ClaudePage() {
   const [token, setToken] = useState(null);
   const [busy, setBusy] = useState('');
   const [adv, setAdv] = useState(false);
+  const [confirm, confirmEl] = useConfirm();
   const mode = app.claudeMode;
 
   const load = () => api.get('/api/claude').then(setInfo).catch((e) => { toast.error(e.message); setInfo({}); });
@@ -31,7 +32,7 @@ export default function ClaudePage() {
     try {
       const r = await api.post('/api/claude/install-desktop');
       toast.success('Listo. Cierra Claude Desktop del todo y ábrelo otra vez para ver WillyPost.', 9000);
-      setInfo((i) => ({ ...i, desktopInstalled: true, desktopConfigPath: (r && r.path) || (i && i.desktopConfigPath) }));
+      setInfo((i) => ({ ...i, desktopInstalled: true, desktopStale: false, desktopConfigPath: (r && r.path) || (i && i.desktopConfigPath) }));
     } catch (e) { toast.error(e.message); } finally { setBusy(''); }
   };
   const genToken = async () => {
@@ -39,7 +40,8 @@ export default function ClaudePage() {
     try { const r = await api.post('/api/claude/token'); setToken(r.token); load(); } catch (e) { toast.error(e.message); } finally { setBusy(''); }
   };
   const revoke = async () => {
-    if (!window.confirm('¿Desconectar Claude? Dejará de poder usar WillyPost hasta que lo vuelvas a conectar.')) return;
+    const ok = await confirm({ title: '¿Desconectar Claude?', text: 'Todos tus tokens dejarán de funcionar (también el de Claude Desktop) y Claude no podrá usar WillyPost hasta que lo vuelvas a conectar.', ok: 'Sí, desconectar', danger: true });
+    if (!ok) return;
     setBusy('revoke');
     try { await api.del('/api/claude/token'); setToken(null); toast.success('Claude desconectado.'); load(); } catch (e) { toast.error(e.message); } finally { setBusy(''); }
   };
@@ -55,6 +57,7 @@ export default function ClaudePage() {
 
   return (
     <div>
+      {confirmEl}
       <PageHeader eyebrow="Inteligencia artificial" title="Trabaja con" pill="Claude"
         sub="Conecta Claude a WillyPost y pídele campañas enteras con lenguaje normal. Él las prepara, tú las apruebas." />
 
@@ -82,9 +85,10 @@ export default function ClaudePage() {
       <div className="two-col">
         <section className="card">
           <div className="set-head"><IconBox icon={Monitor} /><div><h3>Claude Desktop</h3><p>La forma más fácil para empezar.</p></div>
-            {info.desktopInstalled ? <Badge tone="green" icon={Check}>Conectado</Badge> : null}</div>
-          <p>Pulsa el botón y WillyPost se añade solo a la configuración de Claude Desktop. Después, reinicia Claude Desktop.</p>
-          <Button icon={Bot} loading={busy === 'install'} onClick={install}>{info.desktopInstalled ? 'Volver a conectar con Claude Desktop' : 'Conectar con Claude Desktop'}</Button>
+            {info.desktopInstalled ? <Badge tone="green" icon={Check}>Conectado</Badge> : info.desktopStale ? <Badge tone="amber">Hay que reconectar</Badge> : null}</div>
+          <p>Pulsa el botón y WillyPost se añade solo a la configuración de Claude Desktop. Después, cierra Claude Desktop del todo y vuelve a abrirlo.</p>
+          {info.desktopStale ? <p className="muted">Claude Desktop tiene guardada una conexión antigua de WillyPost que ya no funciona (por ejemplo, porque desconectaste Claude o reinstalaste WillyPost). Pulsa el botón para arreglarla.</p> : null}
+          <Button icon={Bot} loading={busy === 'install'} onClick={install}>{info.desktopInstalled || info.desktopStale ? 'Volver a conectar con Claude Desktop' : 'Conectar con Claude Desktop'}</Button>
           {info.desktopConfigPath ? <small className="muted block mt">Archivo de configuración: <code>{info.desktopConfigPath}</code></small> : null}
         </section>
 
@@ -93,7 +97,7 @@ export default function ClaudePage() {
           <p>Pega este comando en tu terminal una sola vez:</p>
           {needsToken ? (
             <>
-              <p className="muted">Este comando necesita tu token personal (como una contraseña para Claude). Pulsa el botón y lo pongo dentro del comando por ti.{info.hasToken ? ' Ya habías generado uno: el nuevo sustituirá al anterior.' : ''}</p>
+              <p className="muted">Este comando necesita tu token personal (como una contraseña para Claude). Pulsa el botón y lo pongo dentro del comando por ti.{info.hasToken ? ' Ya habías generado uno antes: si no lo guardaste, genera otro sin problema.' : ''}</p>
               <Button variant="secondary" icon={KeyRound} loading={busy === 'token'} onClick={genToken}>Generar mi token</Button>
             </>
           ) : codeCmd ? (
@@ -142,7 +146,7 @@ export default function ClaudePage() {
           <Button variant="ghost" size="sm" onClick={() => setAdv((v) => !v)}>{adv ? <ChevronUp size={16} /> : <ChevronDown size={16} />} {adv ? 'Ocultar' : 'Mostrar'}</Button></div>
         {adv && (
           <>
-            <p>El token es como una contraseña para Claude. {info.hasToken ? 'Ya tienes uno; si generas otro, el anterior dejará de funcionar.' : 'Aún no has generado ninguno.'}</p>
+            <p>El token es como una contraseña para Claude. {info.hasToken ? 'Ya tienes al menos uno. Si crees que alguien lo ha visto, pulsa “Desconectar Claude”: todos dejarán de funcionar y podrás generar uno nuevo.' : 'Aún no has generado ninguno.'}</p>
             <div className="btn-row">
               <Button variant="secondary" icon={KeyRound} loading={busy === 'token'} onClick={genToken}>{info.hasToken ? 'Generar token nuevo' : 'Generar token'}</Button>
               {info.hasToken ? <Button variant="ghost" loading={busy === 'revoke'} onClick={revoke}>Desconectar Claude</Button> : null}

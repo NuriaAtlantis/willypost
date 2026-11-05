@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { get, run, now, parseJson } from './db.js';
 import { HttpError } from './auth.js';
 import { getProvider } from './providers/index.js';
-import { getCreds, resolveCreds, saveCandidate } from './accounts.js';
+import { getCreds, resolveCreds, saveCandidate, accountAuthMode } from './accounts.js';
 import { redirectUriFor } from './config.js';
 import { centralCredsFor, loadCentralConfig } from './central.js';
 
@@ -12,18 +12,42 @@ export const PENDING_TTL_MS = 30 * 60 * 1000;
 const isStale = (p) => !p.created_at || Date.parse(p.created_at) < Date.now() - PENDING_TTL_MS;
 
 // Con qué se empezó cada conexión ('central' u 'own'), por "state". Así la vuelta usa la misma app y la
-// misma dirección de retorno aunque entre medias se guarde o se borre un carné. Si WillyPost se reinicia
+// misma dirección de retorno aunque entre medias se guarde o se borre un carné. En modo central se guarda
+// además una copia de los datos PÚBLICOS de la app central con los que se abrió la ventana (client_id, relé,
+// variante de Instagram): si /config cambia a mitad (p. ej. Instagram pasa de "a través de Facebook" a directo,
+// o la red desaparece), la vuelta canjea el código con la misma app que lo emitió. Si WillyPost se reinicia
 // a mitad, se vuelve a decidir con la misma regla (carné propio > central).
 const pendingMode = new Map();
 
 async function credsForPending(pending, family) {
-  const mode = pendingMode.get(pending.state)?.mode;
-  if (mode === 'central') {
+  const started = pendingMode.get(pending.state);
+  if (started?.mode === 'central') {
+    if (started.creds) return started.creds;
     await loadCentralConfig();
     return centralCredsFor(family);
   }
-  if (mode === 'own') return getCreds(pending.user_id, family);
+  if (started?.mode === 'own') return getCreds(pending.user_id, family);
   return resolveCreds(pending.user_id, family);
+}
+
+/**
+ * Con qué app se conecta. Al reconectar se usa, si sigue disponible, la MISMA app con la que se conectó la
+ * cuenta: TikTok (open_id) y LinkedIn (sub) dan un id distinto por app, así que reconectar con otra app parecería
+ * "otra cuenta". Si esa app ya no está (carné borrado o red retirada del modo central), la regla normal.
+ */
+async function credsForStart(userId, family, reconnectAccountId) {
+  const acc = reconnectAccountId ? get('SELECT * FROM accounts WHERE id = ? AND user_id = ?', reconnectAccountId, userId) : null;
+  if (acc && acc.mode !== 'manual') {
+    if (accountAuthMode(acc) === 'central') {
+      await loadCentralConfig();
+      const c = centralCredsFor(family);
+      if (c?.client_id) return c;
+    } else {
+      const own = getCreds(userId, family);
+      if (own?.client_id) return own;
+    }
+  }
+  return resolveCreds(userId, family);
 }
 
 const b64url = (buf) => buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -45,7 +69,7 @@ export async function startOAuth(user, network, reconnectAccountId = null) {
   if (!provider) throw new HttpError(400, 'Esta red no está disponible por API en esta versión. Añádela en modo manual.');
   if (provider.authType !== 'oauth') throw new HttpError(400, 'Esta red no usa este tipo de conexión.');
   run('DELETE FROM oauth_pending WHERE created_at < ?', new Date(Date.now() - PENDING_TTL_MS).toISOString());
-  const creds = await resolveCreds(user.id, provider.family);
+  const creds = await credsForStart(user.id, provider.family, reconnectAccountId);
   if (!creds?.client_id) {
     throw new HttpError(400, `Primero configura tu "carné" de ${provider.label}: pulsa "Configurar carné" y sigue los pasos.`);
   }
@@ -56,7 +80,7 @@ export async function startOAuth(user, network, reconnectAccountId = null) {
     user.id, network, state, verifier, reconnectAccountId, now(),
   );
   for (const [k, v] of pendingMode) if (v.at < Date.now() - PENDING_TTL_MS) pendingMode.delete(k);
-  pendingMode.set(state, { mode: creds.central ? 'central' : 'own', at: Date.now() });
+  pendingMode.set(state, { mode: creds.central ? 'central' : 'own', creds: creds.central ? creds : undefined, at: Date.now() });
   const authUrl = provider.getAuthUrl({
     creds, redirectUri: redirectUriFor(provider, creds), state, codeChallenge: challenge, codeVerifier: verifier,
   });
@@ -103,9 +127,17 @@ const stripTokens = (c) => ({ external_id: String(c.external_id), name: c.name, 
 
 /** Procesa el callback. Devuelve la ruta (hash) a la que redirigir. */
 export async function handleCallback(query) {
-  const { code, state, error, error_description: errorDescription } = query;
+  const { code, state } = query;
+  // Meta a veces devuelve error_code/error_message (y error_reason) en vez de error/error_description.
+  const error = query.error || query.error_code || query.error_reason;
+  const errorDescription = query.error_description || query.error_message || query.error_reason;
   const pending = state ? get('SELECT * FROM oauth_pending WHERE state = ?', String(state)) : null;
-  if (!pending) return `/#/redes?error=${encodeURIComponent('La conexión ha caducado o ya se usó. Vuelve a pulsar Conectar.')}`;
+  if (!pending) {
+    if (error) {
+      return `/#/redes?error=${encodeURIComponent(friendlyOAuthError('La red', error, errorDescription, { central: true }))}`;
+    }
+    return `/#/redes?error=${encodeURIComponent('La conexión ha caducado o ya se usó. Vuelve a pulsar Conectar.')}`;
+  }
   const provider = getProvider(pending.network);
   if (isStale(pending)) {
     run('DELETE FROM oauth_pending WHERE id = ?', pending.id);
@@ -115,7 +147,8 @@ export async function handleCallback(query) {
     // La elección de Páginas ya está hecha y esperando: un segundo retorno con el mismo "state" no hace nada.
     return `/#/redes?pick=${pending.id}`;
   }
-  const startedCentral = pendingMode.get(pending.state)?.mode === 'central';
+  const startedMode = pendingMode.get(pending.state)?.mode; // undefined si WillyPost se reinició a mitad
+  const startedCentral = startedMode === 'central';
   if (error || !code) {
     run('DELETE FROM oauth_pending WHERE id = ?', pending.id);
     pendingMode.delete(pending.state);
@@ -125,6 +158,17 @@ export async function handleCallback(query) {
   try {
     creds = await credsForPending(pending, provider.family);
     pendingMode.delete(pending.state);
+    if (!creds?.client_id) {
+      // La app con la que se empezó ya no está (carné borrado a mitad, o WillyPost se reinició y la red ya no
+      // está en modo central): sin esto, el proveedor fallaría con un error interno sin explicación.
+      run('DELETE FROM oauth_pending WHERE id = ?', pending.id);
+      const label = provider?.label || pending.network;
+      return `/#/redes?error=${encodeURIComponent(startedCentral
+        ? `La conexión sin carné con ${label} no está disponible ahora mismo. Espera unos minutos y vuelve a pulsar Conectar, o usa tu propia app de desarrollador (opción avanzada en Redes).`
+        : startedMode === 'own'
+          ? `No encontramos el carné de ${label} con el que empezaste la conexión. Configúralo en Redes y vuelve a pulsar Conectar.`
+          : `La conexión con ${label} ya no está disponible. Vuelve a pulsar Conectar.`)}`;
+    }
     const candidates = await provider.exchangeCode({
       creds, redirectUri: redirectUriFor(provider, creds), code: String(code), codeVerifier: pending.code_verifier,
     });
@@ -148,6 +192,11 @@ export async function handleCallback(query) {
       if (acc) {
         // Estaba iniciada otra cuenta de la red: NO se añade en silencio como cuenta nueva.
         run('DELETE FROM oauth_pending WHERE id = ?', pending.id);
+        if (accountAuthMode(acc) !== (creds.central ? 'central' : 'own')) {
+          // La cuenta se conectó con otra app (carné propio ↔ app de WillyPost). En algunas redes (TikTok, LinkedIn)
+          // el id de la cuenta cambia de una app a otra, así que no podemos saber si es la misma persona.
+          return `/#/redes?error=${encodeURIComponent(`Esta cuenta de ${provider.label} se conectó con ${accountAuthMode(acc) === 'central' ? 'la app de WillyPost (sin carné)' : 'tu propio carné'} y ahora se ha usado ${creds.central ? 'la app de WillyPost' : 'tu carné'}, así que no podemos reconectarla. Quita la cuenta en Redes y vuelve a conectarla con Conectar. No hemos cambiado nada.`)}`;
+        }
         return `/#/redes?error=${encodeURIComponent(reconnectMismatchMessage(provider.label, acc, candidates))}`;
       }
     }

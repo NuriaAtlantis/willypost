@@ -104,8 +104,7 @@ function admin_page(array $cfg, string $code): void
             if ($val !== '' && strlen($val) <= 512 && preg_match('/^[\x21-\x7e]+$/', $val)) { $saved[$k] = $val; $changed++; }
         }
         if ($changed > 0) {
-            $ok = $file !== '' && @file_put_contents($file, json_encode($saved, JSON_PRETTY_PRINT), LOCK_EX) !== false;
-            if ($ok) @chmod($file, 0600);
+            $ok = $file !== '' && save_secrets($file, $saved);
             $msg = $ok ? 'Guardado. Ya está.' : 'No se ha podido guardar. Avisa a Claude.';
         } else {
             $msg = 'No había nada nuevo que guardar.';
@@ -138,6 +137,33 @@ function admin_page(array $cfg, string $code): void
     }
     echo '</fieldset><button type="submit">Guardar</button></form></body></html>';
     exit;
+}
+/**
+ * Guarda las claves de forma atómica y privada: se escriben en un archivo temporal creado ya con permisos 0600
+ * (umask) y se renombra encima del bueno. Así nunca existe, ni un instante, una copia legible por otros usuarios
+ * del alojamiento, y /config nunca lee un archivo a medio escribir (lo que haría desaparecer redes un rato).
+ */
+function save_secrets(string $file, array $saved): bool
+{
+    $json = json_encode($saved, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    if (!is_string($json)) return false;
+    $tmp = $file . '.' . bin2hex(random_bytes(6)) . '.tmp';
+    $old = umask(0077);
+    try {
+        if (@file_put_contents($tmp, $json, LOCK_EX) !== strlen($json)) {
+            @unlink($tmp);
+            return false;
+        }
+        @chmod($tmp, 0600);
+        if (!@rename($tmp, $file)) {
+            @unlink($tmp);
+            return false;
+        }
+        @chmod($file, 0600);
+        return true;
+    } finally {
+        umask($old);
+    }
 }
 // fin página privada de claves (solo existe en la versión PHP)
 

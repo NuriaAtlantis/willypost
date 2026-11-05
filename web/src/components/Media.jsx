@@ -61,7 +61,7 @@ export function Dropzone({ onUploaded, compact, accept = 'image/*,video/*', mult
     >
       {busy ? <Loader2 className="spin" size={22} /> : <Upload size={22} />}
       <div>
-        <b>{busy ? 'Subiendo…' : 'Arrastra aquí tus imágenes o vídeos'}</b>
+        <b>{busy ? 'Subiendo…' : compact ? 'Sube imágenes o vídeos: haz clic o arrástralos aquí' : 'Arrastra aquí tus imágenes o vídeos'}</b>
         {!compact && <span>o haz clic para elegirlos en tu ordenador</span>}
       </div>
       <input ref={input} type="file" accept={accept} multiple={multiple} hidden onChange={(e) => { upload(e.target.files); e.target.value = ''; }} />

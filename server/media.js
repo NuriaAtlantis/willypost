@@ -29,6 +29,10 @@ const BAD_VIDEO_EXT = new Set(['.avi', '.mkv', '.wmv', '.flv', '.3gp', '.3g2', '
 const PASS_FORMATS = { jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif' };
 const CONVERT_FORMATS = new Set(['heif', 'avif', 'tiff', 'jp2', 'jxl']);
 const MAX_BYTES = 1024 * 1024 * 1024; // 1 GB
+const CANON_EXT = {
+  'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/gif': '.gif',
+  'video/mp4': '.mp4', 'video/quicktime': '.mov', 'video/webm': '.webm',
+};
 
 export const mediaPath = (m) => path.join(MEDIA_DIR, m.filename);
 
@@ -240,6 +244,17 @@ async function registerFile(userId, filename, originalName, browserMime) {
       ({ width, height, duration } = probe);
     }
 
+    // El archivo guardado lleva la extensión de lo que ES de verdad (una ".jfif" o una ".heic" que en realidad
+    // es JPEG → .jpg; ".m4v" → .mp4…). Las URLs públicas usan esa extensión, y algunas redes y el proxy de
+    // medios de TikTok solo aceptan .jpg/.png/.webp/.gif/.mp4/.mov/.webm.
+    const canon = CANON_EXT[mime];
+    if (canon && extOf(filename) !== canon) {
+      const fixed = randomName(canon);
+      fs.renameSync(full, path.join(MEDIA_DIR, fixed));
+      full = path.join(MEDIA_DIR, fixed);
+      filename = fixed;
+    }
+
     const r = run(
       'INSERT INTO media (user_id, filename, original_name, mime, kind, size, width, height, duration, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       userId, filename, displayName, mime, kind, size, width, height, duration, now(),
@@ -318,13 +333,27 @@ export async function importLocalFile(userId, sourcePath) {
 }
 
 /** Convierte a JPEG (Instagram solo admite JPEG). Devuelve un item de proveedor. */
+// Conversiones en marcha: varias redes publican a la vez la misma imagen (Instagram + Threads + Facebook…) y
+// antes escribían todas en el MISMO temporal; la segunda en renombrarlo fallaba y esa publicación se perdía.
+const converting = new Map();
+
 export async function toJpeg(item) {
   if (item.kind !== 'image' || item.mime === 'image/jpeg') return item;
   const out = path.join(CONV_DIR, `${item.id}.jpg`);
   if (!fs.existsSync(out)) {
-    const tmp = `${out}.${process.pid}.tmp`;
-    await sharp(item.path, { failOn: 'none' }).rotate().flatten({ background: '#ffffff' }).jpeg({ quality: 92 }).toFile(tmp);
-    fs.renameSync(tmp, out);
+    if (!converting.has(out)) {
+      const job = (async () => {
+        const tmp = `${out}.${process.pid}.${crypto.randomBytes(4).toString('hex')}.tmp`;
+        try {
+          await sharp(item.path, { failOn: 'none' }).rotate().flatten({ background: '#ffffff' }).jpeg({ quality: 92 }).toFile(tmp);
+          fs.renameSync(tmp, out);
+        } finally {
+          rm(tmp);
+        }
+      })().finally(() => converting.delete(out));
+      converting.set(out, job);
+    }
+    await converting.get(out);
   }
   return { ...item, path: out, mime: 'image/jpeg', original_name: (item.original_name || 'imagen').replace(/\.[^.]+$/, '') + '.jpg' };
 }

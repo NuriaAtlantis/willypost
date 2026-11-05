@@ -153,3 +153,6 @@ process.on('SIGTERM', shutdown);
 // Un error inesperado no debe apagar WillyPost (en Windows nadie lo volvería a arrancar y no se publicaría nada).
 process.on('unhandledRejection', (e) => console.error('[unhandledRejection]', e));
 process.on('uncaughtException', (e) => console.error('[uncaughtException]', e));
+
+// Para pruebas en el mismo proceso (cerrar el servidor al terminar).
+export { app, server };

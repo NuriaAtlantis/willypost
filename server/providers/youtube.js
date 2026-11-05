@@ -170,6 +170,10 @@ export async function googleRefresh({ account, creds }) {
     // Cuenta conectada sin carné y sin poder leer la configuración del servidor central (sin internet).
     throw new ProviderError('No hemos podido contactar con el servidor de WillyPost para renovar la conexión con Google. Lo reintentaremos en unos minutos.', { retryable: true });
   }
+  if (!creds?.central && !creds?.client_id) {
+    // Conectada con el carné propio y el carné ya no está guardado: sin él no se puede renovar.
+    throw new ProviderError('Has borrado el carné de Google con el que conectaste esta cuenta. Vuelve a configurarlo (o quita la cuenta y conéctala de nuevo) en Redes.', { auth: true });
+  }
   const tok = await googleTokenRequest({
     client_id: creds.client_id,
     client_secret: creds.client_secret,

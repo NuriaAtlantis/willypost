@@ -116,7 +116,9 @@ export default function Calendar() {
           return (
             <span key={i} className={`dc ${full ? 'full' : near ? 'near' : ''}`} title={`${netLabel(r.network, app.networks)} · ${r.name}: ${r.feed}/${fMax} publicaciones${r.story ? `, ${r.story}/${sMax} stories` : ''} este día`}>
               <NetDot id={r.network} color={netColor(r.network, app.networks)} />
-              {r.feed}/{fMax}{r.story ? <em>·S{r.story}</em> : null}
+              {/* Solo stories ese día: "S 3/10" en vez de un confuso "0/5 ·S3". */}
+              {r.feed || !r.story ? `${r.feed}/${fMax}` : null}
+              {r.story ? (r.feed ? <em>·S{r.story}</em> : `S ${r.story}/${sMax}`) : null}
             </span>
           );
         })}
@@ -235,7 +237,7 @@ export default function Calendar() {
             </div>
           </div>
           <ol className="onboard-steps">
-            <li><span><Plug size={18} /></span><div><b>1. Conecta una red</b><small>Con tu propio carné, guiado paso a paso</small></div></li>
+            <li><span><Plug size={18} /></span><div><b>1. Conecta una red</b><small>{app.networks.some((n) => n.central) ? 'Pulsa “Conectar” y acepta los permisos' : 'Con tu propio carné, guiado paso a paso'}</small></div></li>
             <li><span><PenLine size={18} /></span><div><b>2. Crea tu primera publicación</b><small>Un texto, varias redes</small></div></li>
             <li><span><Rocket size={18} /></span><div><b>3. Prográmala y olvídate</b><small>Mantén el ordenador encendido a esa hora</small></div></li>
           </ol>
@@ -275,7 +277,7 @@ export default function Calendar() {
             height="auto"
             headerToolbar={{ left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listWeek' }}
             buttonText={{ today: 'Hoy', month: 'Mes', week: 'Semana', list: 'Agenda' }}
-            views={{ dayGridMonth: { dayMaxEvents: 3 }, timeGridWeek: { allDaySlot: false, slotMinTime: '06:00:00', slotMaxTime: '24:00:00' }, listWeek: { listDayFormat: { weekday: 'long', day: 'numeric', month: 'long' }, noEventsContent: 'No hay publicaciones esta semana.' } }}
+            views={{ dayGridMonth: { dayMaxEvents: 3 }, timeGridWeek: { allDaySlot: false, slotMinTime: '06:00:00', slotMaxTime: '24:00:00', eventMaxStack: 3 }, listWeek: { listDayFormat: { weekday: 'long', day: 'numeric', month: 'long' }, noEventsContent: 'No hay publicaciones esta semana.' } }}
             events={events}
             eventContent={renderEvent}
             eventClick={(info) => app.openPost(Number(info.event.id))}
@@ -317,7 +319,7 @@ export default function Calendar() {
             <span><i className="lg lg-draft" /> Borrador</span>
             <span><i className="lg lg-pub" /> Publicada</span>
             <span><i className="lg lg-fail" /> Fallida / sin publicar</span>
-            <span className="muted">Contadores por día: publicaciones hechas / máximo (5 al día, 10 stories)</span>
+            <span className="muted">Contadores por día y red: publicaciones de ese día / máximo (5 al día). S = stories (máximo 10).</span>
           </div>
         </div>
 

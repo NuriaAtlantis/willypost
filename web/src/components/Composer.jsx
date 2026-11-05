@@ -145,9 +145,9 @@ function ComposerInner() {
   const infoFor = (a) => {
     const n = netOf(a);
     const label = netLabel(a.network, app.networks);
-    if (a.mode === 'manual') return { manual: true, reason: `${label} está en modo manual: a su hora te aviso y lo publicas tú en dos clics.` };
+    if (a.mode === 'manual') return { manual: true, reason: 'A su hora te aviso y lo publicas tú en dos clics.' };
     if (n && n.supports && n.supports[type] === false) {
-      return { manual: true, reason: `${label} no permite publicar ${TYPE_PLURAL[type]} automáticamente. Irá en modo manual: a su hora te aviso, copias el texto y lo subes tú.` };
+      return { manual: true, reason: `${label} no permite publicar ${TYPE_PLURAL[type]} automáticamente: a su hora te aviso, copias el texto y lo subes tú.` };
     }
     return { manual: false };
   };
@@ -343,7 +343,10 @@ function ComposerInner() {
         draft: 'Borrador guardado.',
         schedule: 'Publicación programada.',
         queue: res && res.scheduled_at ? `Añadida a la cola para el ${fmtDateTime(res.scheduled_at)}.` : 'Añadida a la cola.',
-        publish_now: 'Publicando ahora. Te aviso cuando termine.',
+        // Si todas las redes van a mano no se "publica" nada: se deja lista en "Para publicar a mano".
+        publish_now: selected.length && manualNotices.length === selected.length
+          ? 'Lista para subir: tienes el texto y los archivos en «Para publicar a mano».'
+          : 'Publicando ahora. Te aviso cuando termine.',
       }[action];
       const ttNote = action !== 'draft' && apiTikTok.length > 0;
       toast.success(ttNote ? `${msg} TikTok puede tardar unos minutos en mostrarlo en tu perfil.` : msg, ttNote ? 8000 : undefined);
@@ -360,7 +363,9 @@ function ComposerInner() {
         if (d.account_id) (byAccount[d.account_id] = byAccount[d.account_id] || []).push(d.message);
       });
       const uniq = [...new Set(lines)];
-      setErrors({ general: uniq.includes(e.message) ? '' : e.message, lines: uniq, byAccount });
+      // Si el mensaje general ya sale en una línea ("Instagram: <mensaje>"), no lo repetimos arriba.
+      const repeated = uniq.some((l) => l === e.message || l.endsWith(`: ${e.message}`));
+      setErrors({ general: repeated ? '' : e.message, lines: uniq, byAccount });
       scrollToErrors();
     } finally {
       submitting.current = false;
@@ -460,7 +465,7 @@ function ComposerInner() {
               </div>
             )}
             {manualNotices.map((x) => (
-              <div className="notice warn" key={x.a.id}><Hand size={18} /><div><b>{x.a.name}: modo manual.</b> {x.reason}</div></div>
+              <div className="notice warn" key={x.a.id}><Hand size={18} /><div><b>{netLabel(x.a.network, app.networks)} ({x.a.name}) irá en modo manual.</b> {x.reason}</div></div>
             ))}
             {approvalNotices.map((a) => (
               <div className="notice info" key={'ap' + a.id}><Info size={18} /><div><b>{netLabel(a.network, app.networks)}:</b> {netOf(a).needsApproval}</div></div>

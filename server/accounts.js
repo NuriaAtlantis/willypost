@@ -112,19 +112,38 @@ export function saveCandidate(userId, network, c) {
   return get('SELECT * FROM accounts WHERE user_id = ? AND network = ? AND external_id = ?', userId, network, String(c.external_id));
 }
 
+// Renovaciones en marcha por cuenta. La publicación y el mantenimiento pueden querer renovar la misma cuenta a
+// la vez; algunas redes (TikTok, Google en ciertos casos…) rotan el refresh_token y una segunda petición con el
+// antiguo fallaría y marcaría la cuenta como "reconectar" sin motivo.
+const refreshing = new Map();
+
 /** Refresca el token si caduca pronto (o si force). Devuelve la fila actualizada. */
 export async function ensureFreshToken(acc, { force = false } = {}) {
   const provider = getProvider(acc.network);
   if (!provider?.refresh) return acc;
-  const exp = acc.token_expires_at ? new Date(acc.token_expires_at).getTime() : null;
+  if (refreshing.has(acc.id)) {
+    await refreshing.get(acc.id);
+    return get('SELECT * FROM accounts WHERE id = ?', acc.id) || acc;
+  }
+  // La fila en memoria puede ser antigua (otra renovación ya guardó un refresh_token nuevo): usamos la guardada.
+  const current = (acc.id != null && get('SELECT * FROM accounts WHERE id = ?', acc.id)) || acc;
+  const exp = current.token_expires_at ? new Date(current.token_expires_at).getTime() : null;
   const soon = exp !== null && exp < Date.now() + 10 * 60 * 1000;
-  if (!force && !soon) return acc;
-  const creds = await credsForAccount(acc, provider.family);
-  const r = await provider.refresh({ account: providerAccount(acc), creds });
-  if (!r) return acc;
-  run(
-    'UPDATE accounts SET access_token = ?, refresh_token = COALESCE(?, refresh_token), token_expires_at = ?, last_error = NULL WHERE id = ?',
-    r.access_token || acc.access_token, r.refresh_token || null, r.token_expires_at || acc.token_expires_at, acc.id,
-  );
-  return get('SELECT * FROM accounts WHERE id = ?', acc.id);
+  if (!force && !soon) return current;
+  const job = (async () => {
+    const creds = await credsForAccount(current, provider.family);
+    const r = await provider.refresh({ account: providerAccount(current), creds });
+    if (!r) return current;
+    run(
+      'UPDATE accounts SET access_token = ?, refresh_token = COALESCE(?, refresh_token), token_expires_at = ?, last_error = NULL WHERE id = ?',
+      r.access_token || current.access_token, r.refresh_token || null, r.token_expires_at || current.token_expires_at, current.id,
+    );
+    return get('SELECT * FROM accounts WHERE id = ?', current.id) || current;
+  })();
+  refreshing.set(acc.id, job);
+  try {
+    return await job;
+  } finally {
+    if (refreshing.get(acc.id) === job) refreshing.delete(acc.id);
+  }
 }

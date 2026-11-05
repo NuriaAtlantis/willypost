@@ -18,7 +18,7 @@ export const db = open();
 
 const MIGRATIONS = [
   `
-  CREATE TABLE users (
+  CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE COLLATE NOCASE,
     name TEXT NOT NULL,
@@ -26,25 +26,25 @@ const MIGRATIONS = [
     recovery_hash TEXT,
     created_at TEXT NOT NULL
   );
-  CREATE TABLE sessions (
+  CREATE TABLE IF NOT EXISTS sessions (
     token TEXT PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     expires_at TEXT NOT NULL
   );
-  CREATE TABLE api_tokens (
+  CREATE TABLE IF NOT EXISTS api_tokens (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     token_hash TEXT NOT NULL UNIQUE,
     label TEXT,
     created_at TEXT NOT NULL
   );
-  CREATE TABLE settings (
+  CREATE TABLE IF NOT EXISTS settings (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     key TEXT NOT NULL,
     value TEXT,
     PRIMARY KEY (user_id, key)
   );
-  CREATE TABLE credentials (
+  CREATE TABLE IF NOT EXISTS credentials (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     family TEXT NOT NULL,
     client_id TEXT NOT NULL,
@@ -53,7 +53,7 @@ const MIGRATIONS = [
     updated_at TEXT NOT NULL,
     PRIMARY KEY (user_id, family)
   );
-  CREATE TABLE accounts (
+  CREATE TABLE IF NOT EXISTS accounts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     network TEXT NOT NULL,
@@ -71,7 +71,7 @@ const MIGRATIONS = [
     created_at TEXT NOT NULL,
     UNIQUE (user_id, network, external_id)
   );
-  CREATE TABLE oauth_pending (
+  CREATE TABLE IF NOT EXISTS oauth_pending (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     network TEXT NOT NULL,
@@ -81,7 +81,7 @@ const MIGRATIONS = [
     account_id_reconnect INTEGER,
     created_at TEXT NOT NULL
   );
-  CREATE TABLE media (
+  CREATE TABLE IF NOT EXISTS media (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     filename TEXT NOT NULL,
@@ -93,7 +93,7 @@ const MIGRATIONS = [
     height INTEGER,
     created_at TEXT NOT NULL
   );
-  CREATE TABLE campaigns (
+  CREATE TABLE IF NOT EXISTS campaigns (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
@@ -101,14 +101,14 @@ const MIGRATIONS = [
     color TEXT,
     created_at TEXT NOT NULL
   );
-  CREATE TABLE snippets (
+  CREATE TABLE IF NOT EXISTS snippets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     text TEXT NOT NULL,
     created_at TEXT NOT NULL
   );
-  CREATE TABLE posts (
+  CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     type TEXT NOT NULL,
@@ -121,13 +121,13 @@ const MIGRATIONS = [
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );
-  CREATE INDEX posts_user_date ON posts(user_id, scheduled_at);
-  CREATE TABLE post_media (
+  CREATE INDEX IF NOT EXISTS posts_user_date ON posts(user_id, scheduled_at);
+  CREATE TABLE IF NOT EXISTS post_media (
     post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
     media_id INTEGER NOT NULL REFERENCES media(id) ON DELETE CASCADE,
     position INTEGER NOT NULL DEFAULT 0
   );
-  CREATE TABLE post_targets (
+  CREATE TABLE IF NOT EXISTS post_targets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
     account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
@@ -144,8 +144,8 @@ const MIGRATIONS = [
     published_at TEXT,
     updated_at TEXT NOT NULL
   );
-  CREATE INDEX targets_status ON post_targets(status);
-  CREATE TABLE notifications (
+  CREATE INDEX IF NOT EXISTS targets_status ON post_targets(status);
+  CREATE TABLE IF NOT EXISTS notifications (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     kind TEXT NOT NULL,
@@ -157,22 +157,129 @@ const MIGRATIONS = [
   );
   `,
   // v2: duración de los vídeos (segundos), para validar límites de cada red.
-  `ALTER TABLE media ADD COLUMN duration REAL;`,
+  (d) => addColumnIfMissing(d, 'media', 'duration', 'REAL'),
 ];
 
-function migrate() {
-  const { user_version: current } = db.prepare('PRAGMA user_version').get();
+const columnsOf = (d, table) => d.prepare(`PRAGMA table_info("${table}")`).all().map((c) => c.name);
+
+function addColumnIfMissing(d, table, column, decl) {
+  if (!columnsOf(d, table).includes(column)) d.exec(`ALTER TABLE "${table}" ADD COLUMN "${column}" ${decl}`);
+}
+
+const userTables = (d) => d.prepare(`SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'`).all();
+
+/** Esquema completo actual (en memoria): sirve de referencia para reparar bases de datos de versiones antiguas. */
+function referenceSchema() {
+  const ref = new DatabaseSync(':memory:');
+  try {
+    for (const m of MIGRATIONS) (typeof m === 'function' ? m(ref) : ref.exec(m));
+    const tables = userTables(ref).map((t) => ({
+      ...t,
+      columns: ref.prepare(`PRAGMA table_info("${t.name}")`).all().map((c) => ({ ...c })),
+    }));
+    const indexes = ref.prepare(`SELECT name, sql FROM sqlite_master WHERE type = 'index' AND sql IS NOT NULL`).all().map((r) => ({ ...r }));
+    return { tables, indexes };
+  } finally {
+    ref.close();
+  }
+}
+
+/**
+ * Deja la base de datos con todas las tablas, columnas e índices que espera esta versión, venga de donde venga
+ * (instalaciones antiguas, versiones de prueba, una migración a medias…). Solo AÑADE: nunca borra datos.
+ * Idempotente: se ejecuta en cada arranque y, si no falta nada, no cambia nada.
+ */
+function repairSchema(d) {
+  const { tables, indexes } = referenceSchema();
+  const have = new Set(userTables(d).map((t) => t.name));
+  const changes = [];
+  d.exec('BEGIN');
+  try {
+    for (const t of tables) {
+      if (!have.has(t.name)) {
+        d.exec(t.sql);
+        changes.push(`tabla ${t.name}`);
+        continue;
+      }
+      const cols = new Set(columnsOf(d, t.name));
+      for (const c of t.columns) {
+        if (cols.has(c.name) || c.pk) continue;
+        const hasDefault = c.dflt_value != null;
+        // SQLite no deja añadir NOT NULL sin valor por defecto a una tabla con filas: se añade sin NOT NULL.
+        const decl = `${c.type || ''}${c.notnull && hasDefault ? ' NOT NULL' : ''}${hasDefault ? ` DEFAULT ${c.dflt_value}` : ''}`;
+        d.exec(`ALTER TABLE "${t.name}" ADD COLUMN "${c.name}" ${decl}`);
+        changes.push(`${t.name}.${c.name}`);
+      }
+    }
+    for (const i of indexes) {
+      d.exec(i.sql.replace(/^CREATE (UNIQUE )?INDEX (?!IF NOT EXISTS)/i, (_m, u) => `CREATE ${u || ''}INDEX IF NOT EXISTS `));
+    }
+    // Fechas guardadas en otro formato (p. ej. sin "Z" o con desfase): el programador compara texto ISO en UTC.
+    const CANON = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+    for (const [table, col] of [['posts', 'scheduled_at'], ['post_targets', 'next_attempt_at'], ['sessions', 'expires_at']]) {
+      for (const r of d.prepare(`SELECT rowid AS rid, "${col}" AS v FROM "${table}" WHERE "${col}" IS NOT NULL`).all()) {
+        if (CANON.test(String(r.v))) continue;
+        const dt = new Date(String(r.v).trim().replace(' ', 'T'));
+        if (Number.isNaN(dt.getTime())) continue;
+        d.prepare(`UPDATE "${table}" SET "${col}" = ? WHERE rowid = ?`).run(dt.toISOString(), r.rid);
+        changes.push(`${table}.${col}#${r.rid}`);
+      }
+    }
+    d.exec('COMMIT');
+  } catch (e) {
+    d.exec('ROLLBACK');
+    throw e;
+  }
+  return changes;
+}
+
+/** Copia de seguridad coherente (también con WAL) antes de actualizar el esquema de una base de datos con datos. */
+function backupBeforeUpgrade(d, file, fromVersion) {
+  if (!file || file === ':memory:') return null;
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\..*$/, '').replace('T', '-');
+  const dest = `${file}.copia-v${fromVersion}-${stamp}.bak`;
+  try {
+    d.prepare('VACUUM INTO ?').run(dest);
+    console.log(`[db] Copia de seguridad antes de actualizar: ${dest}`);
+    return dest;
+  } catch (e) {
+    console.warn(`[db] No se pudo hacer la copia de seguridad antes de actualizar (${e.message}). Sigo: los cambios solo añaden.`);
+    return null;
+  }
+}
+
+/** Aplica las migraciones pendientes y repara el esquema. Seguro de ejecutar todas las veces que haga falta. */
+export function migrate(d = db, file = process.env.WILLYPOST_DB || DB_PATH) {
+  const { user_version: current } = d.prepare('PRAGMA user_version').get();
+  if (current > MIGRATIONS.length) {
+    // Base de datos de una versión MÁS NUEVA de WillyPost: no la tocamos.
+    console.warn(`[db] La base de datos es de una versión más nueva de WillyPost (esquema ${current}). Actualiza WillyPost.`);
+    return { from: current, to: current, backup: null, repaired: [] };
+  }
+  let backup = null;
+  const repaired = [];
+  if (current < MIGRATIONS.length && userTables(d).length) {
+    backup = backupBeforeUpgrade(d, file, current);
+    // Base de datos con tablas pero sin número de versión (instalaciones muy antiguas): primero se completan
+    // las tablas existentes, para que los índices del paso 1 no fallen por columnas que no tenían.
+    if (current === 0) repaired.push(...repairSchema(d));
+  }
   for (let v = current; v < MIGRATIONS.length; v++) {
-    db.exec('BEGIN');
+    d.exec('BEGIN');
     try {
-      db.exec(MIGRATIONS[v]);
-      db.exec(`PRAGMA user_version = ${v + 1}`);
-      db.exec('COMMIT');
+      const m = MIGRATIONS[v];
+      if (typeof m === 'function') m(d); else d.exec(m);
+      d.exec(`PRAGMA user_version = ${v + 1}`);
+      d.exec('COMMIT');
     } catch (e) {
-      db.exec('ROLLBACK');
+      d.exec('ROLLBACK');
+      console.error(`[db] Error al actualizar la base de datos (paso ${v + 1}): ${e.message}.${backup ? ` Tienes una copia en ${backup}.` : ''}`);
       throw e;
     }
   }
+  repaired.push(...repairSchema(d));
+  if (repaired.length) console.log(`[db] Base de datos reparada (faltaba: ${repaired.slice(0, 20).join(', ')}${repaired.length > 20 ? '…' : ''})`);
+  return { from: current, to: Math.max(current, MIGRATIONS.length), backup, repaired };
 }
 migrate();
 

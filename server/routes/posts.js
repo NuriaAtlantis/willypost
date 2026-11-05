@@ -6,7 +6,7 @@ import {
 } from '../posts.js';
 import { slots, nextQueueSlot, checkLimits } from '../limits.js';
 import { getProvider } from '../providers/index.js';
-import { publishTarget, tick } from '../scheduler.js';
+import { publishTarget, tick, isLingering } from '../scheduler.js';
 import { accountStatus, ensureFreshToken } from '../accounts.js';
 import { ProviderError } from '../providers/_http.js';
 import { queryCreatorInfo, tiktokErrorCode, CANNOT_POST_CODES } from '../providers/tiktok.js';
@@ -107,8 +107,17 @@ postsRouter.post('/api/posts', requireAuth, (req, res) => {
   res.status(201).json({ ...r.post, warnings: r.warnings });
 });
 
+const LINGERING_MSG = 'La red todavía puede estar terminando la publicación anterior. Espera unos minutos y mira en la red si salió: si sale, aquí aparecerá como publicada sola.';
+
+/** Si una red aún puede contestar a un envío de esta publicación, rehacerla podría duplicarla. */
+function assertNoLateAnswer(postId) {
+  const ids = all('SELECT id FROM post_targets WHERE post_id = ?', Number(postId)).map((r) => r.id);
+  if (ids.some(isLingering)) throw new HttpError(409, LINGERING_MSG);
+}
+
 postsRouter.put('/api/posts/:id', requireAuth, (req, res) => {
   const b = body(req);
+  assertNoLateAnswer(getPostForUser(req.user.id, req.params.id).id);
   const r = savePost(req.user, b, req.params.id);
   if (b.action === 'publish_now') kick();
   res.json({ ...r.post, warnings: r.warnings });
@@ -226,6 +235,8 @@ postsRouter.post('/api/targets/:id/retry', requireAuth, async (req, res) => {
   denyClaudeInDraftMode(req);
   const t = ownTarget(req);
   if (!['failed', 'manual_pending'].includes(t.status)) throw new HttpError(409, 'Solo se pueden reintentar envíos fallidos.');
+  // La red no contestó a tiempo pero su petición sigue viva: reintentar ahora podría duplicar la publicación.
+  if (isLingering(t.id)) throw new HttpError(409, LINGERING_MSG);
   run(`UPDATE post_targets SET status = 'pending', attempts = 0, next_attempt_at = NULL, error = NULL, updated_at = ? WHERE id = ?`, now(), t.id);
   const p = get('SELECT * FROM posts WHERE id = ?', t.post_id);
   if (['draft', 'missed'].includes(p.status)) {

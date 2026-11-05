@@ -46,9 +46,9 @@ export default function Help() {
       <div className="card help-start">
         <h3>Empieza en 3 pasos</h3>
         <ol>
-          <li><span><Plug size={18} /></span><div><b>Conecta una red.</b> En <a href="#/redes">Redes</a> sigue el asistente de tu carné, o añádela en modo manual si no quieres configurar nada.</div></li>
+          <li><span><Plug size={18} /></span><div><b>Conecta una red.</b> En <a href="#/redes">Redes</a> pulsa “Conectar” y acepta los permisos (si alguna red te pide tu propia app, sigue su guía), o añádela en modo manual si no quieres conectar tu cuenta.</div></li>
           <li><span><PenLine size={18} /></span><div><b>Crea tu primera publicación.</b> Pulsa “Crear publicación”, escribe el texto, añade una imagen y elige las redes.</div></li>
-          <li><span><Rocket size={18} /></span><div><b>Prográmala y deja WillyPost abierto.</b> A la hora elegida se publica sola. Si es modo manual, te aviso para que la subas tú.</div></li>
+          <li><span><Rocket size={18} /></span><div><b>Prográmala y deja el ordenador encendido</b> (con WillyPost en marcha). A la hora elegida se publica sola. Si es modo manual, te aviso para que la subas tú.</div></li>
         </ol>
       </div>
       <div className="help-layout">
@@ -65,7 +65,7 @@ export default function Help() {
         </div>
         <aside className="card help-side">
           <h3>¿Sigues atascado?</h3>
-          <p>Cada red tiene una guía con capturas para crear tu carné paso a paso.</p>
+          <p>Cada red tiene una guía con capturas, paso a paso (también para crear tu propia app si alguna red te la pide).</p>
           <a className="btn btn-secondary" href={DOCS_BASE} target="_blank" rel="noreferrer"><BookOpen size={18} /> Ver las guías</a>
           <p className="mt">También puedes preguntarlo en la comunidad de la Willy SEO Academy.</p>
           <div className="help-hint"><LifeBuoy size={18} /> Cuéntanos qué red y qué mensaje de error ves y te ayudamos.</div>

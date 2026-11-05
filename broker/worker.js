@@ -171,7 +171,7 @@ function qs(obj) {
 }
 
 function configured(env, family) {
-  const f = FAMILIES[family];
+  const f = Object.hasOwn(FAMILIES, family) ? FAMILIES[family] : null;
   return Boolean(f && v(env, f.id) && v(env, f.secret));
 }
 
@@ -254,7 +254,8 @@ function rateLimited(ip, now = Date.now()) {
 /* ------------------------------------------------------------------ /token ------------------------------------------------------------------ */
 
 async function handleToken(request, env, family, op) {
-  const spec = OPS[family] && Object.hasOwn(OPS[family], op) ? OPS[family][op] : null;
+  // Solo propiedades propias (como array_key_exists en PHP): "constructor", "toString"… no son familias.
+  const spec = Object.hasOwn(OPS, family) && Object.hasOwn(OPS[family], op) ? OPS[family][op] : null;
   if (!spec) return fail(404, 'operacion_desconocida', 'Esta operación no existe en el servidor central de WillyPost.');
   if (!configured(env, family)) {
     return fail(404, 'no_configurada', 'Esta red todavía no está disponible en modo central. Usa tu propia app (carné) o inténtalo más adelante.');

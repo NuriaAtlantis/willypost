@@ -19,6 +19,8 @@ const SUSPEND_GAP_MS = 2 * 60 * 1000;
 // Una red que no contesta no puede bloquear el programador para siempre.
 const PUBLISH_TIMEOUT_MS = Number(process.env.WILLYPOST_PUBLISH_TIMEOUT_MS) || 60 * 60 * 1000;
 const REFRESH_TIMEOUT_MS = 2 * 60 * 1000;
+// Cuánto seguimos esperando (como mucho) la respuesta tardía de una red que superó PUBLISH_TIMEOUT_MS.
+const LINGER_MAX_MS = 3 * PUBLISH_TIMEOUT_MS;
 // Errores de red en los que la petición no llegó a salir: reintentar es seguro.
 const CONNECT_CODES = new Set(['ENOTFOUND', 'EAI_AGAIN', 'ECONNREFUSED', 'ENETUNREACH', 'EHOSTUNREACH', 'UND_ERR_CONNECT_TIMEOUT']);
 
@@ -29,6 +31,18 @@ let maintaining = false;
 let lastBeat = Date.now();
 const inFlight = new Set();
 const busyAccounts = new Set();
+// Envíos cuya red no contestó a tiempo (TimeoutError) pero cuya petición sigue viva: si contesta tarde con
+// éxito, el envío se marca publicado; mientras tanto no se vuelve a publicar (evita duplicados).
+const lingering = new Set();
+// Solo se publica lo que pertenece a una publicación "en marcha". Una publicación que el alumno ha visto como
+// atrasada ("missed") o ha vuelto a borrador NO debe salir aunque un envío suyo esté en la cola de una cuenta.
+const RUNNABLE_POST = ['scheduled', 'publishing', 'partial', 'manual'];
+
+/** Cuántos envíos se están publicando ahora mismo (lo consulta el instalador antes de parar WillyPost). */
+export const publishingNow = () => inFlight.size;
+
+/** true si la red aún puede contestar a una publicación anterior de este envío (no conviene reintentar). */
+export const isLingering = (targetId) => lingering.has(Number(targetId));
 
 const label = (network) => getProvider(network)?.label || network;
 const log = (...a) => console.log('[scheduler]', ...a);
@@ -70,9 +84,53 @@ function describeError(e, net) {
   };
 }
 
+/** Quita de un mensaje la promesa de reintentar (para cuando ya no vamos a reintentar más). */
+export function withoutRetryPromise(msg) {
+  return String(msg)
+    .replace(/[:.]?\s*[Ll]o (?:reintentaremos|volveremos a intentar)[^.]*\.?/g, '.')
+    .replace(/\.{2,}/g, '.')
+    .trim();
+}
+
+/**
+ * La red no contestó a tiempo, pero su petición sigue en marcha. Si al final contesta que SÍ ha publicado,
+ * lo anotamos (así el alumno no la repite a mano ni con Reintentar y no hay duplicados).
+ */
+function watchLateResult(targetId, post, net, publishing) {
+  lingering.add(targetId);
+  // Una petición que no termina nunca no puede bloquear el envío para siempre.
+  const cap = setTimeout(() => lingering.delete(targetId), LINGER_MAX_MS);
+  cap.unref?.();
+  publishing.then((result) => {
+    try {
+      const cur = get('SELECT * FROM post_targets WHERE id = ?', targetId);
+      if (!cur || !['failed', 'pending'].includes(cur.status) || inFlight.has(targetId)) return;
+      setTarget(targetId, {
+        status: 'published',
+        external_id: result?.external_id ? String(result.external_id) : null,
+        external_url: result?.url || null,
+        warning: `${net} contestó tarde, pero la publicación salió bien.`,
+        error: null,
+        published_at: now(),
+        next_attempt_at: null,
+      });
+      recomputeStatus(cur.post_id);
+      log(`publicado con retraso post ${post.id} en ${net}`);
+      notify(post.user_id, {
+        kind: 'published', postId: post.id, open: '/#/lista',
+        title: `Publicado en ${net} (con retraso)`,
+        body: `${net} tardó en contestar, pero la publicación ha salido. No hace falta reintentarla.`,
+      });
+    } catch (e) {
+      console.error('[scheduler] error anotando una publicación tardía', targetId, e);
+    }
+  }, () => { /* falló de verdad: se queda como fallida */ })
+    .finally(() => { clearTimeout(cap); lingering.delete(targetId); });
+}
+
 /** Publica un envío concreto. Nunca lanza: deja el resultado en la base de datos. */
 export async function publishTarget(targetId) {
-  if (inFlight.has(targetId)) return;
+  if (inFlight.has(targetId) || lingering.has(targetId)) return;
   inFlight.add(targetId);
   try {
     const t = get('SELECT * FROM post_targets WHERE id = ?', targetId);
@@ -80,6 +138,10 @@ export async function publishTarget(targetId) {
     const post = get('SELECT * FROM posts WHERE id = ?', t.post_id);
     let acc = get('SELECT * FROM accounts WHERE id = ?', t.account_id);
     if (!post || !acc) return;
+    // Mientras este envío esperaba en la cola de su cuenta, la publicación pudo pasar a "missed" (el ordenador
+    // estuvo dormido), volver a borrador u omitirse: entonces ya no se publica sola.
+    if (!RUNNABLE_POST.includes(post.status)) return;
+    if (!post.scheduled_at || new Date(post.scheduled_at).getTime() > Date.now() + 1000) return;
     const net = label(acc.network);
     const provider = getProvider(acc.network);
 
@@ -107,6 +169,9 @@ export async function publishTarget(targetId) {
     setTarget(t.id, { status: 'publishing', attempts });
     recomputeStatus(post.id);
 
+    let publishing = null;
+    let result;
+    let failure = null;
     try {
       acc = await withTimeout(ensureFreshToken(acc), REFRESH_TIMEOUT_MS, `${net} no ha respondido al renovar la conexión. Pulsa Reintentar en un rato.`);
       const media = all(
@@ -127,19 +192,26 @@ export async function publishTarget(targetId) {
         sleep,
         log: (...a) => console.log(`[${acc.network}]`, ...a),
       };
-      const result = await withTimeout(
-        Promise.resolve().then(() => provider.publish({
-          account: providerAccount(acc),
-          creds,
-          type: post.type,
-          caption: effectiveCaption(post, t),
-          media,
-          options: parseJson(t.options, {}),
-          ctx,
-        })),
+      publishing = Promise.resolve().then(() => provider.publish({
+        account: providerAccount(acc),
+        creds,
+        type: post.type,
+        caption: effectiveCaption(post, t),
+        media,
+        options: parseJson(t.options, {}),
+        ctx,
+      }));
+      result = await withTimeout(
+        publishing,
         PUBLISH_TIMEOUT_MS,
         `${net} no ha respondido en ${Math.max(1, Math.round(PUBLISH_TIMEOUT_MS / 60000))} minutos. Mira en ${net} si la publicación salió; si no, pulsa Reintentar.`,
       );
+    } catch (e) {
+      failure = e;
+    }
+    if (!failure) {
+      // La red ha dicho que SÍ. A partir de aquí ningún fallo nuestro (base de datos ocupada, aviso que no se
+      // guarda…) puede marcar el envío como fallido: el alumno lo reintentaría y saldría duplicado.
       setTarget(t.id, {
         status: 'published',
         external_id: result?.external_id ? String(result.external_id) : null,
@@ -149,16 +221,22 @@ export async function publishTarget(targetId) {
         published_at: now(),
         next_attempt_at: null,
       });
-      if (acc.last_error) run('UPDATE accounts SET last_error = NULL WHERE id = ?', acc.id);
-      log(`publicado post ${post.id} en ${acc.network}`);
-      notify(post.user_id, {
-        kind: 'published', postId: post.id, desktop: false,
-        title: `Publicado en ${net}`,
-        body: result?.warning || (post.caption || '').slice(0, 80),
-      });
-    } catch (e) {
+      try {
+        if (acc.last_error) run('UPDATE accounts SET last_error = NULL WHERE id = ?', acc.id);
+        log(`publicado post ${post.id} en ${acc.network}`);
+        notify(post.user_id, {
+          kind: 'published', postId: post.id, desktop: false,
+          title: `Publicado en ${net}`,
+          body: result?.warning || (post.caption || '').slice(0, 80),
+        });
+      } catch (e) {
+        console.error('[scheduler] publicado, pero no se pudo guardar el aviso', t.id, e);
+      }
+    } else {
+      const e = failure;
       const { msg, retryable, auth, manual } = describeError(e, net);
       console.error(`[scheduler] fallo post ${post.id} en ${acc.network}:`, e?.stack || e);
+      if (e instanceof TimeoutError && publishing) watchLateResult(t.id, post, net, publishing);
       if (auth) {
         run('UPDATE accounts SET last_error = ? WHERE id = ?', msg, acc.id);
       }
@@ -177,11 +255,15 @@ export async function publishTarget(targetId) {
         const next = new Date(Date.now() + RETRY_DELAYS_MIN[attempts - 1] * 60000).toISOString();
         setTarget(t.id, { status: 'pending', error: msg, next_attempt_at: next });
       } else {
-        setTarget(t.id, { status: 'failed', error: auth ? `${msg} — Reconecta ${net} en Redes y pulsa Reintentar.` : msg, next_attempt_at: null });
+        let finalMsg = msg;
+        if (auth) finalMsg = `${msg} — Reconecta ${net} en Redes y pulsa Reintentar.`;
+        // Se agotaron los reintentos: el mensaje no puede seguir prometiendo "lo reintentaremos".
+        else if (retryable) finalMsg = `${withoutRetryPromise(msg)} Lo hemos intentado ${attempts} veces sin éxito: cuando se solucione, pulsa Reintentar.`;
+        setTarget(t.id, { status: 'failed', error: finalMsg, next_attempt_at: null });
         notify(post.user_id, {
           kind: 'error', postId: post.id, open: '/#/lista',
           title: `No se pudo publicar en ${net}`,
-          body: msg.slice(0, 180),
+          body: finalMsg.slice(0, 180),
         });
       }
     }
@@ -278,12 +360,12 @@ export async function tick() {
       `SELECT t.id, t.account_id FROM post_targets t JOIN posts p ON p.id = t.post_id
        WHERE p.status IN ('scheduled', 'publishing', 'partial', 'manual') AND p.scheduled_at <= ?
          AND t.status = 'pending' AND (t.next_attempt_at IS NULL OR t.next_attempt_at <= ?)
-       ORDER BY p.scheduled_at, t.id LIMIT 50`,
+       ORDER BY p.scheduled_at, t.id LIMIT 500`,
       ts, ts,
     );
     const byAccount = new Map();
     for (const { id, account_id: acc } of due) {
-      if (busyAccounts.has(acc) || inFlight.has(id)) continue;
+      if (busyAccounts.has(acc) || inFlight.has(id) || lingering.has(id)) continue;
       if (!byAccount.has(acc)) byAccount.set(acc, []);
       byAccount.get(acc).push(id);
     }
@@ -321,7 +403,8 @@ export async function maintenance() {
   try {
     const today = new Date().toISOString().slice(0, 10);
     // Los avisos de días anteriores ya no sirven.
-    run(`DELETE FROM settings WHERE key LIKE 'warned\\_%' ESCAPE '\\' AND key NOT LIKE ?`, `%\\_${today}`);
+    // (Los dos LIKE necesitan su ESCAPE: sin él, el de hoy también se borraba y el aviso se repetía cada hora.)
+    run(`DELETE FROM settings WHERE key LIKE 'warned\\_%' ESCAPE '\\' AND key NOT LIKE ? ESCAPE '\\'`, `%\\_${today}`);
     for (const acc of all(`SELECT * FROM accounts WHERE mode = 'api'`)) {
       try {
         const st = accountStatus(acc);

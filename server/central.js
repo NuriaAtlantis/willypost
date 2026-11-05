@@ -10,8 +10,8 @@ import { BROKER_URL, MEDIA_PROXY, RELAY_URL, DATA_DIR } from './config.js';
 import { ProviderError, httpError } from './providers/_http.js';
 
 export const CONFIG_TTL_MS = 15 * 60 * 1000; // 15 min (al arrancar se pregunta siempre: la copia en disco solo sirve sin conexión)
-const RETRY_AFTER_FAIL_MS = 60 * 1000; // sin conexión: no reintentar /config en cada clic
-const CONFIG_TIMEOUT_MS = 5000;
+const RETRY_AFTER_FAIL_MS = 15 * 1000; // sin conexión: no reintentar /config en cada clic
+const CONFIG_TIMEOUT_MS = 12000; // el servidor central (Hostinger + CDN) puede tardar 2-3 s en frío
 const TOKEN_TIMEOUT_MS = 30000;
 const FAMILIES = ['meta', 'instagram', 'threads', 'tiktok', 'linkedin', 'google'];
 const LABELS = { meta: 'Facebook', instagram: 'Instagram', threads: 'Threads', tiktok: 'TikTok', linkedin: 'LinkedIn', google: 'Google' };
@@ -204,8 +204,16 @@ export async function centralToken(family, op, body) {
   }
   const text = await res.text();
   let json;
-  try { json = text ? JSON.parse(text) : {}; } catch { json = text; }
-  if (json && typeof json === 'object' && typeof json.error === 'string' && json.error.startsWith('willypost_')) {
+  try { json = text ? JSON.parse(text) : {}; } catch { json = undefined; }
+  if (!json || typeof json !== 'object') {
+    // El servidor central SIEMPRE contesta JSON (el suyo o el de la red, que valida antes). Otra cosa (una página
+    // HTML de error del alojamiento o un cuerpo cortado) es un fallo del propio servidor central: no se
+    // enseña ese HTML al alumno ni se marca la cuenta como "reconectar".
+    const err = new ProviderError(brokerErrorMessage(500, family), { retryable: true, status: res.status, raw: String(text).slice(0, 200) });
+    err.central = true;
+    throw err;
+  }
+  if (typeof json.error === 'string' && json.error.startsWith('willypost_')) {
     const s = res.status;
     const err = new ProviderError(brokerErrorMessage(s, family, json.error), {
       retryable: s === 429 || s >= 500, rateLimited: s === 429, status: s, raw: json,
@@ -233,4 +241,10 @@ export function mediaProxyUrl(url) {
   if (!m) return url;
   const base = centralConfig()?.media || MEDIA_PROXY;
   return `${base}/t/${m[1].toLowerCase()}/m/${m[2]}/${m[3].toLowerCase()}`;
+}
+
+// Al arrancar WillyPost se pregunta ya al servidor central, para que la primera visita a Redes muestre
+// «Conectar» sin esperar. Nunca en tests (NODE_TEST_CONTEXT) ni sin servidor central configurado.
+if (!process.env.NODE_TEST_CONTEXT && brokerBase()) {
+  setTimeout(() => { loadCentralConfig().catch(() => {}); }, 0).unref?.();
 }

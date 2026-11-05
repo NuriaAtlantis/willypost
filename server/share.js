@@ -12,13 +12,19 @@ import { SHARE_PORT, BIN_DIR } from './config.js';
 import { ProviderError } from './providers/_http.js';
 
 const TOKEN_TTL_MS = 2 * 60 * 60 * 1000;
-const TUNNEL_IDLE_MS = 15 * 60 * 1000;
+const TUNNEL_IDLE_MS = Number(process.env.WILLYPOST_TUNNEL_IDLE_MS) || 15 * 60 * 1000;
 const shares = new Map(); // token -> { path, mime, expires }
 
 let server = null;
 let tunnel = null; // { proc, url }
 let tunnelStarting = null;
 let idleTimer = null;
+// Descargas en curso: un vídeo grande con una conexión lenta puede tardar más que TUNNEL_IDLE_MS en bajar
+// de una sola vez; el túnel no se cierra mientras alguien esté descargando.
+let activeDownloads = 0;
+
+/** Solo para pruebas: simula un túnel ya abierto. */
+export function _setTunnelForTests(t) { tunnel = t; if (t) scheduleIdleClose(); }
 
 /** Interpreta una cabecera Range simple (un solo tramo). Devuelve {start,end}, 'invalid' (416) o null (ignorar). */
 export function parseRange(header, size) {
@@ -81,7 +87,16 @@ export function handleShareRequest(req, res) {
       res.writeHead(200, { ...headers, 'Content-Length': size });
     }
     if (req.method === 'HEAD') return res.end();
-    pipeline(fs.createReadStream(entry.path, opts), res, () => { /* cliente cortado o fichero borrado: nada que hacer */ });
+    activeDownloads++;
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      activeDownloads--;
+      touchTunnel(); // la cuenta atrás de inactividad empieza al TERMINAR la descarga, no al empezarla
+    };
+    res.on('close', finish);
+    pipeline(fs.createReadStream(entry.path, opts), res, () => { finish(); /* cliente cortado o fichero borrado: nada más que hacer */ });
   } catch (e) {
     console.error('[share] error atendiendo una petición:', e?.message || e);
     try { if (!res.headersSent) res.writeHead(500); res.end(); } catch { /* */ }
@@ -90,11 +105,37 @@ export function handleShareRequest(req, res) {
 
 export function startShareServer() {
   if (server) return server;
-  server = http.createServer(handleShareRequest);
-  server.on('clientError', (_e, socket) => { try { socket.end('HTTP/1.1 400 Bad Request\r\n\r\n'); } catch { /* */ } });
-  server.on('error', (e) => console.error('[share] error del servidor de medios:', e.message));
-  server.listen(SHARE_PORT, '127.0.0.1');
-  return server;
+  const s = http.createServer(handleShareRequest);
+  s.on('clientError', (_e, socket) => { try { socket.end('HTTP/1.1 400 Bad Request\r\n\r\n'); } catch { /* */ } });
+  s.on('error', (e) => {
+    console.error('[share] error del servidor de medios:', e.message);
+    if (server === s && !s.listening) server = null; // la próxima publicación lo vuelve a intentar
+  });
+  s.listen(SHARE_PORT, '127.0.0.1');
+  server = s;
+  return s;
+}
+
+/**
+ * El túnel publica en internet lo que haya en 127.0.0.1:SHARE_PORT. Si ese puerto lo tiene OTRO programa
+ * (nuestro servidor no pudo arrancar), NUNCA se abre el túnel: se expondría ese programa a internet.
+ */
+async function ensureShareListening() {
+  const s = startShareServer();
+  if (!s.listening) {
+    await new Promise((resolve) => {
+      const t = setTimeout(done, 5000);
+      function done() { clearTimeout(t); s.off('listening', done); s.off('error', done); resolve(); }
+      s.once('listening', done);
+      s.once('error', done);
+    });
+  }
+  if (!s.listening) {
+    throw new ProviderError(
+      `WillyPost no puede preparar tus fotos y vídeos para las redes: el puerto ${SHARE_PORT} lo está usando otro programa. Reinicia el ordenador y pulsa Reintentar.`,
+      { retryable: true },
+    );
+  }
 }
 
 function cloudflaredAsset() {
@@ -152,7 +193,10 @@ function touchTunnel() {
 
 function scheduleIdleClose() {
   clearTimeout(idleTimer);
-  idleTimer = setTimeout(stopTunnel, TUNNEL_IDLE_MS);
+  idleTimer = setTimeout(() => {
+    if (activeDownloads > 0) return scheduleIdleClose();
+    stopTunnel();
+  }, TUNNEL_IDLE_MS);
   idleTimer.unref?.();
 }
 
@@ -228,7 +272,7 @@ async function publicBase() {
 
 /** URL https temporal para un item de medios ({path, mime, original_name}). */
 export async function publicUrl(item) {
-  startShareServer();
+  await ensureShareListening();
   const token = crypto.randomBytes(32).toString('hex');
   shares.set(token, { path: item.path, mime: item.mime, expires: Date.now() + TOKEN_TTL_MS });
   for (const [t, v] of shares) if (v.expires < Date.now()) shares.delete(t);

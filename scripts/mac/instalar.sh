@@ -8,6 +8,7 @@ set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib.sh
 source "$HERE/lib.sh"
+trap on_exit_pause EXIT
 
 SRC="$(cd "$HERE/../.." && pwd)"     # carpeta descomprimida
 TOTAL=6
@@ -16,6 +17,7 @@ NODE_DIR="$WP_APP_DIR/runtime/node"
 NODE_BIN=""
 
 banner "Instalador para macOS  (versión $VERSION)"
+[ "$DRY" = "1" ] || refuse_root
 
 # ------------------------------------------------------------------ 1. Comprobaciones
 step 1 $TOTAL "Comprobando tu Mac..."
@@ -46,15 +48,27 @@ if [ "$DRY" != "1" ]; then
     die "WillyPost sigue abierto y no he conseguido pararlo." "Reinicia el Mac y vuelve a ejecutar el instalador."
   fi
   if port_busy; then
-    die "Otro programa está usando el puerto $WP_PORT, que WillyPost necesita." "Reinicia el Mac (así se cierra ese programa) y vuelve a ejecutar el instalador."
+    OWNER="$(port_owner)"; [ -n "$OWNER" ] && info "Programa que lo ocupa: $OWNER"
+    die "Otro programa está usando el puerto $WP_PORT, que WillyPost necesita." "Cierra ese programa (o reinicia el Mac) y vuelve a ejecutar el instalador."
   fi
 fi
 if [ -d "$WP_APP_DIR" ] && [ "$(cd "$SRC" && pwd -P)" = "$(cd "$WP_APP_DIR" && pwd -P)" ]; then
   ok "Ya estás ejecutando el instalador desde la carpeta de instalación."
 else
   copy_app() {
+    # Antes de tocar nada: que se pueda leer la carpeta descomprimida (macOS puede negar el acceso a Descargas/Escritorio)
+    { : < "$SRC/package.json"; } 2>/dev/null || return 1
     mkdir -p "$WP_APP_DIR" || return 1
-    rsync -a --delete --exclude '/runtime' --exclude 'node_modules' --exclude '.git' --exclude '.DS_Store' "$SRC/" "$WP_APP_DIR/" || return 1
+    if ! { command -v rsync >/dev/null 2>&1 && rsync -a --delete --exclude '/runtime' --exclude 'node_modules' --exclude '.git' --exclude '.DS_Store' "$SRC/" "$WP_APP_DIR/"; }; then
+      # Respaldo sin rsync (Apple lo esta sustituyendo por openrsync): vaciar todo salvo runtime y node_modules, y copiar con tar
+      local e
+      for e in "$WP_APP_DIR"/* "$WP_APP_DIR"/.[!.]*; do
+        [ -e "$e" ] || continue
+        case "$(basename "$e")" in runtime|node_modules) ;; *) rm -rf "$e" || return 1 ;; esac
+      done
+      ( cd "$SRC" && tar -cf - --exclude './runtime' --exclude 'node_modules' --exclude '.git' --exclude '.DS_Store' . ) | ( cd "$WP_APP_DIR" && tar -xf - ) || return 1
+    fi
+    [ -f "$WP_APP_DIR/server/index.js" ] || return 1
     xattr -dr com.apple.quarantine "$WP_APP_DIR" 2>/dev/null || true
     chmod +x "$WP_APP_DIR"/*.command 2>/dev/null || true
   }
@@ -81,7 +95,7 @@ else
   download_node() {
     local tmp; tmp="$(mktemp -d "${TMPDIR:-/tmp}/willypost-node.XXXXXX")" || return 1
     curl -fL --retry 3 --progress-bar -o "$tmp/$NODE_FILE" "$NODE_URL" || { rm -rf "$tmp"; return 1; }
-    local got; got="$(shasum -a 256 "$tmp/$NODE_FILE" | awk '{print $1}')"
+    local got; got="$(sha256_of "$tmp/$NODE_FILE")"
     if [ "$got" != "$NODE_SHA" ]; then rm -rf "$tmp"; echo "La descarga de Node está corrupta (la huella no coincide)." >&2; return 1; fi
     tar -xzf "$tmp/$NODE_FILE" -C "$tmp" || { rm -rf "$tmp"; return 1; }
     local inner; inner="$(find "$tmp" -maxdepth 1 -type d -name 'node-v*' | head -n 1)"
@@ -105,7 +119,7 @@ LOCK="$WP_APP_DIR/package-lock.json"; [ -f "$LOCK" ] || LOCK="$WP_APP_DIR/packag
 STAMP="$WP_APP_DIR/runtime/npm-stamp.txt"
 NEED_NPM=1
 if [ "$DRY" != "1" ] && [ "${WILLYPOST_FORCE:-}" != "1" ] && [ -f "$STAMP" ] && [ -d "$WP_APP_DIR/node_modules" ]; then
-  CUR="$(shasum -a 256 "$LOCK" | awk '{print $1}')"
+  CUR="$(sha256_of "$LOCK")"
   if [ "$(cat "$STAMP" 2>/dev/null)" = "$CUR" ]; then
     if (cd "$WP_APP_DIR" && "$NODE_BIN" --input-type=module -e "await import('express'); await import('sharp');" >/dev/null 2>&1); then NEED_NPM=0; fi
   fi
@@ -116,6 +130,8 @@ else
   run_npm() {
     export PATH="$(dirname "$NODE_BIN"):$PATH"
     export npm_config_update_notifier=false
+    # Cache propia: si ~/.npm quedo a nombre del administrador (por un "sudo npm" antiguo), npm fallaria con EACCES
+    export npm_config_cache="$WP_APP_DIR/runtime/npm-cache"
     cd "$WP_APP_DIR" || return 1
     local good=1
     echo "      Descargando e instalando. No cierres esta ventana."
@@ -128,7 +144,7 @@ else
     # Comprobacion final: que las piezas (sharp trae programas nativos) arrancan en este Mac
     "$NODE_BIN" --input-type=module -e "await import('express'); await import('sharp');" >/dev/null 2>&1 || { echo "      Las piezas se han descargado pero no arrancan en este Mac." >&2; return 1; }
     mkdir -p runtime
-    shasum -a 256 "$LOCK" | awk '{print $1}' > "$STAMP"
+    sha256_of "$LOCK" > "$STAMP"
   }
   if [ -f "$WP_APP_DIR/package-lock.json" ] || { [ "$DRY" = "1" ] && [ -f "$SRC/package-lock.json" ]; }; then NPM_TXT="npm ci --omit=dev  (si falla: npm install --omit=dev)"; else NPM_TXT="npm install --omit=dev"; fi
   act "En $WP_APP_DIR ejecutar: $NPM_TXT" run_npm || die "npm no ha podido instalar las piezas." "Casi siempre es la conexión a internet: comprueba que funciona y vuelve a ejecutar el instalador (repite solo lo que faltaba)."
@@ -142,7 +158,14 @@ step 5 $TOTAL "Preparando el arranque automático y el icono..."
 write_plist() {
   mkdir -p "$HOME/Library/LaunchAgents" "$WP_LOG_DIR" || return 1
   rotate_log
-  local node_dir; node_dir="$(dirname "$NODE_BIN")"
+  local node_dir extra_env=""; node_dir="$(dirname "$NODE_BIN")"
+  # Si se instalo con una carpeta de datos o un puerto distintos, el servicio debe usar los mismos
+  [ -n "${WILLYPOST_DATA:-}" ] && extra_env="${extra_env}
+    <key>WILLYPOST_DATA</key>
+    <string>$(xml_escape "$WILLYPOST_DATA")</string>"
+  [ -n "${WILLYPOST_PORT:-}" ] && extra_env="${extra_env}
+    <key>WILLYPOST_PORT</key>
+    <string>$(xml_escape "$WILLYPOST_PORT")</string>"
   cat > "$WP_PLIST" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -150,6 +173,10 @@ write_plist() {
 <dict>
   <key>Label</key>
   <string>${WP_LABEL}</string>
+  <key>AssociatedBundleIdentifiers</key>
+  <array>
+    <string>com.willyseo.willypost.launcher</string>
+  </array>
   <key>ProgramArguments</key>
   <array>
     <string>$(xml_escape "$NODE_BIN")</string>
@@ -174,7 +201,7 @@ write_plist() {
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
-    <string>$(xml_escape "$node_dir"):/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <string>$(xml_escape "$node_dir"):/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>${extra_env}
   </dict>
 </dict>
 </plist>
@@ -182,7 +209,12 @@ PLIST
   plutil -lint "$WP_PLIST" >/dev/null 2>&1 || return 1
   chmod 644 "$WP_PLIST"
 }
-act "Crear el servicio de arranque automático: $WP_PLIST  (RunAtLoad, se reinicia solo si falla; registro en $WP_LOG_DIR/servidor.log)" write_plist || die "No he podido crear el arranque automático."
+PLIST_OK=1
+if ! act "Crear el servicio de arranque automático: $WP_PLIST  (RunAtLoad, se reinicia solo si falla; registro en $WP_LOG_DIR/servidor.log)" write_plist; then
+  PLIST_OK=0; rm -f "$WP_PLIST" 2>/dev/null
+  warn "No he podido crear el arranque automático (macOS no deja escribir en ~/Library/LaunchAgents)."
+  info "WillyPost funcionará, pero después de reiniciar el Mac tendrás que abrirlo tú con el icono WillyPost o con \"Abrir WillyPost\"."
+fi
 
 make_app_bundle() {
   local app="$WP_APP_BUNDLE"
@@ -229,22 +261,32 @@ LAUNCH
   # Firma "ad hoc" (sin cuenta de desarrollador): hace que macOS trate la app como una app normal
   command -v codesign >/dev/null 2>&1 && codesign --force --sign - "$app" >/dev/null 2>&1
   touch "$app"
+  # Que aparezca ya en Spotlight/Launchpad sin esperar a que macOS la descubra
+  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$app" >/dev/null 2>&1 || true
   return 0
 }
 act "Crear la app $WP_APP_BUNDLE con su icono (aparece en Launchpad y Spotlight; arrástrala al Dock si quieres)" make_app_bundle || warn "No he podido crear el icono de WillyPost (no es grave: puedes usar \"Abrir WillyPost\")."
-[ "$DRY" = "1" ] || { ok "Servicio de arranque automático creado (se enciende solo al iniciar sesión)."; [ -d "$WP_APP_BUNDLE" ] && ok "App \"WillyPost\" creada en ~/Applications (búscala en Launchpad o Spotlight)."; }
+if [ "$DRY" != "1" ]; then
+  [ "$PLIST_OK" = "1" ] && ok "Servicio de arranque automático creado (se enciende solo al iniciar sesión)."
+  [ -d "$WP_APP_BUNDLE" ] && ok "App \"WillyPost\" creada en ~/Applications (búscala con Spotlight: Cmd + Espacio)."
+fi
 
 # ------------------------------------------------------------------ 6. Arrancar
 step 6 $TOTAL "Arrancando WillyPost..."
-AGENT_OK=1
-act "Cargar el servicio: launchctl bootstrap gui/$(id -u) $WP_PLIST" agent_load || AGENT_OK=0
+AGENT_OK=0
+if [ "$PLIST_OK" = "1" ]; then
+  act "Cargar el servicio: launchctl bootstrap gui/$(id -u) $WP_PLIST" agent_load && AGENT_OK=1
+fi
 if [ "$DRY" = "1" ]; then
   dry "Esperar a que responda $WP_HEALTH y abrir el navegador en $WP_URL"
   echo ""; echo "${C_MAGENTA}  Fin de la prueba (DRYRUN): no se ha cambiado nada.${C_RESET}"; echo ""
   exit 0
 fi
 if [ "$AGENT_OK" = "0" ]; then
-  warn "macOS no ha aceptado el servicio de arranque automático; arranco WillyPost de otra forma (esta vez no se encenderá solo al reiniciar)."
+  if [ "$PLIST_OK" = "1" ]; then
+    warn "macOS no ha aceptado el arranque automático; arranco WillyPost de otra forma (esta vez no se encenderá solo al reiniciar)."
+    info "Suele pasar si se desactivó WillyPost (puede aparecer como \"node\") en Ajustes del Sistema > General > Ítems de inicio (Permitir en segundo plano). Actívalo y vuelve a ejecutar el instalador."
+  fi
   start_direct || true
 fi
 if wait_healthy 60; then
@@ -260,10 +302,10 @@ echo ""
 echo "${C_GREEN}  ==================================================${C_RESET}"
 echo "${C_GREEN}   LISTO. WillyPost ya está instalado.${C_RESET}"
 echo "${C_GRAY}   - Se ha abierto en tu navegador: $WP_URL${C_RESET}"
-echo "${C_GRAY}   - La próxima vez, abre \"WillyPost\" desde Launchpad (o Spotlight), o haz doble clic en \"Abrir WillyPost\".${C_RESET}"
-echo "${C_GRAY}   - Arranca solo cuando enciendes el Mac. Si macOS avisa de un \"elemento en segundo plano\", pulsa Permitir.${C_RESET}"
+echo "${C_GRAY}   - La próxima vez, busca \"WillyPost\" con Spotlight (Cmd + Espacio) o en Launchpad, o haz doble clic en \"Abrir WillyPost\".${C_RESET}"
+echo "${C_GRAY}   - Arranca solo cuando enciendes el Mac. Si macOS avisa de un \"elemento en segundo plano\" (puede llamarse \"node\"), déjalo activado.${C_RESET}"
 echo "${C_GRAY}   - Para actualizar: descarga el ZIP nuevo y vuelve a ejecutar \"Instalar WillyPost\".${C_RESET}"
 echo "${C_GRAY}   - Puedes borrar la carpeta que descomprimiste: ya no hace falta.${C_RESET}"
 echo "${C_GREEN}  ==================================================${C_RESET}"
-pause_end
+WP_PAUSED=1; pause_end
 exit 0

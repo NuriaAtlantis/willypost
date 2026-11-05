@@ -19,11 +19,13 @@ const GRAPH = `https://graph.facebook.com/${GRAPH_VERSION}`;
 const RUPLOAD = `https://rupload.facebook.com/video-upload/${GRAPH_VERSION}`;
 const LABEL = 'Facebook';
 
-const DEFAULT_SCOPES = [
+// Sin publish_video: el caso de uso «Gestionar todo en tu Página» ya no lo ofrece (pedirlo da «Invalid Scopes») y no
+// hace falta: /{page}/videos, /{page}/video_reels y /{page}/video_stories solo piden pages_show_list,
+// pages_read_engagement y pages_manage_posts (docs de Video API «Publishing», «Reels Publishing» y Page Stories, nov-2026).
+export const DEFAULT_SCOPES = [
   'pages_show_list',
   'pages_read_engagement',
   'pages_manage_posts',
-  'publish_video',
   'business_management', // necesario para que /me/accounts liste Páginas que están dentro de un portfolio de negocio
 ];
 const FB_IMAGE_MIMES = new Set(['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff']);

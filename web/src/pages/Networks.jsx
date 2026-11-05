@@ -31,7 +31,7 @@ export default function Networks({ query }) {
   useEffect(() => {
     if (query.ok) {
       const n = app.netById(query.ok);
-      toast.success(`${n ? n.label : query.ok} conectada. Recuerda: hay que reconectarla cada 30 días.`);
+      toast.success(`${n ? n.label : query.ok} conectada. Por seguridad, te pediré renovar la conexión cada 30 días (te aviso antes).`);
       app.refreshAccounts();
       replaceRoute('/redes');
     } else if (query.error) {
@@ -91,18 +91,20 @@ export default function Networks({ query }) {
   const connectedCount = app.accounts.length;
   // ¿Alguna red se conecta sin carné (modo central)? Cambia el mensaje de bienvenida.
   const anyCentral = app.networks.some((n) => n.central);
+  // ¿Queda alguna red que aún necesite carné propio? Así no prometemos "sin configurar nada" en todas.
+  const someNeedOwnApp = app.networks.some((n) => n.authType !== 'apppassword' && !n.central && !n.credsConfigured);
 
   return (
     <div>
       {confirmEl}
       <PageHeader eyebrow="Tus redes sociales" title="Conecta tus" pill="redes"
         sub={anyCentral
-          ? 'Pulsa “Conectar”, acepta los permisos en la red y listo: no tienes que configurar nada. Tus publicaciones y tus datos se quedan en tu ordenador.'
+          ? `Pulsa “Conectar”, acepta los permisos en la red y listo: no tienes que configurar nada.${someNeedOwnApp ? ' Alguna red todavía necesita tu propia app de desarrollador (te guío paso a paso) o puedes usarla en modo manual.' : ''} Tus publicaciones y tus datos se quedan en tu ordenador.`
           : 'Cada red se conecta con tu propio “carné” de desarrollador: es gratis, lo creas una vez y las claves se quedan solo en tu ordenador.'} />
 
       <div className="notice info big">
         <Info size={20} />
-        <div><b>Cada conexión dura 30 días.</b> Es una norma de las propias redes. Te aviso desde el día 25 y con un clic la renuevas. ¿Prefieres no configurar nada? Cualquier red se puede añadir en <b>modo manual</b>: te aviso a la hora y publicas tú en dos clics.</div>
+        <div><b>Cada conexión dura 30 días.</b> Por seguridad, WillyPost te pide renovarla cada 30 días: te aviso desde el día 25 y se renueva con un clic. ¿Prefieres no conectar tu cuenta? Cualquier red se puede añadir en <b>modo manual</b>: te aviso a la hora y publicas tú en dos clics.</div>
       </div>
 
       {app.networks.length === 0 ? <Spinner label="Cargando redes…" /> : (
@@ -113,6 +115,8 @@ export default function Networks({ query }) {
             const configured = isPwd || n.credsConfigured;
             // Sin carné: la red se conecta con la app de WillyPost (el carné propio, si se guarda, tiene preferencia).
             const easy = !isPwd && !n.credsConfigured && n.central;
+            // Las cuentas en modo manual no cuentan: con solo una manual, el botón sigue siendo "Conectar <red>".
+            const hasAuto = accs.some((a) => a.mode !== 'manual');
             return (
               <article className="card net-card" key={n.id}>
                 <header>
@@ -160,15 +164,15 @@ export default function Networks({ query }) {
 
                 <footer>
                   {isPwd ? (
-                    <Button icon={Plug} onClick={() => setBsky({ network: n })}>{accs.length ? 'Añadir otra cuenta' : 'Conectar con contraseña de aplicación'}</Button>
+                    <Button icon={Plug} onClick={() => setBsky({ network: n })}>{hasAuto ? 'Añadir otra cuenta' : 'Conectar con contraseña de aplicación'}</Button>
                   ) : easy ? (
                     <div className="net-easy">
-                      <Button icon={Plug} loading={busy === n.id} onClick={() => startOAuth(n)}>{accs.length ? 'Añadir otra cuenta' : `Conectar ${n.label}`}</Button>
+                      <Button icon={Plug} loading={busy === n.id} onClick={() => startOAuth(n)}>{hasAuto ? 'Añadir otra cuenta' : `Conectar ${n.label}`}</Button>
                       <small><Sparkles size={14} /> Sin configurar nada: aceptas y listo.</small>
                     </div>
                   ) : configured ? (
                     <>
-                      <Button icon={Plug} loading={busy === n.id} onClick={() => startOAuth(n)}>{accs.length ? 'Añadir otra cuenta' : `Conectar ${n.label}`}</Button>
+                      <Button icon={Plug} loading={busy === n.id} onClick={() => startOAuth(n)}>{hasAuto ? 'Añadir otra cuenta' : `Conectar ${n.label}`}</Button>
                       <Button variant="ghost" size="sm" icon={KeyRound} onClick={() => setWizard(n)}>{n.central ? 'Mi propia app' : 'Mi carné'}</Button>
                     </>
                   ) : (
@@ -360,7 +364,7 @@ function ManualModal({ network, onClose, onDone }) {
     try { await api.post('/api/accounts/manual', { network: network.id, name: name.trim() }); toast.success(`${network.label} añadida en modo manual.`); onDone(); } catch (e) { setErr(e.message); } finally { setBusy(false); }
   };
   return (
-    <Modal onClose={onClose} title={`${network.label} en modo manual`} subtitle="Sin carné ni conexiones. A la hora de publicar te aviso y lo subes tú."
+    <Modal onClose={onClose} title={`${network.label} en modo manual`} subtitle="Sin conectar tu cuenta: a la hora de publicar te aviso y lo subes tú."
       footer={(<><Button variant="secondary" onClick={onClose}>Cancelar</Button><Button loading={busy} icon={Plus} onClick={save}>Añadir</Button></>)}>
       <div className="notice info"><Hand size={18} /><div>Podrás programar como siempre. A su hora recibirás una notificación y verás el texto y los archivos listos en <b>Para publicar a mano</b>.</div></div>
       <Field label="Nombre de la cuenta" className="mt" error={err}><input className="input" value={name} onChange={(e) => { setName(e.target.value); setErr(''); }} placeholder="@mi_negocio" data-autofocus onKeyDown={(e) => { if (e.key === 'Enter') save(); }} /></Field>

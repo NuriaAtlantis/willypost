@@ -6,10 +6,13 @@ import crypto from 'node:crypto';
 import { all, get, run, now } from '../db.js';
 import { HttpError, requireAuth, requireSession, sha256 } from '../auth.js';
 import { ROOT, APP_URL, VERSION } from '../config.js';
+import { publishingNow } from '../scheduler.js';
 
 export const miscRouter = express.Router();
 
-miscRouter.get('/api/health', (_req, res) => res.json({ ok: true, app: 'willypost', version: VERSION }));
+// "publishing": envíos que se están subiendo ahora mismo. El instalador espera a que lleguen a 0 antes de
+// parar WillyPost para actualizarlo (si no, esa publicación quedaría "interrumpida" y habría que revisarla a mano).
+miscRouter.get('/api/health', (_req, res) => res.json({ ok: true, app: 'willypost', version: VERSION, publishing: publishingNow() }));
 
 // ---------- Campañas ----------
 const PALETTE = ['#5881B9', '#E1306C', '#F5A623', '#16A34A', '#8B5CF6', '#0EA5E9', '#EF4444', '#203046'];
@@ -165,13 +168,21 @@ export function installInDesktopConfig(p, entry) {
 
 miscRouter.get('/api/claude', requireAuth, (req, res) => {
   const paths = desktopConfigPaths();
-  const installed = paths.some((p) => readJson(p)?.mcpServers?.willypost);
+  const entries = paths.map((p) => readJson(p)?.mcpServers?.willypost).filter(Boolean);
+  // "Conectado" solo si el token que tiene Claude Desktop sigue siendo válido para esta cuenta. Si el token
+  // se revocó (Desconectar Claude), se reinstaló WillyPost o es de otra cuenta, Claude no podrá entrar.
+  const tokenOk = (e) => {
+    const t = e?.env?.WILLYPOST_TOKEN;
+    return typeof t === 'string' && !!get('SELECT id FROM api_tokens WHERE user_id = ? AND token_hash = ?', req.user.id, sha256(t));
+  };
+  const installed = entries.some(tokenOk);
   res.json({
     hasToken: get('SELECT COUNT(*) AS n FROM api_tokens WHERE user_id = ?', req.user.id).n > 0,
     mcp: { command: process.execPath, args: MCP_ARGS, env: { WILLYPOST_URL: APP_URL, WILLYPOST_TOKEN: '<TU_TOKEN>' } },
     claudeCodeCommand: claudeCodeCommand('<TU_TOKEN>'),
     desktopConfigPath: paths.find((p) => fs.existsSync(path.dirname(p))) || paths[0],
     desktopInstalled: installed,
+    desktopStale: !installed && entries.length > 0,
   });
 });
 
